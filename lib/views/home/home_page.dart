@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+
+
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
@@ -17,6 +19,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
   @override
   void initState() {
     super.initState();
+
     fetchData();
   }
 
@@ -36,9 +39,6 @@ class HomePageWidgetState extends State<HomePageWidget> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('主页'),
-      ),
       body: Container(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
           child: Column(

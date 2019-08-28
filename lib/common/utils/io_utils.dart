@@ -2,14 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:thief_book_flutter/common/redux/init_state.dart';
+import 'package:thief_book_flutter/common/redux/progress_redux.dart';
 import 'package:thief_book_flutter/common/server/articels_curd.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/book.dart';
+import 'package:redux/redux.dart';
 
 class IoUtils {
   ///拆解txt文本到章节
-  static splitTxtByStream(String bookName, String sourcePath) async {
+  static splitTxtByStream(String bookName, String sourcePath, store) async {
     // var sql =
     //     "INSERT INTO books [(name, author, imgUrl,status,importUrl)] VALUES values(?,?,?,?,?);";
     var book = new Book(bookName, "作者", "imgUrl", 1, sourcePath);
@@ -54,6 +57,7 @@ class IoUtils {
       for (Match m in matches) {
         String match = m.group(0);
         print("章节-------$match");
+        store.dispatch(new RefreshProgressDataAction("解析到至:" + match));
         Article obj = new Article(book.id, line, line, 0, inedx++, 0, 0);
         currAr = await LocalCrud.insertArticel(obj);
         lock = false;
@@ -66,6 +70,4 @@ class IoUtils {
     DateTime etime = new DateTime.now();
     print("开始时间:${etime.hour}:${etime.minute}:${etime.second}");
   }
-
-  
 }

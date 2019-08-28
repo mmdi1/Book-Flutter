@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
+import 'package:thief_book_flutter/common/redux/init_state.dart';
+import 'package:thief_book_flutter/common/redux/progress_redux.dart';
 import 'package:thief_book_flutter/common/utils/io_utils.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
-import 'package:thief_book_flutter/views/down/down_server.dart' as prefix0;
-import 'package:thief_book_flutter/widgets/loadingWidget.dart';
 
 class DownPageView extends StatefulWidget {
   @override
@@ -23,48 +24,35 @@ class DownPageViewState extends State<DownPageView> {
   @override
   void initState() {
     super.initState();
-    // showDialog(
-    //       context: context,
-    //       builder: (context) {
-    //         return new NetLoadingDialog(
-    //           dismissCallback: ()=>{
-    //             print("回调-----------")
-    //           },
-    //           outsideDismiss: false,
-    //         );
-    //       }
-    //   );
-    // 初始化进度条
-    // ProgressDialog pr =
-    //     new ProgressDialog(context, ProgressDialogType.Download);
-    // pr.setMessage('下载中…');
   }
 
   @override
   Widget build(BuildContext context) {
     // var width = (Screen.width - 15 * 2 - 24 * 2) / 3;
-    return Scaffold(
-      appBar: new AppBar(
-        title: new Text('下载页'),
-      ),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Text("请输入txt下载地址"),
-              new Padding(padding: new EdgeInsets.all(20.0)),
-              bookNameTextView(),
-              new Padding(padding: new EdgeInsets.all(20.0)),
-              inputTextView(),
-              new Padding(padding: new EdgeInsets.all(30.0)),
-              downBtnView(context),
-            ],
+    return new StoreBuilder<ReduxState>(builder: (context, store) {
+      return Scaffold(
+        appBar: new AppBar(
+          title: new Text('下载页'),
+        ),
+        body: Container(
+          padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: <Widget>[
+                Text("请输入txt下载地址"),
+                new Padding(padding: new EdgeInsets.all(20.0)),
+                bookNameTextView(),
+                new Padding(padding: new EdgeInsets.all(20.0)),
+                inputTextView(),
+                new Padding(padding: new EdgeInsets.all(30.0)),
+                downBtnView(context, store),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   //url输入框
@@ -98,7 +86,7 @@ class DownPageViewState extends State<DownPageView> {
   }
 
   //下载按钮
-  Widget downBtnView(BuildContext context) {
+  Widget downBtnView(BuildContext context, store) {
     return new RaisedButton(
         padding: new EdgeInsets.only(
             left: 20.0, top: 10.0, right: 20.0, bottom: 10.0),
@@ -118,17 +106,18 @@ class DownPageViewState extends State<DownPageView> {
           // 获取存储路径
           // var path = await DownApi.findLocalPath(context);
           var path = await Config.getLocalFilePath();
-          var file = new File(path);
-          var falg = await file.exists();
-          print("$falg----------------------");
+          // var file = new File(path);
+          // var falg = await file.exists();
+          // print("$falg----------------------");
           print("下载地址：$downUrl   ,下载到：$path");
           //"http://file.joucks.cn:3008/jianlai.txt"
           DownApi.downloadFile(downUrl, path);
-          downFileCb(context);
+
+          downFileCb(context, store);
         });
   }
 
-  downFileCb(BuildContext cxt) async {
+  downFileCb(BuildContext cxt, store) async {
     ProgressDialog pr = new ProgressDialog(cxt, ProgressDialogType.Download);
     pr.setMessage('下载中…');
     // 设置下载回调
@@ -160,7 +149,7 @@ class DownPageViewState extends State<DownPageView> {
             builder: (context) => AlertDialog(
                   title: Text('提示'),
                   // 标题文字样式
-                  content: Text('文件下载完成，是否解析章节？'),
+                  content: Text('文件下载完成，是否后台解析章节？'),
                   // 内容文字样式
                   backgroundColor: CupertinoColors.white,
                   elevation: 8.0,
@@ -182,9 +171,10 @@ class DownPageViewState extends State<DownPageView> {
                           var txtName =
                               downUrl.substring(downUrl.lastIndexOf("/"));
                           print("path:$path,txtName:$txtName");
-                          IoUtils.splitTxtByStream(bookName, path + txtName);
+                          // store.dispatch(
+                          //     new RefreshProgressDataAction("解析到至:测试"));
+                          IoUtils.splitTxtByStream(bookName, path + txtName,store);
                           Navigator.pop(context);
-                          NetLoadingDialog();
                           // 打开文件
                         },
                         child: Text('打开')),

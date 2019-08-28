@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/utils/db_utils.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
+import 'package:redux/redux.dart';
 
 class SplashScreen extends StatefulWidget {
+  Store<ReduxState> store;
+  SplashScreen(this.store);
   @override
   State<StatefulWidget> createState() {
     return new SplashScreenState();
@@ -69,7 +73,8 @@ class SplashScreenState extends State<SplashScreen> {
   void onDonePress() {
     // _setHasSkip();
     Navigator.of(context).pushAndRemoveUntil(
-        new MaterialPageRoute(builder: (context) => BottomNavigationWidget()),
+        new MaterialPageRoute(
+            builder: (context) => BottomNavigationWidget(this.widget.store)),
         (route) => route == null);
   }
 
