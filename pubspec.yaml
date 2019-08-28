@@ -27,7 +27,7 @@ dependencies:
   sqflite: ^1.1.0
   shared_preferences: ^0.5.1+2
   path_provider: ^1.2.0
-  flutter_downloader: ^1.1.7
+  flutter_downloader: ^1.1.9
   permission_handler: ^3.2.2
   progress_dialog: ^1.1.0+1
   intro_slider: ^2.2.7

@@ -39,10 +39,7 @@ class DownApi {
     // 因为Apple没有外置存储，所以第一步我们需要先对所在平台进行判断
     // 如果是android，使用getExternalStorageDirectory
     // 如果是iOS，使用getApplicationSupportDirectory
-
-    var android = await getExternalStorageDirectory();
-    print(
-        "${Theme.of(context).platform == TargetPlatform.android}android路径:$android");
+  
     final directory = Theme.of(context).platform == TargetPlatform.android
         ? await getExternalStorageDirectory()
         : await getApplicationSupportDirectory();

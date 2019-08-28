@@ -7,6 +7,7 @@ import 'package:thief_book_flutter/common/utils/db_utils.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
 import 'package:redux/redux.dart';
+import 'package:thief_book_flutter/views/read/read_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   Store<ReduxState> store;
@@ -28,7 +29,7 @@ class SplashScreenState extends State<SplashScreen> {
       new Slide(
         title: "C.TEAM 出品",
         description:
-            "官网:https://c.team\n\nC.TEAM是创新团队\n\nC.TEAM旗下有很多爆款产品，并且C.TEAM产品目前是完全免费、开源的。",
+            "官网:https://c.team\n\nC.TEAM是创新团队\n\nC.TEAM旗下有很多爆款产品 \n\n并且C.TEAM产品目前是完全免费、开源",
         styleDescription: TextStyle(
             color: Colors.white, fontSize: 20.0, fontFamily: 'Raleway'),
         marginDescription:
@@ -74,7 +75,8 @@ class SplashScreenState extends State<SplashScreen> {
     // _setHasSkip();
     Navigator.of(context).pushAndRemoveUntil(
         new MaterialPageRoute(
-            builder: (context) => BottomNavigationWidget(this.widget.store)),
+          // builder: (context) => ReadScreen(1)),
+        builder: (context) => BottomNavigationWidget(this.widget.store)),
         (route) => route == null);
   }
 

@@ -104,12 +104,14 @@ class DownPageViewState extends State<DownPageView> {
           ],
         ),
         onPressed: () async {
+          print("环境:${Theme.of(context).platform }");
           // 获取存储路径
-          // var path = await DownApi.findLocalPath(context);
-          var path = await Config.getLocalFilePath();
+          var path = await DownApi.findLocalPath(context);
+          // var path = await Config.getLocalFilePath();
           // var file = new File(path);
           // var falg = await file.exists();
           // print("$falg----------------------");
+          downUrl = "http:file.joucks.cn:3008/jianlai.txt";
           print("下载地址：$downUrl   ,下载到：$path");
           //"http://file.joucks.cn:3008/jianlai.txt"
           DownApi.downloadFile(downUrl, path);
@@ -168,7 +170,7 @@ class DownPageViewState extends State<DownPageView> {
                     FlatButton(
                         onPressed: () async {
                           // 获取存储路径
-                          var path = await Config.getLocalFilePath();
+                          var path = await DownApi.findLocalPath(context);
                           var txtName =
                               downUrl.substring(downUrl.lastIndexOf("/"));
                           print("path:$path,txtName:$txtName");

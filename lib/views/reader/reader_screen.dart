@@ -44,7 +44,6 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   void initState() {
     super.initState();
     pageController.addListener(onScroll);
-
     setup();
   }
 
@@ -116,14 +115,6 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       pageController.jumpToPage(
           (preArticle != null ? preArticle.pageCount : 0) + pageIndex);
     }
-    //取出缓存页数
-    var cachePageIndex =
-        await SpUtils.getInt(Config.spCacheArticleId + novelId.toString());
-    print("缓存章节id: $articleId  取出的缓存页: $cachePageIndex");
-    if (cachePageIndex != null) {
-      pageIndex = cachePageIndex;
-      isCacheFlag = true;
-    }
     setState(() {});
   }
 
@@ -155,8 +146,8 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     var bookid = this.widget.novelId.toString();
     SpUtils.setInt(Config.spCacheArticleId + bookid, currentArticle.id);
     print("章节缓存:  ${currentArticle.id}");
-    SpUtils.setInt(Config.spCachePageIndex + bookid, pageIndex);
-    print("页数缓存 pageIndex:$pageIndex");
+    // SpUtils.setInt(Config.spCachePageIndex + bookid, pageIndex);
+    // print("页数缓存 pageIndex:$pageIndex");
   }
 
   fetchPreviousArticle(int articleId) async {
@@ -245,28 +236,20 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   Widget buildPage(BuildContext context, int index) {
-    var page = 0;
-    if (!isCacheFlag) {
-      page = index - (preArticle != null ? preArticle.pageCount : 0);
-    }
+    var page = index - (preArticle != null ? preArticle.pageCount : 0);
     var article;
     if (page >= this.currentArticle.pageCount) {
-      print("--下一章-------------$page");
-      isCacheFlag = false;
       // 到达下一章了
       article = nextArticle;
       page = 0;
     } else if (page < 0) {
       // 到达上一章了
-      print("--上一章---------page:$page----${preArticle.pageCount}");
       article = preArticle;
       page = preArticle.pageCount - 1;
     } else {
       page = pageIndex;
-      print("--当前章-------------$page");
       article = this.currentArticle;
     }
-
     return GestureDetector(
       onTapUp: (TapUpDetails details) {
         onTap(details.globalPosition);

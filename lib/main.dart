@@ -4,6 +4,7 @@ import 'package:redux/redux.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/home/welcome_page.dart';
+import 'package:thief_book_flutter/views/read/read_screen.dart';
 
 void main() {
   runApp(new FlutterReduxApp());
@@ -20,7 +21,7 @@ class FlutterReduxApp extends StatelessWidget {
     ///初始化数据
     initialState: new ReduxState(
         themeData: ThemeData(
-            primarySwatch: Colors.blue, platform: TargetPlatform.android),
+            primarySwatch: Colors.blue),
         progressData: "" //解析进度
         ),
     // locale: Locale('zh', 'CH')),
@@ -36,8 +37,9 @@ class FlutterReduxApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: '首页',
             navigatorObservers: [routeObserver],
-            home: new SplashScreen(store),
-            // home: new BottomNavigationWidget(store),
+            // home: new SplashScreen(store),
+            // home:new ReadScreen(1),
+            home: new BottomNavigationWidget(store),
             //主题
             theme: store.state.themeData,
           );

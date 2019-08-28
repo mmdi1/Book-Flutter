@@ -57,10 +57,10 @@ class IoUtils {
       for (Match m in matches) {
         String match = m.group(0);
         print("章节-------$match");
-        if (line.length < 15) {
+        if (match.length < 15) {
           store.dispatch(new RefreshProgressDataAction("开始解析:" + match));
         }
-        Article obj = new Article(book.id, line, line, 0, inedx++, 0, 0);
+        Article obj = new Article(book.id, line, line+"\n\r", 0, inedx++, 0, 0);
         currAr = await LocalCrud.insertArticel(obj);
         lock = false;
       }
