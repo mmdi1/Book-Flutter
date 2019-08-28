@@ -9,6 +9,7 @@ import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/redux/progress_redux.dart';
 import 'package:thief_book_flutter/common/utils/io_utils.dart';
+import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
 
 class DownPageView extends StatefulWidget {
@@ -173,8 +174,10 @@ class DownPageViewState extends State<DownPageView> {
                           print("path:$path,txtName:$txtName");
                           // store.dispatch(
                           //     new RefreshProgressDataAction("解析到至:测试"));
-                          IoUtils.splitTxtByStream(bookName, path + txtName,store);
-                          Navigator.pop(context);
+                          IoUtils.splitTxtByStream(
+                              bookName, path + txtName, store);
+                          // Navigator.pop(context);
+                          AppNavigator.pushHome(context, store);
                           // 打开文件
                         },
                         child: Text('打开')),

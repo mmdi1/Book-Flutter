@@ -35,9 +35,6 @@ class DiscoveryPageState extends State<DiscoveryPage> {
       child: new StoreBuilder<ReduxState>(
         builder: (context, store) {
           return new Scaffold(
-            appBar: new AppBar(
-              title: new Text('发现'),
-            ),
             body: Container(
               padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
               child: Column(

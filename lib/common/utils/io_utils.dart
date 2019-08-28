@@ -44,7 +44,7 @@ class IoUtils {
         // 每次返回一行
         .transform(LineSplitter());
     RegExp exp = new RegExp(r"第\W+.*章");
-    Article currAr;
+    Article currAr = new Article(book.id, book.name, "", 0, 0, 0, 0);
     await LocalCrud.deleteAll();
     //章节索引
     var inedx = 0;
@@ -57,7 +57,9 @@ class IoUtils {
       for (Match m in matches) {
         String match = m.group(0);
         print("章节-------$match");
-        store.dispatch(new RefreshProgressDataAction("解析到至:" + match));
+        if (line.length < 15) {
+          store.dispatch(new RefreshProgressDataAction("开始解析:" + match));
+        }
         Article obj = new Article(book.id, line, line, 0, inedx++, 0, 0);
         currAr = await LocalCrud.insertArticel(obj);
         lock = false;
@@ -67,7 +69,8 @@ class IoUtils {
         await LocalCrud.appendArticel(currAr);
       }
     }
+    store.dispatch(new RefreshProgressDataAction(""));
     DateTime etime = new DateTime.now();
-    print("开始时间:${etime.hour}:${etime.minute}:${etime.second}");
+    print("结束时间:${etime.hour}:${etime.minute}:${etime.second}");
   }
 }

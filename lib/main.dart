@@ -16,12 +16,13 @@ class FlutterReduxApp extends StatelessWidget {
   /// initialState 初始化 State
   final store = new Store<ReduxState>(
     appReducer,
+
     ///初始化数据
     initialState: new ReduxState(
-      themeData:
-          ThemeData(primarySwatch: Colors.blue, platform: TargetPlatform.android),
-          progressData: "初始化"
-    ),
+        themeData: ThemeData(
+            primarySwatch: Colors.blue, platform: TargetPlatform.android),
+        progressData: "" //解析进度
+        ),
     // locale: Locale('zh', 'CH')),
   );
 
@@ -32,12 +33,11 @@ class FlutterReduxApp extends StatelessWidget {
         store: store,
         child: new StoreBuilder<ReduxState>(builder: (context, store) {
           return new MaterialApp(
-            
             debugShowCheckedModeBanner: false,
             title: '首页',
             navigatorObservers: [routeObserver],
-            // home: new SplashScreen(),
-            home: new BottomNavigationWidget(store),
+            home: new SplashScreen(store),
+            // home: new BottomNavigationWidget(store),
             //主题
             theme: store.state.themeData,
           );

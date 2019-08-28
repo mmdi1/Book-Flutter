@@ -12,12 +12,10 @@ class AboutPageState extends State<AboutPage> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('关于'),
-      ),
       body: Container(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
           child: Center(

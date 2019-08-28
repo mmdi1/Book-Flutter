@@ -19,7 +19,6 @@ class HomePageWidgetState extends State<HomePageWidget> {
   @override
   void initState() {
     super.initState();
-
     fetchData();
   }
 

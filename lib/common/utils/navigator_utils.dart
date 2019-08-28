@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:thief_book_flutter/models/book.dart';
+import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_page.dart';
 import 'package:thief_book_flutter/views/reader/reader_screen.dart';
 
@@ -21,6 +22,12 @@ class AppNavigator {
     AppNavigator.push(context, DownPageView());
   }
 
+  static pushHome(BuildContext context,store) {
+    Navigator.of(context).pushAndRemoveUntil(
+        new MaterialPageRoute(
+            builder: (context) => BottomNavigationWidget(store)),
+        (route) => route == null);
+  }
   // static pushLogin(BuildContext context) {
   //   Navigator.push(context, MaterialPageRoute(builder: (context) {
   //     return LoginScene();
