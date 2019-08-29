@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -24,9 +26,13 @@ class Config {
   }
 
   //获取文件路径
-  static Future<String> getLocalFilePath() async {
+  static Future<String> getLocalFilePath(BuildContext context) async {
     if (filePath != "") {
       return filePath;
+    }
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      var path = await getExternalStorageDirectory();
+      return path.path + "/files";
     }
     // 获取文档目录的路径
     Directory appDocDir = await getApplicationDocumentsDirectory();

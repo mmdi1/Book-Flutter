@@ -37,9 +37,9 @@ class FlutterReduxApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: '首页',
             navigatorObservers: [routeObserver],
-            // home: new SplashScreen(store),
+            home: new SplashScreen(store),
             // home:new ReadScreen(1),
-            home: new BottomNavigationWidget(store),
+            // home: new BottomNavigationWidget(store),
             //主题
             theme: store.state.themeData,
           );

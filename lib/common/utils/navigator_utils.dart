@@ -16,7 +16,7 @@ class AppNavigator {
   }
 
   static pushNovelDetail(BuildContext context, Book book) {
-    AppNavigator.push(context, ReadScreen(novelId: book.id));
+    AppNavigator.push(context, ReaderScene(novelId: book.id));
   }
 
   static pushDownloadPage(BuildContext context) {

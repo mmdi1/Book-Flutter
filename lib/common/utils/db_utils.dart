@@ -22,7 +22,7 @@ class DbUtils {
     var flag = await fileDb.exists();
     if (flag) {
       print("删除数据库");
-      fileDb.deleteSync();
+      await fileDb.delete();
     }
     var db = await openDatabase(dbPath, version: Config.currentDbVersion,
         onUpgrade: (Database db, int oldVersion, int newVersion) async {

@@ -5,15 +5,15 @@ import 'package:thief_book_flutter/common/utils/request.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/sp_uitls.dart';
 import 'package:thief_book_flutter/main.dart';
+import 'dart:async';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/chapter.dart';
-import 'dart:async';
+import 'package:thief_book_flutter/views/reader/reader_config.dart';
+import 'package:thief_book_flutter/views/reader/reader_page_agent.dart';
+import 'package:thief_book_flutter/views/reader/reader_utils.dart';
+import 'package:thief_book_flutter/views/reader/reader_view.dart';
 import 'article_provider.dart';
-import 'reader_utils.dart';
-import 'reader_config.dart';
-import 'reader_page_agent.dart';
 import 'reader_menu.dart';
-import 'reader_view.dart';
 
 enum PageJumpType { stay, firstPage, lastPage }
 
@@ -29,9 +29,9 @@ class ReaderScene extends StatefulWidget {
 class ReaderSceneState extends State<ReaderScene> with RouteAware {
   int pageIndex = 0;
   bool isMenuVisiable = false;
-  PageController pageController;
+  PageController pageController = PageController(keepPage: false);
   bool isLoading = false;
-
+  bool isCacheFlag = false;
   double topSafeHeight = 0;
 
   Article preArticle;
@@ -43,6 +43,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   @override
   void initState() {
     super.initState();
+    pageController.addListener(onScroll);
     setup();
   }
 
@@ -68,7 +69,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   void setup() async {
     await SystemChrome.setEnabledSystemUIOverlays([]);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
-    await Future.delayed(const Duration(milliseconds: 200), () {});
+    await Future.delayed(const Duration(milliseconds: 100), () {});
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     topSafeHeight = Screen.topSafeHeight;
@@ -78,25 +79,22 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       chapters.add(Chapter.fromJson(data));
     });
     var idStr = this.widget.novelId.toString();
-    var currentArticleId = 1;
+    var nextArticleId = 1;
     //获取已读到的章节
     var exArticleId = await SpUtils.getInt(Config.spCacheArticleId + idStr);
-    // if (false) {
     if (exArticleId != null) {
-      currentArticleId = exArticleId;
-      print("取出的缓存章节id:$currentArticleId");
+      nextArticleId = exArticleId;
+      print("取出的缓存章节id:$nextArticleId");
     } else {
       var currentArticle =
           await ArticleProvider.getArticelByNovelId(this.widget.novelId);
-      currentArticleId = currentArticle.id;
-      print("无缓存章节直接获取第一章id:$currentArticleId");
+      nextArticleId = currentArticle.id;
+      print("无缓存章节直接获取第一章id:$nextArticleId");
     }
-    await resetContent(
-        this.widget.novelId, currentArticleId, PageJumpType.stay);
+    await resetContent(this.widget.novelId, nextArticleId, PageJumpType.stay);
   }
 
   resetContent(int novelId, int articleId, PageJumpType jumpType) async {
-    print("---------------------------$jumpType");
     currentArticle = await fetchArticle(articleId);
     if (currentArticle.preArticleId > 0) {
       preArticle = await fetchArticle(currentArticle.preArticleId);
@@ -114,55 +112,42 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       pageIndex = currentArticle.pageCount - 1;
     }
     if (jumpType != PageJumpType.stay) {
-      var toPage = (preArticle != null ? preArticle.pageCount : 0) + pageIndex;
-      print("toPage-----------------$toPage");
-      pageController.jumpToPage(toPage);
-    }
-    //初次进入
-    if (jumpType == PageJumpType.stay) {
-      //获取已读到的章节
-      var idStr = this.widget.novelId.toString();
-      var exPageIndex = await SpUtils.getInt(Config.spCachePageIndex + idStr);
-      print("已存在的页数:$exPageIndex");
-      if (exPageIndex != null) {
-        print("取出缓存页数:$exPageIndex");
-        pageIndex = exPageIndex;
-        pageController =
-            PageController(keepPage: false, initialPage: pageIndex);
-        pageController.addListener(onScroll);
-      }
+      pageController.jumpToPage(
+          (preArticle != null ? preArticle.pageCount : 0) + pageIndex);
     }
     setState(() {});
   }
 
   onScroll() {
     var page = pageController.offset / Screen.width;
-    var idStr = this.widget.novelId.toString();
+
     var nextArtilePage = currentArticle.pageCount +
         (preArticle != null ? preArticle.pageCount : 0);
     if (page >= nextArtilePage) {
+      print('到达下个章节了');
       preArticle = currentArticle;
       currentArticle = nextArticle;
       nextArticle = null;
       pageIndex = 0;
       pageController.jumpToPage(preArticle.pageCount);
       fetchNextArticle(currentArticle.nextArticleId);
-      print('到达上个章节了,存入已读的章节:${currentArticle.id}');
-      //缓存章节
-      SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
       setState(() {});
     }
     if (preArticle != null && page <= preArticle.pageCount - 1) {
+      print('到达上个章节了');
       nextArticle = currentArticle;
       currentArticle = preArticle;
       preArticle = null;
       pageIndex = currentArticle.pageCount - 1;
       pageController.jumpToPage(currentArticle.pageCount - 1);
       fetchPreviousArticle(currentArticle.preArticleId);
-      print('到达上个章节了,存入已读的章节:${currentArticle.id}');
-      SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
       setState(() {});
     }
+    var bookid = this.widget.novelId.toString();
+    SpUtils.setInt(Config.spCacheArticleId + bookid, currentArticle.id);
+    print("章节缓存:  ${currentArticle.id}");
+    // SpUtils.setInt(Config.spCachePageIndex + bookid, pageIndex);
+    // print("页数缓存 pageIndex:$pageIndex");
   }
 
   fetchPreviousArticle(int articleId) async {
@@ -217,7 +202,10 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   onPageChanged(int index) {
-    var page = index - (preArticle != null ? preArticle.pageCount : 0);
+    var page = 0;
+    if (!isCacheFlag) {
+      page = index - (preArticle != null ? preArticle.pageCount : 0);
+    }
     if (page < currentArticle.pageCount && page >= 0) {
       setState(() {
         pageIndex = page;
@@ -227,13 +215,10 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   previousPage() {
     if (pageIndex == 0 && currentArticle.preArticleId == 0) {
-      print("第一页了");
+      print("已经是第一页了");
+      // Toast.show('已经是第一页了');
       return;
     }
-    print("上一页，存入已读的页数:${pageIndex + 1}");
-    //存入已读到的页数
-    var idStr = this.widget.novelId.toString();
-    SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex + 1);
     pageController.previousPage(
         duration: Duration(milliseconds: 250), curve: Curves.easeOut);
   }
@@ -241,13 +226,11 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   nextPage() {
     if (pageIndex >= currentArticle.pageCount - 1 &&
         currentArticle.nextArticleId == 0) {
-      print("最后一页了");
+      print("已经最后一页了");
+      // Toast.show('已经是最后一页了');
       return;
     }
-    print("下一页，存入已读的页数:${pageIndex + 1}");
-    //存入已读到的页数
-    var idStr = this.widget.novelId.toString();
-    SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex + 1);
+
     pageController.nextPage(
         duration: Duration(milliseconds: 250), curve: Curves.easeOut);
   }
@@ -264,9 +247,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       article = preArticle;
       page = preArticle.pageCount - 1;
     } else {
+      page = pageIndex;
       article = this.currentArticle;
     }
-
     return GestureDetector(
       onTapUp: (TapUpDetails details) {
         onTap(details.globalPosition);
@@ -283,6 +266,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     int itemCount = (preArticle != null ? preArticle.pageCount : 0) +
         currentArticle.pageCount +
         (nextArticle != null ? nextArticle.pageCount : 0);
+    print("前一章加当前章后一章总页数:$itemCount");
     return PageView.builder(
       physics: BouncingScrollPhysics(),
       controller: pageController,

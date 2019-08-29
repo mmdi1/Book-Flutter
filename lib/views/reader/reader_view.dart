@@ -18,7 +18,7 @@ class ReaderView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Positioned(left: 0, top: 0, right: 0, bottom: 0, child: Image.asset('assets/images/read_bg.png', fit: BoxFit.cover)),
+        // Positioned(left: 0, top: 0, right: 0, bottom: 0, child: Image.asset('assets/images/read_bg.png', fit: BoxFit.cover)),
         ReaderOverlayer(article: article, page: page, topSafeHeight: topSafeHeight),
         buildContent(article, page),
       ],
