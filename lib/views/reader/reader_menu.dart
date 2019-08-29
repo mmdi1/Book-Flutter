@@ -139,7 +139,10 @@ class _ReaderMenuState extends State<ReaderMenu>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(chapter.title,
+          Text(
+              chapter.title.length > 16
+                  ? chapter.title.substring(0, 16) + ".."
+                  : chapter.title,
               style: TextStyle(color: Colors.white, fontSize: 16)),
           Text('${percentage.toStringAsFixed(1)}%',
               style: TextStyle(color: Colors.black, fontSize: 12)),

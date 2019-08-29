@@ -21,9 +21,6 @@ class SplashScreenState extends State<SplashScreen> {
   List<Slide> slides = new List();
   @override
   void initState() {
-    RegExp exp = new RegExp(r"第\W+.{1,10}章");
-    var str = exp.stringMatch("全英文也完全第的微乎dfSD卡的说的说的是其微IE我去诶我章陈的看法技能等级");
-    print("---------------$str");
     DownApi.requestPermission();
     super.initState();
     slides.add(

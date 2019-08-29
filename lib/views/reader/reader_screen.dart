@@ -69,7 +69,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   void setup() async {
     await SystemChrome.setEnabledSystemUIOverlays([]);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
-    await Future.delayed(const Duration(milliseconds: 200), () {});
+    await Future.delayed(const Duration(milliseconds: 280), () {});
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     topSafeHeight = Screen.topSafeHeight;
@@ -152,10 +152,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       print('到达下个章节了,存入已读的章节:${currentArticle.id}');
       //缓存章节
       SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
-      print("2222222222222222");
-      setState(() {
-        print("----------------");
-      });
+      setState(() {});
     }
     if (preArticle != null && page <= preArticle.pageCount - 1) {
       nextArticle = currentArticle;
@@ -166,11 +163,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       fetchPreviousArticle(currentArticle.preArticleId);
       print('到达上个章节了,存入已读的章节:${currentArticle.id}');
       SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
-      print("1111111111111");
-
-      setState(() {
-        print("----------------");
-      });
+      setState(() {});
     }
   }
 
@@ -231,8 +224,17 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   onPageChanged(int index) {
     var page = index - (preArticle != null ? preArticle.pageCount : 0);
     if (page < currentArticle.pageCount && page >= 0) {
+      print("4444444444:::::$page");
       setState(() {
         pageIndex = page;
+        //存入已读到的页数
+        if (pageIndex < currentArticle.pageCount) {
+          print(
+              "换页，存入已读的页数:${pageIndex + 1},当前章共有页数:${currentArticle.pageCount}");
+          //存入已读到的页数
+          var idStr = this.widget.novelId.toString();
+          SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex);
+        }
       });
     }
   }
@@ -244,12 +246,6 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     }
     pageController.previousPage(
         duration: Duration(milliseconds: 250), curve: Curves.easeOut);
-    if (pageIndex < currentArticle.pageCount) {
-      print("上一页，存入已读的页数:$pageIndex");
-      //存入已读到的页数
-      var idStr = this.widget.novelId.toString();
-      SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex);
-    }
   }
 
   nextPage() {
@@ -260,12 +256,6 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     }
     pageController.nextPage(
         duration: Duration(milliseconds: 250), curve: Curves.easeOut);
-    if (pageIndex < currentArticle.pageCount) {
-      print("下一页，存入已读的页数:${pageIndex + 1},当前章共有页数:${currentArticle.pageCount}");
-      //存入已读到的页数
-      var idStr = this.widget.novelId.toString();
-      SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex);
-    }
   }
 
   Widget buildPage(BuildContext context, int index) {
@@ -300,6 +290,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         currentArticle.pageCount +
         (nextArticle != null ? nextArticle.pageCount : 0);
     return PageView.builder(
+      //  scrollDirection: Axis.vertical,
       physics: BouncingScrollPhysics(),
       controller: pageController,
       itemCount: itemCount,
@@ -340,7 +331,19 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   @override
   Widget build(BuildContext context) {
     if (currentArticle == null || chapters == null) {
-      return Scaffold();
+      return Scaffold(
+        body: Stack(
+          children: <Widget>[
+            Positioned(
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0,
+                child:
+                    Image.asset('assets/images/read_bg.png', fit: BoxFit.cover))
+          ],
+        ),
+      );
     }
 
     return Scaffold(

@@ -14,7 +14,7 @@ class DbUtils {
     if (exists == true) {
       print("已存在数据库");
       //已存在数据库
-      return;
+      // return;
     }
     var fileDb = new File(dbPath);
     var flag = await fileDb.exists();
