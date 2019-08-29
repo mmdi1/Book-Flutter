@@ -9,6 +9,7 @@ import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/utils/io_utils.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
+import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
 
 class DownPageView extends StatefulWidget {
@@ -19,8 +20,8 @@ class DownPageView extends StatefulWidget {
 /// 下载页 */
 class DownPageViewState extends State<DownPageView> {
   final TextEditingController urlController = new TextEditingController();
-  var downUrl = "http://file.joucks.cn:3008/jianlai.txt";
-  var bookName = "剑来";
+  var downUrl = "";
+  var bookName = "";
   @override
   void initState() {
     super.initState();
@@ -103,21 +104,44 @@ class DownPageViewState extends State<DownPageView> {
           ],
         ),
         onPressed: () async {
+          if (bookName.trim() == "") {
+            Toast.show("给小说命个名吧~");
+            return;
+          }
+          if (bookName.trim().length > 6) {
+            Toast.show("名称不得超过6字~");
+            return;
+          }
+          var subTxt = downUrl.substring(downUrl.lastIndexOf("."));
+          if (subTxt.trim() != ".txt") {
+            Toast.show("只能下载.txt地址小说哦~");
+            return;
+          }
           // 获取存储路径
           var path = await Config.getLocalFilePath(context);
-          downUrl = "http://file.joucks.cn:3008/zui.txt";
-          print("下载地址：$downUrl,下载到：$path");
-          //"http://file.joucks.cn:3008/jianlai.txt"
-          DownApi.downloadFile(bookName, downUrl, path);
+          var newUrl = downUrl;
+          RegExp exp = new RegExp(r"[\u4e00-\u9fa5]");
+          var cnStr = exp.stringMatch(downUrl);
+          if (cnStr != null) {
+            debugPrint(
+                "需要解析的内容:${downUrl.substring(downUrl.lastIndexOf('/') + 1)}");
+            downUrl = Uri.encodeComponent(
+                downUrl.substring(downUrl.lastIndexOf('/') + 1));
+            newUrl = newUrl.substring(0, newUrl.lastIndexOf('/') + 1) + downUrl;
+            debugPrint("解析后:$newUrl");
+          }
+          debugPrint("下载地址：$newUrl,下载到：$path");
+          DownApi.downloadFile(bookName, newUrl, path);
           downFileCb(context, store);
         });
   }
 
   downFileCb(BuildContext cxt, store) async {
     ProgressDialog pr = new ProgressDialog(cxt, ProgressDialogType.Download);
-    pr.setMessage('下载中…');
+    pr.setMessage('此链接无进度显示,下载中…');
     // 设置下载回调
     FlutterDownloader.registerCallback((id, status, progress) {
+      debugPrint("id:$id,status:$status,progress:$progress");
       // 打印输出下载信息
       if (!pr.isShowing()) {
         pr.show();
@@ -127,13 +151,12 @@ class DownPageViewState extends State<DownPageView> {
       }
       if (status == DownloadTaskStatus.failed) {
         // showToast("下载异常，请稍后重试");
-        print("下载异常!!");
+        debugPrint("下载异常!!");
         if (pr.isShowing()) {
           pr.hide();
         }
       }
       if (status == DownloadTaskStatus.complete) {
-        print(pr.isShowing());
         if (pr.isShowing()) {
           pr.hide();
         }
@@ -145,7 +168,7 @@ class DownPageViewState extends State<DownPageView> {
             builder: (context) => AlertDialog(
                   title: Text('提示'),
                   // 标题文字样式
-                  content: Text('文件下载完成，是否后台解析章节？'),
+                  content: Text('下载完成，是否后台解析章节？'),
                   // 内容文字样式
                   backgroundColor: CupertinoColors.white,
                   elevation: 8.0,
@@ -157,16 +180,13 @@ class DownPageViewState extends State<DownPageView> {
                   actions: <Widget>[
                     // 点击取消按钮
                     FlatButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => AppNavigator.pushHome(context, store),
                         child: Text('取消')),
                     // 点击打开按钮
                     FlatButton(
                         onPressed: () async {
                           // 获取存储路径
                           var path = await Config.getLocalFilePath(context);
-                          // var txtName =
-                          //     downUrl.substring(downUrl.lastIndexOf("/"));
-                          // print("path:$path,txtName:$txtName");
                           IoUtils.splitTxtByStream(
                               bookName, path + "/" + bookName + ".txt", store);
                           // Navigator.pop(context);

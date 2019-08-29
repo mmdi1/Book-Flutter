@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class HomeBanner extends StatefulWidget {
@@ -16,7 +17,7 @@ class HomeBannerWidget extends State<HomeBanner> {
     return Container(
       child: Image(
         fit: BoxFit.fitHeight,
-        image: NetworkImage("http://file.joucks.cn:3008/v2_pwtuzc.png"),
+        image: CachedNetworkImageProvider("http://file.joucks.cn:3008/v2_pwtuzc.png"),
       ),
       foregroundDecoration: new BoxDecoration(
         border: new Border.all(

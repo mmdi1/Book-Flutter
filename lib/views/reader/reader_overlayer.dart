@@ -23,6 +23,8 @@ class ReaderOverlayer extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(article.title,
+              maxLines: 1,
+              overflow: TextOverflow.visible,
               style: TextStyle(
                   fontSize: fixedFontSize(14), color: SQColor.golden)),
           Expanded(child: Container()),

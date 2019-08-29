@@ -21,9 +21,11 @@ class SplashScreenState extends State<SplashScreen> {
   List<Slide> slides = new List();
   @override
   void initState() {
-    super.initState();
-    DbUtils.initDbTabel();
+    RegExp exp = new RegExp(r"第\W+.{1,10}章");
+    var str = exp.stringMatch("全英文也完全第的微乎dfSD卡的说的说的是其微IE我去诶我章陈的看法技能等级");
+    print("---------------$str");
     DownApi.requestPermission();
+    super.initState();
     slides.add(
       new Slide(
         title: "C.TEAM 出品",
@@ -39,6 +41,7 @@ class SplashScreenState extends State<SplashScreen> {
         directionColorEnd: Alignment.bottomRight,
       ),
     );
+    initApp();
     // slides.add(
     //   new Slide(
     //     title: "Wanandroid",
@@ -70,12 +73,17 @@ class SplashScreenState extends State<SplashScreen> {
     // );
   }
 
+  void initApp() async {
+    await DbUtils.initDbTabel();
+    // await Request.get("");
+  }
+
   void onDonePress() {
     // _setHasSkip();
     Navigator.of(context).pushAndRemoveUntil(
         new MaterialPageRoute(
-          // builder: (context) => ReadScreen(1)),
-        builder: (context) => BottomNavigationWidget(this.widget.store)),
+            // builder: (context) => ReadScreen(1)),
+            builder: (context) => BottomNavigationWidget(this.widget.store)),
         (route) => route == null);
   }
 

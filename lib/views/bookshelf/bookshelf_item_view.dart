@@ -22,15 +22,18 @@ class BookshelfItemView extends StatelessWidget {
           children: <Widget>[
             DecoratedBox(
               child: Container(
-                child: Image(
-                  image: CachedNetworkImageProvider(
-                      "http://img-tailor.11222.cn/bcv/big/201901031812421599.jpg"),
-                  fit: BoxFit.cover,
-                  width: width,
-                  height: width / 0.75,
+                child: Column(
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/images/book_cover.png',
+                      fit: BoxFit.cover,
+                      width: width,
+                      height: width / 0.75,
+                    ),
+                  ],
                 ),
                 decoration:
-                    BoxDecoration(border: Border.all(color: Colors.red)),
+                    BoxDecoration(border: Border.all(color: Colors.grey)),
               ),
               decoration: BoxDecoration(boxShadow: [
                 BoxShadow(color: Color(0x22000000), blurRadius: 5)

@@ -117,7 +117,6 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     }
     if (jumpType != PageJumpType.stay) {
       var toPage = (preArticle != null ? preArticle.pageCount : 0) + pageIndex;
-      print("toPage-----------------$toPage");
       pageController.jumpToPage(toPage);
     }
     //初次进入

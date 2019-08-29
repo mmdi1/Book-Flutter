@@ -28,9 +28,9 @@ class DownApi {
     PermissionStatus permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
     if (permission == PermissionStatus.granted) {
-      print("权限申请通过");
+      debugPrint("权限申请通过");
     } else {
-      print("权限申请通过");
+      debugPrint("权限申请通过");
     }
   }
 

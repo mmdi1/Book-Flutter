@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/redux/theme_redux.dart';
-import 'package:thief_book_flutter/widgets/progress_dialog.dart';
 
 class DiscoveryPage extends StatefulWidget {
   @override
@@ -36,6 +35,7 @@ class DiscoveryPageState extends State<DiscoveryPage> {
         builder: (context, store) {
           return new Scaffold(
             body: Container(
+              // https://www.xsjtxt.com/soft/3/2014/2014082846278.html
                 padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
                 child: Center(
                     child: Icon(Icons.change_history,
