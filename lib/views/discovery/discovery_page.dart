@@ -36,27 +36,30 @@ class DiscoveryPageState extends State<DiscoveryPage> {
         builder: (context, store) {
           return new Scaffold(
             body: Container(
-              padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
-              child: Column(
-                children: <Widget>[
-                  RaisedButton(
-                    child: Text(
-                      '登录',
-                      style: Theme.of(context).primaryTextTheme.headline,
-                    ),
-                    color: Colors.black,
-                    onPressed: () {
-                      setColorTest(store);
-                      // ProgressDialog.showLoadingDialog(context, '登录中...');
-                      //  Navigator.of(context).pop();
-                    },
-                  ),
-                  Center(
-                      child: Icon(Icons.change_history,
-                          size: 128.0, color: Colors.black12))
-                ],
-              ),
-            ),
+                padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
+                child: Center(
+                    child: Icon(Icons.change_history,
+                        size: 128.0, color: Colors.black12))
+                // Column(
+                //   children: <Widget>[
+                //     // RaisedButton(
+                //     //   child: Text(
+                //     //     '登录',
+                //     //     style: Theme.of(context).primaryTextTheme.headline,
+                //     //   ),
+                //     //   color: Colors.black,
+                //     //   onPressed: () {
+                //     //     setColorTest(store);
+                //     //     // ProgressDialog.showLoadingDialog(context, '登录中...');
+                //     //     //  Navigator.of(context).pop();
+                //     //   },
+                //     // ),
+                //     Center(
+                //         child: Icon(Icons.change_history,
+                //             size: 128.0, color: Colors.black12))
+                //   ],
+                // ),
+                ),
           );
         },
       ),

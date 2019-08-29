@@ -1,4 +1,3 @@
-
 class Chapter {
   int id;
   String title;
@@ -6,7 +5,9 @@ class Chapter {
 
   Chapter.fromJson(Map data) {
     id = data['id'];
-    title = data['title'];
-    index = data['index'];
+    title = data['title'].toString().length > 20
+        ? data['title'].toString().substring(0, 19) + ".."
+        : data['title'];
+    index = data['currentIndex'];
   }
 }

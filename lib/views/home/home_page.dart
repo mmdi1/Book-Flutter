@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
+import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/views/bookshelf/bookshelf_item_view.dart';
 import 'package:thief_book_flutter/views/home/home_banner.dart';
 
@@ -30,8 +30,9 @@ class HomePageWidgetState extends State<HomePageWidget> {
     books.forEach((book) {
       bookItems.add(BookshelfItemView(book));
     });
-
-    bookItems.add(addItemView());
+    if (bookItems.length < 5) {
+      bookItems.add(addItemView());
+    }
     setState(() {});
   }
 
@@ -57,6 +58,10 @@ class HomePageWidgetState extends State<HomePageWidget> {
     var width = (Screen.width - 15 * 2 - 24 * 2) / 3;
     return GestureDetector(
       onTap: () {
+        if (bookItems.length > 5) {
+          Toast.show("书架已达上限~");
+          return;
+        }
         AppNavigator.pushDownloadPage(context);
       },
       child: Container(

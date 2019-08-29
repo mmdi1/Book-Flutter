@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class DownApi {
-   static Future<bool> checkPermission() async {
+  static Future<bool> checkPermission() async {
     PermissionStatus permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
     if (permission != PermissionStatus.granted) {
@@ -39,7 +39,7 @@ class DownApi {
     // 因为Apple没有外置存储，所以第一步我们需要先对所在平台进行判断
     // 如果是android，使用getExternalStorageDirectory
     // 如果是iOS，使用getApplicationSupportDirectory
-  
+
     final directory = Theme.of(context).platform == TargetPlatform.android
         ? await getExternalStorageDirectory()
         : await getApplicationSupportDirectory();
@@ -47,7 +47,7 @@ class DownApi {
   }
 
   // 根据 downloadUrl 和 savePath 下载文件
-  static downloadFile(downloadUrl, savePath) async {
+  static downloadFile(bookName, downloadUrl, savePath) async {
     final savedDir = Directory(savePath);
     // 判断下载路径是否存在
     bool hasExisted = await savedDir.exists();
@@ -58,6 +58,7 @@ class DownApi {
     await FlutterDownloader.enqueue(
       url: downloadUrl,
       savedDir: savePath,
+      fileName: bookName + ".txt",
       showNotification: true,
       // show download progress in status bar (for Android)
       openFileFromNotification:

@@ -16,7 +16,7 @@ class HomeBannerWidget extends State<HomeBanner> {
     return Container(
       child: Image(
         fit: BoxFit.fitHeight,
-        image: NetworkImage("http://iph.href.lu/879x200?text=我是banner图片"),
+        image: NetworkImage("http://file.joucks.cn:3008/v2_pwtuzc.png"),
       ),
       foregroundDecoration: new BoxDecoration(
         border: new Border.all(

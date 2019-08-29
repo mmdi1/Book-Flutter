@@ -16,10 +16,12 @@ class AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: Container(
-          padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
-          child: Center(
-              child: Icon(Icons.mood, size: 128.0, color: Colors.black12))),
-    );
+        body: Column(
+      children: <Widget>[
+        Container(
+            child: Center(
+                child: Icon(Icons.mood, size: 128.0, color: Colors.black12))),
+      ],
+    ));
   }
 }

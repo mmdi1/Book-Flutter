@@ -1,14 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:path_provider/path_provider.dart';
-import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/redux/progress_redux.dart';
 import 'package:thief_book_flutter/common/server/articels_curd.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/book.dart';
-import 'package:redux/redux.dart';
 
 class IoUtils {
   ///拆解txt文本到章节
@@ -50,7 +47,7 @@ class IoUtils {
     var inedx = 0;
     DateTime time = new DateTime.now();
     print("开始时间:${time.hour}:${time.minute}:${time.second}");
-
+    var content = "";
     await for (var line in lines) {
       Iterable<Match> matches = exp.allMatches(line);
       var lock = true;
@@ -60,14 +57,26 @@ class IoUtils {
         if (match.length < 15) {
           store.dispatch(new RefreshProgressDataAction("开始解析:" + match));
         }
-        Article obj = new Article(book.id, line, line+"\n\r", 0, inedx++, 0, 0);
+        if (content.length > 0) {
+          print("追加内容长度:${content.length}");
+          currAr.content = content;
+          await LocalCrud.appendArticel(currAr);
+          content = "";
+        }
+        Article obj = new Article(book.id, line.substring(line.indexOf(match)),
+            line, 0, inedx++, 0, 0);
         currAr = await LocalCrud.insertArticel(obj);
         lock = false;
       }
       if (lock) {
-        currAr.content = line;
-        await LocalCrud.appendArticel(currAr);
+        content += line;
+        // await LocalCrud.appendArticel(currAr);
       }
+    }
+    if (content != "") {
+      print("最后一张的追加${content.length}");
+      currAr.content = content;
+      await LocalCrud.appendArticel(currAr);
     }
     store.dispatch(new RefreshProgressDataAction(""));
     DateTime etime = new DateTime.now();

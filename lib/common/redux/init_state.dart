@@ -14,11 +14,13 @@ class ReduxState {
 
   ///当前手机平台默认语言
   Locale platformLocale;
-
+  //后台进度
   String progressData;
+  //title
+  String title;
 
   ///构造方法
-  ReduxState({this.themeData, this.progressData});
+  ReduxState({this.themeData, this.progressData,this.title});
 }
 
 ///创建 Reducer

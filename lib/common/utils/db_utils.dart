@@ -16,13 +16,12 @@ class DbUtils {
       //已存在数据库
       return;
     }
-    print("22222222");
     var fileDb = new File(dbPath);
-    print("3333333333");
     var flag = await fileDb.exists();
     if (flag) {
       print("删除数据库");
       await fileDb.delete();
+      await Future.delayed(const Duration(milliseconds: 1000), () {});
     }
     var db = await openDatabase(dbPath, version: Config.currentDbVersion,
         onUpgrade: (Database db, int oldVersion, int newVersion) async {

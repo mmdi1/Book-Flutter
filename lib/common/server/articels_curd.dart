@@ -61,6 +61,20 @@ class LocalCrud {
     }
     return null;
   }
+
+  static Future<List<dynamic>> getArticelAllByNovelId(int id) async {
+    var con = new LocalDb();
+    var db = await con.getConn();
+    List<Map> maps = await db.query("articels",
+        columns: ["id", "title", "currentIndex"],
+        where: 'novelId = ?',
+        whereArgs: [id]);
+    if (maps.length > 0) {
+      return maps;
+    }
+    return null;
+  }
+
   // 追加数据
   static Future<Article> appendArticel(Article articel) async {
     var con = new LocalDb();

@@ -17,8 +17,8 @@ class Article {
     novelId = data['novelId'];
     title = data['title'];
     content = data['content'];
-    content = '　　' + content;
-    // content = content.replaceAll('\n', '\n　　');
+    // content = '　　' + content;
+    content = content.replaceAll('    ', '\n　　');
     price = data['price'];
     currentIndex = data['currentIndex'];
     nextArticleId = data['nextArticleId'];

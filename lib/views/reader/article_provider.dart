@@ -1,5 +1,6 @@
 import 'package:thief_book_flutter/common/server/articels_curd.dart';
 import 'package:thief_book_flutter/models/article.dart';
+import 'package:thief_book_flutter/models/chapter.dart';
 
 class ArticleProvider {
   static Future<Article> fetchArticle(int articleId) async {
@@ -12,5 +13,10 @@ class ArticleProvider {
   static Future<Article> getArticelByNovelId(int novelId) async {
     var article = await LocalCrud.getArticelByNovelId(novelId);
     return article;
+  }
+
+  static Future<List<dynamic>> getArticelAll(int novelId) async {
+    var result = await LocalCrud.getArticelAllByNovelId(novelId);
+    return result;
   }
 }

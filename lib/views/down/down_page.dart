@@ -7,7 +7,6 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
-import 'package:thief_book_flutter/common/redux/progress_redux.dart';
 import 'package:thief_book_flutter/common/utils/io_utils.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
@@ -106,15 +105,10 @@ class DownPageViewState extends State<DownPageView> {
         onPressed: () async {
           // 获取存储路径
           var path = await Config.getLocalFilePath(context);
-          // var file = new File(path);
-          // var falg = await file.exists();
-          // print("$falg----------------------");
-          downUrl =
-              "http://dd.xsjtxt.com/down/46/最强弃少.txt";
-          print("下载地址：$downUrl   ,下载到：$path");
+          downUrl = "http://file.joucks.cn:3008/zui.txt";
+          print("下载地址：$downUrl,下载到：$path");
           //"http://file.joucks.cn:3008/jianlai.txt"
-          DownApi.downloadFile(downUrl, path);
-
+          DownApi.downloadFile(bookName, downUrl, path);
           downFileCb(context, store);
         });
   }
@@ -170,18 +164,16 @@ class DownPageViewState extends State<DownPageView> {
                         onPressed: () async {
                           // 获取存储路径
                           var path = await Config.getLocalFilePath(context);
-                          var txtName =
-                              downUrl.substring(downUrl.lastIndexOf("/"));
-                          print("path:$path,txtName:$txtName");
-                          // store.dispatch(
-                          //     new RefreshProgressDataAction("解析到至:测试"));
+                          // var txtName =
+                          //     downUrl.substring(downUrl.lastIndexOf("/"));
+                          // print("path:$path,txtName:$txtName");
                           IoUtils.splitTxtByStream(
-                              bookName, path + txtName, store);
+                              bookName, path + "/" + bookName + ".txt", store);
                           // Navigator.pop(context);
                           AppNavigator.pushHome(context, store);
                           // 打开文件
                         },
-                        child: Text('打开')),
+                        child: Text('确认')),
                   ],
                 ));
       }

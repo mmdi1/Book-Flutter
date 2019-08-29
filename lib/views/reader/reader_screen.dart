@@ -4,6 +4,7 @@ import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/utils/request.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/sp_uitls.dart';
+import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/main.dart';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/chapter.dart';
@@ -72,8 +73,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     topSafeHeight = Screen.topSafeHeight;
-
-    List<dynamic> chaptersResponse = await Request.get(action: 'catalog');
+    List<dynamic> chaptersResponse =
+        await ArticleProvider.getArticelAll(this.widget.novelId);
+    // List<dynamic> chaptersResponse = await Request.get(action: 'catalog');
     chaptersResponse.forEach((data) {
       chapters.add(Chapter.fromJson(data));
     });
@@ -127,6 +129,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       if (exPageIndex != null) {
         print("取出缓存页数:$exPageIndex");
         pageIndex = exPageIndex;
+        pageIndex = (preArticle != null ? preArticle.pageCount : 0) + pageIndex;
         pageController =
             PageController(keepPage: false, initialPage: pageIndex);
         pageController.addListener(onScroll);
@@ -147,10 +150,13 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       pageIndex = 0;
       pageController.jumpToPage(preArticle.pageCount);
       fetchNextArticle(currentArticle.nextArticleId);
-      print('到达上个章节了,存入已读的章节:${currentArticle.id}');
+      print('到达下个章节了,存入已读的章节:${currentArticle.id}');
       //缓存章节
       SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
-      setState(() {});
+      print("2222222222222222");
+      setState(() {
+        print("----------------");
+      });
     }
     if (preArticle != null && page <= preArticle.pageCount - 1) {
       nextArticle = currentArticle;
@@ -161,7 +167,11 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       fetchPreviousArticle(currentArticle.preArticleId);
       print('到达上个章节了,存入已读的章节:${currentArticle.id}');
       SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
-      setState(() {});
+      print("1111111111111");
+
+      setState(() {
+        print("----------------");
+      });
     }
   }
 
@@ -173,7 +183,10 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     preArticle = await fetchArticle(articleId);
     pageController.jumpToPage(preArticle.pageCount + pageIndex);
     isLoading = false;
-    setState(() {});
+    print('33333333');
+    setState(() {
+      print('33333333--------------${preArticle.pageCount + pageIndex}');
+    });
   }
 
   fetchNextArticle(int articleId) async {
@@ -227,29 +240,33 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   previousPage() {
     if (pageIndex == 0 && currentArticle.preArticleId == 0) {
-      print("第一页了");
+      Toast.show("已经是第一章了~");
       return;
     }
-    print("上一页，存入已读的页数:${pageIndex + 1}");
-    //存入已读到的页数
-    var idStr = this.widget.novelId.toString();
-    SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex + 1);
     pageController.previousPage(
         duration: Duration(milliseconds: 250), curve: Curves.easeOut);
+    if (pageIndex < currentArticle.pageCount) {
+      print("上一页，存入已读的页数:$pageIndex");
+      //存入已读到的页数
+      var idStr = this.widget.novelId.toString();
+      SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex);
+    }
   }
 
   nextPage() {
     if (pageIndex >= currentArticle.pageCount - 1 &&
         currentArticle.nextArticleId == 0) {
-      print("最后一页了");
+      Toast.show("已经最后一页了~");
       return;
     }
-    print("下一页，存入已读的页数:${pageIndex + 1}");
-    //存入已读到的页数
-    var idStr = this.widget.novelId.toString();
-    SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex + 1);
     pageController.nextPage(
         duration: Duration(milliseconds: 250), curve: Curves.easeOut);
+    if (pageIndex < currentArticle.pageCount) {
+      print("下一页，存入已读的页数:${pageIndex + 1},当前章共有页数:${currentArticle.pageCount}");
+      //存入已读到的页数
+      var idStr = this.widget.novelId.toString();
+      SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex);
+    }
   }
 
   Widget buildPage(BuildContext context, int index) {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:thief_book_flutter/common/utils/SQColor.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
+import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/common/utils/utility.dart';
 import 'dart:async';
 
 import 'package:thief_book_flutter/models/chapter.dart';
-
 
 class ReaderMenu extends StatefulWidget {
   final List<Chapter> chapters;
@@ -16,13 +16,20 @@ class ReaderMenu extends StatefulWidget {
   final VoidCallback onNextArticle;
   final void Function(Chapter chapter) onToggleChapter;
 
-  ReaderMenu({this.chapters, this.articleIndex, this.onTap, this.onPreviousArticle, this.onNextArticle, this.onToggleChapter});
+  ReaderMenu(
+      {this.chapters,
+      this.articleIndex,
+      this.onTap,
+      this.onPreviousArticle,
+      this.onNextArticle,
+      this.onToggleChapter});
 
   @override
   _ReaderMenuState createState() => _ReaderMenuState();
 }
 
-class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateMixin {
+class _ReaderMenuState extends State<ReaderMenu>
+    with SingleTickerProviderStateMixin {
   AnimationController animationController;
   Animation<double> animation;
 
@@ -33,8 +40,10 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   initState() {
     super.initState();
 
-    progressValue = this.widget.articleIndex / (this.widget.chapters.length - 1);
-    animationController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
+    progressValue =
+        this.widget.articleIndex / (this.widget.chapters.length - 1);
+    animationController = AnimationController(
+        duration: const Duration(milliseconds: 200), vsync: this);
     animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
     animation.addListener(() {
       setState(() {});
@@ -45,7 +54,8 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   @override
   void didUpdateWidget(ReaderMenu oldWidget) {
     super.didUpdateWidget(oldWidget);
-    progressValue = this.widget.articleIndex / (this.widget.chapters.length - 1);
+    progressValue =
+        this.widget.articleIndex / (this.widget.chapters.length - 1);
   }
 
   @override
@@ -70,7 +80,9 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
       left: 0,
       right: 0,
       child: Container(
-        decoration: BoxDecoration(color: Colors.pink, boxShadow:  [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+        decoration: BoxDecoration(
+            color: Colors.grey[200],
+            boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
         height: Screen.navigationBarHeight,
         padding: EdgeInsets.fromLTRB(5, Screen.topSafeHeight, 5, 0),
         child: Row(
@@ -87,11 +99,21 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
             Expanded(child: Container()),
             Container(
               width: 44,
-              child: Image.asset('assets/images/read_icon_voice.png'),
+              child: GestureDetector(
+                onTap: () {
+                  Toast.show("功能暂未开放~");
+                },
+                child: Image.asset('assets/images/read_icon_voice.png'),
+              ),
             ),
             Container(
               width: 44,
-              child: Image.asset('assets/images/read_icon_more.png'),
+              child: GestureDetector(
+                onTap: () {
+                  Toast.show("功能暂未开放~");
+                },
+                child: Image.asset('assets/images/read_icon_more.png'),
+              ),
             ),
           ],
         ),
@@ -110,14 +132,17 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
     Chapter chapter = this.widget.chapters[currentArticleIndex()];
     double percentage = chapter.index / (this.widget.chapters.length - 1) * 100;
     return Container(
-      decoration: BoxDecoration(color: Color(0xff00C88D), borderRadius: BorderRadius.circular(5)),
+      decoration: BoxDecoration(
+          color: Color(0xff00C88D), borderRadius: BorderRadius.circular(5)),
       margin: EdgeInsets.fromLTRB(15, 0, 15, 10),
       padding: EdgeInsets.all(15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Text(chapter.title, style: TextStyle(color: Colors.white, fontSize: 16)),
-          Text('${percentage.toStringAsFixed(1)}%', style: TextStyle(color: Colors.lightGreen, fontSize: 12)),
+          Text(chapter.title,
+              style: TextStyle(color: Colors.white, fontSize: 16)),
+          Text('${percentage.toStringAsFixed(1)}%',
+              style: TextStyle(color: Colors.black, fontSize: 12)),
         ],
       ),
     );
@@ -138,7 +163,7 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   nextArticle() {
     if (this.widget.articleIndex == this.widget.chapters.length - 1) {
       // Toast.show('已经是最后一章了');
-       print("已经是最后一章了");
+      print("已经是最后一章了");
       return;
     }
     this.widget.onNextArticle();
@@ -156,7 +181,8 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
             onTap: previousArticle,
             child: Container(
               padding: EdgeInsets.all(20),
-              child: Image.asset('assets/images/read_icon_chapter_previous.png'),
+              child:
+                  Image.asset('assets/images/read_icon_chapter_previous.png'),
             ),
           ),
           Expanded(
@@ -197,7 +223,9 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
         children: <Widget>[
           buildProgressTipView(),
           Container(
-            decoration: BoxDecoration(color: SQColor.paper, boxShadow:  [BoxShadow(color: Color(0x22000000), blurRadius: 8)]),
+            decoration: BoxDecoration(color: SQColor.paper, boxShadow: [
+              BoxShadow(color: Color(0x22000000), blurRadius: 8)
+            ]),
             padding: EdgeInsets.only(bottom: Screen.bottomSafeHeight),
             child: Column(
               children: <Widget>[
@@ -226,12 +254,19 @@ class _ReaderMenuState extends State<ReaderMenu> with SingleTickerProviderStateM
   buildBottomItem(String title, String icon) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 7),
-      child: Column(
-        children: <Widget>[
-          Image.asset(icon),
-          SizedBox(height: 5),
-          Text(title, style: TextStyle(fontSize: fixedFontSize(12), color: SQColor.darkGray)),
-        ],
+      child: GestureDetector(
+        onTap: () {
+          Toast.show("功能暂未开放");
+        },
+        child: Column(
+          children: <Widget>[
+            Image.asset(icon),
+            SizedBox(height: 5),
+            Text(title,
+                style: TextStyle(
+                    fontSize: fixedFontSize(12), color: SQColor.darkGray)),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
+import 'package:thief_book_flutter/common/redux/title_redux.dart';
 import 'package:thief_book_flutter/views/about/about_page.dart';
 import 'package:thief_book_flutter/views/discovery/discovery_page.dart';
 import 'package:thief_book_flutter/views/home/home_page.dart';
@@ -19,6 +20,7 @@ class BottomNavigationWidget extends StatefulWidget {
 
 class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   int _currentIndex = 0;
+  String title = "书架";
   List<Widget> pages = new List();
 
   @override
@@ -34,7 +36,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
         child: new StoreBuilder<ReduxState>(builder: (context, storew) {
           return new Scaffold(
             appBar: new AppBar(
-              title: new Text('主页'),
+              title: new Text(title),
               flexibleSpace: Column(
                 children: <Widget>[
                   Padding(padding: new EdgeInsets.fromLTRB(0, 40, 0, 0)),
@@ -52,11 +54,11 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
                       Icons.home,
                     ),
                     title: new Text(
-                      '首页',
+                      '书架',
                     )),
                 BottomNavigationBarItem(
                     icon: Icon(
-                      Icons.reorder,
+                      Icons.change_history,
                     ),
                     title: new Text(
                       '发现',
@@ -74,6 +76,13 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget> {
               currentIndex: _currentIndex,
               //这是点击属性，会执行带有一个int值的回调函数，这个int值是系统自动返回的你点击的那个标签的位标
               onTap: (int i) {
+                if (i == 0) {
+                  title = "书架";
+                } else if (i == 1) {
+                  title = "发现";
+                } else if (i == 2) {
+                  title = "关于";
+                }
                 //进行状态更新，将系统返回的你点击的标签位标赋予当前位标属性，告诉系统当前要显示的导航标签被用户改变了。
                 setState(() {
                   _currentIndex = i;
