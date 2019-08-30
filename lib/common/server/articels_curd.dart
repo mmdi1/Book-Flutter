@@ -36,6 +36,7 @@ class LocalCrud {
     if (maps.length > 0) {
       return Article.fromJson(maps.first);
     }
+    db.close();
     return null;
   }
 
@@ -59,6 +60,7 @@ class LocalCrud {
     if (maps.length > 0) {
       return Article.fromJson(maps.first);
     }
+    db.close();
     return null;
   }
 
@@ -72,6 +74,7 @@ class LocalCrud {
     if (maps.length > 0) {
       return maps;
     }
+    db.close();
     return null;
   }
 

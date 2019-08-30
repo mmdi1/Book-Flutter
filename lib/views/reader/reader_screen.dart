@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
@@ -38,13 +41,15 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   Article preArticle;
   Article currentArticle;
   Article nextArticle;
+  int bookId = 0;
+  var basePath = "";
 
   List<Chapter> chapters = [];
 
   @override
   void initState() {
     super.initState();
-    setup();
+    setup(this.widget.novelId);
   }
 
   @override
@@ -61,21 +66,31 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   @override
   void dispose() {
-    pageController.dispose();
+    if (pageController != null) {
+      print("释放pageController");
+      pageController.dispose();
+    }
     routeObserver.unsubscribe(this);
     super.dispose();
   }
 
-  void setup() async {
-    await SystemChrome.setEnabledSystemUIOverlays([]);
+  void setup(novelId) async {
+    await SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
-    await Future.delayed(const Duration(milliseconds: 280), () {});
+    await Future.delayed(const Duration(milliseconds: 400), () {});
+    //setSystemUIOverlayStyle 用来设置状态栏顶部和底部样式，默认有 light 和 dark 模式，也可以按照需求自定义样式；
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
     topSafeHeight = Screen.topSafeHeight;
-    List<dynamic> chaptersResponse =
-        await ArticleProvider.getArticelAll(this.widget.novelId);
-    // List<dynamic> chaptersResponse = await Request.get(action: 'catalog');
+    // List<dynamic> chaptersResponse =
+    // await ArticleProvider.getArticelAll(this.widget.novelId);
+    if (basePath == "") {
+      basePath = await Config.getLocalFilePath(this.context);
+    }
+    var responseStr = await rootBundle
+        .loadString(basePath + '/' + novelId.toString() + "/catalog.json");
+    var jsonStr = json.decode(responseStr);
+    List<dynamic> chaptersResponse = jsonStr["data"];
     chaptersResponse.forEach((data) {
       chapters.add(Chapter.fromJson(data));
     });
@@ -83,15 +98,14 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     var currentArticleId = 1;
     //获取已读到的章节
     var exArticleId = await SpUtils.getInt(Config.spCacheArticleId + idStr);
-    // if (false) {
     if (exArticleId != null) {
       currentArticleId = exArticleId;
       print("取出的缓存章节id:$currentArticleId");
     } else {
-      var currentArticle =
-          await ArticleProvider.getArticelByNovelId(this.widget.novelId);
-      currentArticleId = currentArticle.id;
-      print("无缓存章节直接获取第一章id:$currentArticleId");
+      // var currentArticle =
+      //     await ArticleProvider.getArticelByNovelId(this.widget.novelId);
+      // currentArticleId = currentArticle.id;
+      // print("无缓存章节直接获取第一章id:$currentArticleId");
     }
     await resetContent(
         this.widget.novelId, currentArticleId, PageJumpType.stay);
@@ -192,7 +206,10 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   Future<Article> fetchArticle(int articleId) async {
-    var article = await ArticleProvider.fetchArticle(articleId);
+    var jsonData = await Request.getArticleByPath(
+        basePath, this.widget.novelId.toString(), articleId.toString());
+    var article = Article.fromJson(jsonData);
+    // var article = await ArticleProvider.fetchArticle(articleId);
     var contentHeight = Screen.height -
         topSafeHeight -
         ReaderUtils.topOffset -
@@ -227,12 +244,13 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       print("4444444444:::::$page");
       setState(() {
         pageIndex = page;
-        //存入已读到的页数
+        //存���已读到的页数
         if (pageIndex < currentArticle.pageCount) {
           print(
               "换页，存入已读的页数:${pageIndex + 1},当前章共有页数:${currentArticle.pageCount}");
           //存入已读到的页数
           var idStr = this.widget.novelId.toString();
+          SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
           SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex);
         }
       });

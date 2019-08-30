@@ -130,7 +130,8 @@ class _ReaderMenuState extends State<ReaderMenu>
       return Container();
     }
     Chapter chapter = this.widget.chapters[currentArticleIndex()];
-    double percentage = chapter.index / (this.widget.chapters.length - 1) * 100;
+    double percentage =
+        (chapter.index - 1) / (this.widget.chapters.length - 1) * 100;
     return Container(
       decoration: BoxDecoration(
           color: Color(0xff00C88D), borderRadius: BorderRadius.circular(5)),
@@ -140,8 +141,8 @@ class _ReaderMenuState extends State<ReaderMenu>
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-              chapter.title.length > 16
-                  ? chapter.title.substring(0, 16) + ".."
+              chapter.title.length > 15
+                  ? chapter.title.substring(0, 15) + ".."
                   : chapter.title,
               style: TextStyle(color: Colors.white, fontSize: 16)),
           Text('${percentage.toStringAsFixed(1)}%',

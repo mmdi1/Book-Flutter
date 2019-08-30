@@ -6,10 +6,12 @@ import 'package:thief_book_flutter/common/server/articels_curd.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/book.dart';
+import 'package:thief_book_flutter/models/catalog.dart';
 
 class IoUtils {
   ///拆解txt文本到章节
-  static splitTxtByStream(String bookName, String sourcePath, store) async {
+  static splitTxtByStream(
+      String bookName, String sourcePath, store, path) async {
     var book = new Book(bookName, "作者", "imgUrl", 1, sourcePath);
     var bookApi = new BookApi();
     book = await bookApi.insertBook(book);
@@ -35,6 +37,11 @@ class IoUtils {
     DateTime time = new DateTime.now();
     debugPrint("开始时间:${time.hour}:${time.minute}:${time.second}");
     var content = "";
+    Directory bf = new Directory(path + "/" + book.id.toString());
+    if (!bf.existsSync()) {
+      bf.createSync();
+    }
+    var listCatalogJson = '{"data":[';
     await for (var line in lines) {
       Iterable<Match> matches = exp.allMatches(line);
       var lock = true;
@@ -47,11 +54,30 @@ class IoUtils {
         if (content.length > 0) {
           debugPrint("追加内容长度:${content.length}");
           currAr.content = content;
-          await LocalCrud.appendArticel(currAr);
+
+          File af = new File(path +
+              "/" +
+              book.id.toString() +
+              "/article_" +
+              currAr.id.toString() +
+              ".json");
+          af.createSync();
+          af.writeAsStringSync(jsonEncode(currAr));
+          // await LocalCrud.appendArticel(currAr);
           content = "";
         }
-        Article obj = new Article(book.id, line, line, 0, inedx++, 0, 0);
-        currAr = await LocalCrud.insertArticel(obj);
+        //http://file.joucks.cn:3008/jianlai.txt
+        inedx++;
+        currAr = new Article(book.id, line, line, 0, inedx, 0, 0);
+        currAr.id = inedx;
+        currAr.nextArticleId = currAr.id + 1;
+        currAr.preArticleId = currAr.id - 1;
+        // listCatalog
+        //     .add(new Catalog(currAr.id, currAr.title, currAr.currentIndex));
+        var cJson = new Catalog(currAr.id, currAr.title, currAr.currentIndex);
+
+        listCatalogJson += jsonEncode(cJson) + ",";
+        // currAr = await LocalCrud.insertArticel(obj);
         lock = false;
       }
       if (lock) {
@@ -59,10 +85,23 @@ class IoUtils {
         // await LocalCrud.appendArticel(currAr);
       }
     }
+    File cf = new File(path + "/" + book.id.toString() + "/catalog.json");
+    cf.createSync();
+    listCatalogJson =
+        listCatalogJson.substring(0, listCatalogJson.lastIndexOf(",")) + "]}";
+    cf.writeAsStringSync(listCatalogJson);
     if (content != "") {
       debugPrint("最后一张的追加${content.length}");
-      currAr.content = content;
-      await LocalCrud.appendArticel(currAr);
+      // currAr.content = content;
+      // File lastAf = new File(path +
+      //     "/" +
+      //     book.id.toString() +
+      //     "/article_" +
+      //     currAr.id.toString() +
+      //     ".json");
+      // lastAf.createSync();
+      // lastAf.writeAsStringSync(jsonEncode(currAr));
+      // await LocalCrud.appendArticel(currAr);
     }
     store.dispatch(new RefreshProgressDataAction(""));
     DateTime etime = new DateTime.now();

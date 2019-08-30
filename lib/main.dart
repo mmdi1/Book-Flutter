@@ -33,7 +33,7 @@ class FlutterReduxApp extends StatelessWidget {
         child: new StoreBuilder<ReduxState>(builder: (context, store) {
           return new MaterialApp(
             debugShowCheckedModeBanner: false,
-            title:"主页",
+            title:"鱼叉阅读",
             navigatorObservers: [routeObserver],
             home: new SplashScreen(store),
             // home:new ReadScreen(1),

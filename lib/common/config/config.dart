@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -11,6 +13,8 @@ class Config {
   static String spCacheBookId = "spCacheBookId_key";
   static String spCacheArticleId = "spCacheArticleId_key";
   static String spCachePageIndex = "spCachePageIndex_key";
+
+  static String bookPath = "";
 
   /// 当前数据库版本 */
   static int currentDbVersion = 2;
@@ -41,4 +45,5 @@ class Config {
     filePath = path;
     return path;
   }
+
 }

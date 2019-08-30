@@ -188,7 +188,7 @@ class DownPageViewState extends State<DownPageView> {
                           // 获取存储路径
                           var path = await Config.getLocalFilePath(context);
                           IoUtils.splitTxtByStream(
-                              bookName, path + "/" + bookName + ".txt", store);
+                              bookName, path + "/" + bookName + ".txt", store,path);
                           // Navigator.pop(context);
                           AppNavigator.pushHome(context, store);
                           // 打开文件
