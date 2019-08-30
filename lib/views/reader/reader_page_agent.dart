@@ -12,7 +12,6 @@ class ReaderPageAgent {
       textPainter.text = TextSpan(text: tempStr, style: TextStyle(fontSize: fontSize));
       textPainter.layout(maxWidth: width);
       var end = textPainter.getPositionForOffset(Offset(width, height)).offset;
-
       if (end == 0) {
         break;
       }
