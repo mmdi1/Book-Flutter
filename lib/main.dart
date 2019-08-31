@@ -32,10 +32,22 @@ class FlutterReduxApp extends StatelessWidget {
         store: store,
         child: new StoreBuilder<ReduxState>(builder: (context, store) {
           return new MaterialApp(
+            initialRoute: "/",
+            routes: {
+              "/": (context) {
+                print("welcome------router");
+                store.state.platformLocale = Localizations.localeOf(context);
+                return new SplashScreen(store: store,);
+              },
+              "/home": (context) {
+                print("home------router");
+                return new BottomNavigationWidget(store);
+              }
+            },
             debugShowCheckedModeBanner: false,
-            title:"鱼叉阅读",
+            title: "鱼叉阅读",
             navigatorObservers: [routeObserver],
-            home: new SplashScreen(store),
+            // home: new SplashScreen(store),
             // home:new ReadScreen(1),
             // home: new BottomNavigationWidget(store),
             //主题

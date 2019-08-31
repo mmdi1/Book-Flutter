@@ -7,10 +7,11 @@ import 'package:thief_book_flutter/common/utils/db_utils.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
 import 'package:redux/redux.dart';
+import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class SplashScreen extends StatefulWidget {
   Store<ReduxState> store;
-  SplashScreen(this.store);
+  SplashScreen({this.store});
   @override
   State<StatefulWidget> createState() {
     return new SplashScreenState();
@@ -77,11 +78,13 @@ class SplashScreenState extends State<SplashScreen> {
 
   void onDonePress() {
     // _setHasSkip();
-    Navigator.of(context).pushAndRemoveUntil(
-        new MaterialPageRoute(
-            // builder: (context) => ReadScreen(1)),
-            builder: (context) => BottomNavigationWidget(this.widget.store)),
-        (route) => route == null);
+    Navigator.of(context).push(
+        CustomFindInRoute(BottomNavigationWidget(this.widget.store), 2000));
+    // Navigator.of(context).pushAndRemoveUntil(
+    //     new MaterialPageRoute(
+    //         // builder: (context) => ReadScreen(1)),
+    //         builder: (context) => BottomNavigationWidget(this.widget.store)),
+    //     (route) => route == CustomFindInRoute(BottomNavigationWidget(this.widget.store)));
   }
 
   void _setHasSkip() async {

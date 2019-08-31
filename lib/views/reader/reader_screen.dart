@@ -12,7 +12,6 @@ import 'package:thief_book_flutter/main.dart';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/chapter.dart';
 import 'dart:async';
-import 'article_provider.dart';
 import 'reader_utils.dart';
 import 'reader_config.dart';
 import 'reader_page_agent.dart';
@@ -75,9 +74,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   void setup(novelId) async {
-    await SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top]);
+    await SystemChrome.setEnabledSystemUIOverlays([]);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
-    await Future.delayed(const Duration(milliseconds: 400), () {});
+    await Future.delayed(const Duration(milliseconds: 300), () {});
     //setSystemUIOverlayStyle 用来设置状态栏顶部和底部样式，默认有 light 和 dark 模式，也可以按照需求自定义样式；
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
