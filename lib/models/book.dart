@@ -1,6 +1,15 @@
 class Book {
-  Book({this.name, this.author, this.info, this.wordCount, this.imgUrl,
-      this.status, this.importUrl});
+  Book(
+      {this.name,
+      this.author,
+      this.info,
+      this.wordCount,
+      this.imgUrl,
+      this.status,
+      this.sourceAddress,
+      this.sourceType,
+      this.catalogUrl,
+      this.importUrl});
   int id;
   String name;
   String author;
@@ -8,7 +17,10 @@ class Book {
   String wordCount;
   String info;
   String status;
+  String catalogUrl;
   String importUrl;
+  String sourceAddress;
+  String sourceType;
 
   Book.fromJson(Map data) {
     id = data['id'];
@@ -17,8 +29,11 @@ class Book {
     imgUrl = data['imgUrl'];
     wordCount = data['wordCount'];
     info = data['info'];
+    sourceAddress = data['sourceAddress'];
     status = data['status'];
+    catalogUrl = data['catalogUrl'];
     importUrl = data['importUrl'];
+    sourceType = data["sourceType"];
   }
 
   /// jsonDecode(jsonStr) 方法中会调用实体类的这个方法。如果实体类中没有这个方法，会报错。
@@ -32,6 +47,9 @@ class Book {
     map["imgUrl"] = this.imgUrl;
     map["status"] = this.status;
     map["importUrl"] = this.importUrl;
+    map["catalogUrl"] = this.catalogUrl;
+    map["sourceAddress"] = this.sourceAddress;
+    map["sourceType"] = this.sourceType;
     return map;
   }
 }

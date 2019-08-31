@@ -5,7 +5,6 @@ import 'package:thief_book_flutter/views/about/about_page.dart';
 import 'package:thief_book_flutter/views/discovery/discovery_page.dart';
 import 'package:thief_book_flutter/views/home/home_page.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:thief_book_flutter/views/home/welcome_page.dart';
 import 'package:thief_book_flutter/views/search/search_screen.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
@@ -20,7 +19,6 @@ class BottomNavigationWidget extends StatefulWidget {
 
 class BottomNavigationWidgetState extends State<BottomNavigationWidget>
     with SingleTickerProviderStateMixin {
-  int _currentIndex = 0;
   String title = "书架";
   List<Widget> pages = new List();
   //Tab页的控制器，可以用来定义Tab标签和内容页的坐标
@@ -50,17 +48,15 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
         store: this.widget.store,
         child: new StoreBuilder<ReduxState>(builder: (context, storew) {
           return DefaultTabController(
-            
             child: new Scaffold(
-              
               appBar: new AppBar(
-                
                 automaticallyImplyLeading: false,
                 actions: <Widget>[
                   IconButton(
                     icon: Icon(Icons.search),
                     onPressed: () {
-                      Navigator.push(context, CustomRoute(SearchSreenWidget()));
+                      Navigator.push(
+                          context, CustomRoute(widget: SearchSreenWidget()));
                     },
                   ),
                 ],

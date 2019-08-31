@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 
 class CustomRoute extends PageRouteBuilder {
   final Widget widget;
-  CustomRoute(this.widget)
+  final int type;
+  CustomRoute({this.widget, this.type})
       : super(
           transitionDuration: const Duration(milliseconds: 500),
           pageBuilder: (BuildContext context, Animation<double> animation,
@@ -18,12 +19,14 @@ class CustomRoute extends PageRouteBuilder {
               Animation<double> animation,
               Animation<double> secondaryAnimation,
               Widget child) {
-            //淡出过渡路由
-            // return FadeTransition(
-            //     opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            //         parent: animation, curve: Curves.fastOutSlowIn)),
-            //     child: child,
-            //     );
+            if (type == 1) {
+              //淡出过渡路由
+              return FadeTransition(
+                opacity: Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+                    parent: animation, curve: Curves.fastOutSlowIn)),
+                child: child,
+              );
+            }
 
             //比例转换路由
             //  return ScaleTransition(
@@ -42,7 +45,6 @@ class CustomRoute extends PageRouteBuilder {
 //                child: child,
 //              ),
 //            );
-
             //幻灯片路由
             return SlideTransition(
               position:
