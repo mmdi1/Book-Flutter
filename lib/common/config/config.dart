@@ -36,7 +36,7 @@ class Config {
     }
     if (Theme.of(context).platform == TargetPlatform.android) {
       var path = await getExternalStorageDirectory();
-      return path.path + "/files";
+      return path.path;
     }
     // 获取文档目录的路径
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -45,5 +45,4 @@ class Config {
     filePath = path;
     return path;
   }
-
 }

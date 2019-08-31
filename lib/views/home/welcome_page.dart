@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
@@ -19,10 +22,34 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
+  Timer _timer;
+  int count = 2;
   List<Slide> slides = new List();
+  startTime() async {
+    //设置启动图生效时间
+    var _duration = new Duration(seconds: 1);
+    new Timer(_duration, () {
+      // 空等1秒之后再计时
+      _timer =
+          new Timer.periodic(const Duration(milliseconds: 1000), (v) async {
+        count--;
+        if (count == 0) {
+          _timer.cancel();
+          Navigator.of(context).push(CustomFindInRoute(
+              BottomNavigationWidget(this.widget.store), 2000));
+        } else {
+          setState(() {});
+        }
+      });
+      return _timer;
+    });
+  }
+
   @override
   void initState() {
     DownApi.requestPermission();
+    DbUtils.initDbTabel();
+    startTime();
     super.initState();
     slides.add(
       new Slide(
@@ -39,7 +66,6 @@ class SplashScreenState extends State<SplashScreen> {
         directionColorEnd: Alignment.bottomRight,
       ),
     );
-    initApp();
     // slides.add(
     //   new Slide(
     //     title: "Wanandroid",
@@ -71,15 +97,9 @@ class SplashScreenState extends State<SplashScreen> {
     // );
   }
 
-  void initApp() async {
-    await DbUtils.initDbTabel();
-    // await Request.get("");
-  }
-
   void onDonePress() {
     // _setHasSkip();
-    Navigator.of(context).push(
-        CustomFindInRoute(BottomNavigationWidget(this.widget.store), 2000));
+
     // Navigator.of(context).pushAndRemoveUntil(
     //     new MaterialPageRoute(
     //         // builder: (context) => ReadScreen(1)),
@@ -100,6 +120,7 @@ class SplashScreenState extends State<SplashScreen> {
       nameSkipBtn: "跳过",
       nameNextBtn: "下一页",
       nameDoneBtn: "进入",
+      isShowDoneBtn: false,
     );
   }
 }

@@ -12,7 +12,15 @@ class IoUtils {
   ///拆解txt文本到章节
   static splitTxtByStream(
       String bookName, String sourcePath, store, path) async {
-    var book = new Book(bookName, "作者", "imgUrl", 1, sourcePath);
+    //bookName, "作者", "介绍", "字数", "imgUrl", "完结", sourcePath
+    var book = new Book(
+        name: bookName,
+        author: "作者",
+        info: "介绍",
+        wordCount: "字数",
+        imgUrl: "封面地址",
+        status: "完结",
+        importUrl: sourcePath);
     var bookApi = new BookApi();
     book = await bookApi.insertBook(book);
     File file = new File(sourcePath);
@@ -86,6 +94,7 @@ class IoUtils {
       }
     }
     File cf = new File(path + "/" + book.id.toString() + "/catalog.json");
+    print("写入地址:${cf.path}");
     cf.createSync();
     listCatalogJson =
         listCatalogJson.substring(0, listCatalogJson.lastIndexOf(",")) + "]}";

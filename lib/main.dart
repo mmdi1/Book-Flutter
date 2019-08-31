@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/home/welcome_page.dart';
+import 'package:thief_book_flutter/views/search/search_screen.dart';
 
 void main() {
   runApp(new FlutterReduxApp());
@@ -32,22 +34,27 @@ class FlutterReduxApp extends StatelessWidget {
         store: store,
         child: new StoreBuilder<ReduxState>(builder: (context, store) {
           return new MaterialApp(
-            initialRoute: "/",
-            routes: {
-              "/": (context) {
-                print("welcome------router");
-                store.state.platformLocale = Localizations.localeOf(context);
-                return new SplashScreen(store: store,);
-              },
-              "/home": (context) {
-                print("home------router");
-                return new BottomNavigationWidget(store);
-              }
-            },
+            // initialRoute: "/search",
+            // routes: {
+            //   "/": (context) {
+            //     print("welcome------router");
+            //     store.state.platformLocale = Localizations.localeOf(context);
+            //     return new SplashScreen(
+            //       store: store,
+            //     );
+            //   },
+            //   "/home": (context) {
+            //     print("home------router");
+            //     return new BottomNavigationWidget(store);
+            //   },
+            //   "/search": (context) {
+            //     return new SearchSreenWidget();
+            //   }
+            // },
             debugShowCheckedModeBanner: false,
             title: "鱼叉阅读",
             navigatorObservers: [routeObserver],
-            // home: new SplashScreen(store),
+            home: new SearchSreenWidget(),
             // home:new ReadScreen(1),
             // home: new BottomNavigationWidget(store),
             //主题

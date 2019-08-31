@@ -50,8 +50,11 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
         store: this.widget.store,
         child: new StoreBuilder<ReduxState>(builder: (context, storew) {
           return DefaultTabController(
+            
             child: new Scaffold(
+              
               appBar: new AppBar(
+                
                 automaticallyImplyLeading: false,
                 actions: <Widget>[
                   IconButton(
