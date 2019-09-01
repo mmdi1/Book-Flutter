@@ -41,7 +41,14 @@ class IoUtils {
         // 每次返回一行
         .transform(LineSplitter());
     RegExp exp = new RegExp(r"第\W+.{1,10}章");
-    Article currAr = new Article(book.id, book.name, "", 0, 0, 0, 0);
+    Article currAr = new Article(
+        novelId: book.id,
+        title: book.name,
+        content: "",
+        price: 0,
+        currentIndex: 0,
+        nextArticleId: 0,
+        preArticleId: 0);
     await LocalCrud.deleteAll();
     //章节索引
     var inedx = 0;
@@ -79,13 +86,21 @@ class IoUtils {
         }
         //http://file.joucks.cn:3008/jianlai.txt
         inedx++;
-        currAr = new Article(book.id, line, line, 0, inedx, 0, 0);
+        currAr = new Article(
+            novelId: book.id,
+            title: line,
+            content: line,
+            price: 0,
+            currentIndex: inedx,
+            nextArticleId: 0,
+            preArticleId: 0);
         currAr.id = inedx;
         currAr.nextArticleId = currAr.id + 1;
         currAr.preArticleId = currAr.id - 1;
         // listCatalog
         //     .add(new Catalog(currAr.id, currAr.title, currAr.currentIndex));
-        var cJson = new Catalog(currAr.id, currAr.title, currAr.currentIndex);
+        var cJson =
+            new Catalog(currAr.id, currAr.title, null, currAr.currentIndex);
 
         listCatalogJson += jsonEncode(cJson) + ",";
         // currAr = await LocalCrud.insertArticel(obj);

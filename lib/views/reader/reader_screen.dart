@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
@@ -11,6 +11,7 @@ import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/main.dart';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/chapter.dart';
+import 'package:thief_book_flutter/views/reader/reader_source_core.dart';
 import 'dart:async';
 import 'reader_utils.dart';
 import 'reader_config.dart';
@@ -22,9 +23,11 @@ enum PageJumpType { stay, firstPage, lastPage }
 
 class ReaderScene extends StatefulWidget {
   final int novelId;
-
-  ReaderScene({this.novelId});
-
+  final String sourceType; //来源
+  final String catalogUrl;
+  final isOlineRedaer; //在线阅读?
+  ReaderScene(
+      {this.novelId, this.sourceType, this.isOlineRedaer, this.catalogUrl});
   @override
   ReaderSceneState createState() => ReaderSceneState();
 }
@@ -34,21 +37,25 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   bool isMenuVisiable = false;
   PageController pageController;
   bool isLoading = false;
-
   double topSafeHeight = 0;
-
+  int chapterIndex = 0;
   Article preArticle;
   Article currentArticle;
   Article nextArticle;
   int bookId = 0;
   var basePath = "";
+  String fisrtSourceLink = "";
 
   List<Chapter> chapters = [];
 
   @override
   void initState() {
     super.initState();
-    setup(this.widget.novelId);
+    if (this.widget.isOlineRedaer) {
+      onlineSetup();
+    } else {
+      setup(this.widget.novelId);
+    }
   }
 
   @override
@@ -73,7 +80,34 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     super.dispose();
   }
 
+  //在线阅读初始方法
+  void onlineSetup() async {
+    var currentArticleId = 1;
+    await SystemChrome.setEnabledSystemUIOverlays([]);
+    // 不延迟的话，安卓获取到的topSafeHeight是错的。
+    await Future.delayed(const Duration(milliseconds: 300), () {});
+    //setSystemUIOverlayStyle 用来设置状态栏顶部和底部样式，默认有 light 和 dark 模式，也可以按照需求自定义样式；
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    print("目录源链接：${this.widget.catalogUrl}");
+    chapters = await RedaerRequest.getCotalogByOline(
+        this.widget.catalogUrl, this.widget.sourceType);
+    //
+    topSafeHeight = Screen.topSafeHeight;
+    var linkUrl = chapters[0].linkUrl;
+    fisrtSourceLink = linkUrl;
+    //获取已读到的章节
+    var exArticleLink =
+        await SpUtils.getValue(Config.spCacheArticleId + fisrtSourceLink);
+    if (exArticleLink != null) {
+      linkUrl = exArticleLink;
+    }
+    await resetContent(
+        this.widget.novelId, currentArticleId, linkUrl, PageJumpType.stay);
+  }
+
+  //缓存阅读初始方法
   void setup(novelId) async {
+    var currentArticleId = 1;
     await SystemChrome.setEnabledSystemUIOverlays([]);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
     await Future.delayed(const Duration(milliseconds: 300), () {});
@@ -94,32 +128,33 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       chapters.add(Chapter.fromJson(data));
     });
     var idStr = this.widget.novelId.toString();
-    var currentArticleId = 1;
     //获取已读到的章节
     var exArticleId = await SpUtils.getInt(Config.spCacheArticleId + idStr);
     if (exArticleId != null) {
       currentArticleId = exArticleId;
       print("取出的缓存章节id:$currentArticleId");
-    } else {
-      // var currentArticle =
-      //     await ArticleProvider.getArticelByNovelId(this.widget.novelId);
-      // currentArticleId = currentArticle.id;
-      // print("无缓存章节直接获取第一章id:$currentArticleId");
     }
     await resetContent(
-        this.widget.novelId, currentArticleId, PageJumpType.stay);
+        this.widget.novelId, currentArticleId, null, PageJumpType.stay);
   }
 
-  resetContent(int novelId, int articleId, PageJumpType jumpType) async {
-    print("---------------------------$jumpType");
-    currentArticle = await fetchArticle(articleId);
-    if (currentArticle.preArticleId > 0) {
-      preArticle = await fetchArticle(currentArticle.preArticleId);
+  resetContent(
+      int novelId, int articleId, String linkUrl, PageJumpType jumpType) async {
+    print("重置章节:---------------------------$jumpType");
+    currentArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
+    if (currentArticle.preLink != null || currentArticle.preArticleId > 0) {
+      preArticle = await fetchArticle(
+        articleId: currentArticle.preArticleId,
+        linkUrl: currentArticle.preLink,
+      );
     } else {
       preArticle = null;
     }
-    if (currentArticle.nextArticleId > 0) {
-      nextArticle = await fetchArticle(currentArticle.nextArticleId);
+    if (currentArticle.nextLink != null || currentArticle.nextArticleId > 0) {
+      nextArticle = await fetchArticle(
+        articleId: currentArticle.nextArticleId,
+        linkUrl: currentArticle.nextLink,
+      );
     } else {
       nextArticle = null;
     }
@@ -134,18 +169,28 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     }
     //初次进入
     if (jumpType == PageJumpType.stay) {
-      //获取已读到的章节
-      var idStr = this.widget.novelId.toString();
-      var exPageIndex = await SpUtils.getInt(Config.spCachePageIndex + idStr);
-      print("已存在的页数:$exPageIndex");
-      if (exPageIndex != null) {
-        print("取出缓存页数:$exPageIndex");
-        pageIndex = exPageIndex;
-        pageIndex = (preArticle != null ? preArticle.pageCount : 0) + pageIndex;
-        pageController =
-            PageController(keepPage: false, initialPage: pageIndex);
-        pageController.addListener(onScroll);
+      //获取已读到的页数
+      var exPageIndex;
+      if (this.widget.isOlineRedaer) {
+        exPageIndex =
+            await SpUtils.getInt(Config.spCachePageIndex + fisrtSourceLink);
+        print("在线已存在的页数:$exPageIndex");
+        if (exPageIndex != null) {
+          print("取出在线阅读缓存页数:$exPageIndex");
+          pageIndex = exPageIndex;
+        }
+      } else {
+        var idStr = this.widget.novelId.toString();
+        exPageIndex = await SpUtils.getInt(Config.spCachePageIndex + idStr);
+        print("已存在的页数:$exPageIndex");
+        if (exPageIndex != null) {
+          print("取出缓存页数:$exPageIndex");
+          pageIndex = exPageIndex;
+        }
       }
+      pageIndex = (preArticle != null ? preArticle.pageCount : 0) + pageIndex;
+      pageController = PageController(keepPage: false, initialPage: pageIndex);
+      pageController.addListener(onScroll);
     }
     setState(() {});
   }
@@ -161,10 +206,17 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       nextArticle = null;
       pageIndex = 0;
       pageController.jumpToPage(preArticle.pageCount);
-      fetchNextArticle(currentArticle.nextArticleId);
+      fetchNextArticle(
+          articleId: currentArticle.nextArticleId,
+          linkUrl: currentArticle.nextLink);
       print('到达下个章节了,存入已读的章节:${currentArticle.id}');
       //缓存章节
-      SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
+      if (this.widget.isOlineRedaer) {
+        SpUtils.setValue(Config.spCacheArticleId + fisrtSourceLink,
+            currentArticle.currentLink);
+      } else {
+        SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
+      }
       setState(() {});
     }
     if (preArticle != null && page <= preArticle.pageCount - 1) {
@@ -173,19 +225,26 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       preArticle = null;
       pageIndex = currentArticle.pageCount - 1;
       pageController.jumpToPage(currentArticle.pageCount - 1);
-      fetchPreviousArticle(currentArticle.preArticleId);
-      print('到达上个章节了,存入已读的章节:${currentArticle.id}');
-      SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
+      fetchPreviousArticle(
+          articleId: currentArticle.preArticleId,
+          linkUrl: currentArticle.preLink);
+      print('到达上个章节了,存入已读的���节:${currentArticle.id}');
+      if (this.widget.isOlineRedaer) {
+        SpUtils.setValue(Config.spCacheArticleId + fisrtSourceLink,
+            currentArticle.currentLink);
+      } else {
+        SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
+      }
       setState(() {});
     }
   }
 
-  fetchPreviousArticle(int articleId) async {
+  fetchPreviousArticle({int articleId, String linkUrl}) async {
     if (preArticle != null || isLoading || articleId == 0) {
       return;
     }
     isLoading = true;
-    preArticle = await fetchArticle(articleId);
+    preArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
     pageController.jumpToPage(preArticle.pageCount + pageIndex);
     isLoading = false;
     print('33333333');
@@ -194,21 +253,27 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     });
   }
 
-  fetchNextArticle(int articleId) async {
+  fetchNextArticle({int articleId, String linkUrl}) async {
     if (nextArticle != null || isLoading || articleId == 0) {
       return;
     }
     isLoading = true;
-    nextArticle = await fetchArticle(articleId);
+    nextArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
     isLoading = false;
     setState(() {});
   }
 
-  Future<Article> fetchArticle(int articleId) async {
-    var jsonData = await Request.getArticleByPath(
-        basePath, this.widget.novelId.toString(), articleId.toString());
-    var article = Article.fromJson(jsonData);
-    // var article = await ArticleProvider.fetchArticle(articleId);
+  Future<Article> fetchArticle({int articleId, String linkUrl}) async {
+    var article = new Article();
+    //是否在线阅读
+    if (this.widget.isOlineRedaer) {
+      article = await RedaerRequest.getArticleByOline(
+          linkUrl: linkUrl, sourceType: this.widget.sourceType);
+    } else {
+      var jsonData = await Request.getArticleByPath(
+          basePath, this.widget.novelId.toString(), articleId.toString());
+      article = Article.fromJson(jsonData);
+    }
     var contentHeight = Screen.height -
         topSafeHeight -
         ReaderUtils.topOffset -
@@ -240,17 +305,22 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   onPageChanged(int index) {
     var page = index - (preArticle != null ? preArticle.pageCount : 0);
     if (page < currentArticle.pageCount && page >= 0) {
-      print("4444444444:::::$page");
       setState(() {
         pageIndex = page;
-        //存���已读到的页数
         if (pageIndex < currentArticle.pageCount) {
-          print(
-              "换页，存入已读的页数:${pageIndex + 1},当前章共有页数:${currentArticle.pageCount}");
           //存入已读到的页数
-          var idStr = this.widget.novelId.toString();
-          SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
-          SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex);
+          if (this.widget.isOlineRedaer) {
+            SpUtils.setValue(Config.spCacheArticleId + fisrtSourceLink,
+                currentArticle.currentLink);
+            SpUtils.setInt(
+                Config.spCachePageIndex + fisrtSourceLink, pageIndex);
+          } else {
+            print(
+                "缓存换页，存入已读的页数:${pageIndex + 1},当前章共有页数:${currentArticle.pageCount}");
+            var idStr = this.widget.novelId.toString();
+            SpUtils.setInt(Config.spCacheArticleId + idStr, currentArticle.id);
+            SpUtils.setInt(Config.spCachePageIndex + idStr, pageIndex);
+          }
         }
       });
     }
@@ -322,18 +392,30 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     }
     return ReaderMenu(
       chapters: chapters,
-      articleIndex: currentArticle.currentIndex,
+      articleIndex: this.widget.isOlineRedaer
+          ? chapterIndex
+          : currentArticle.currentIndex,
       onTap: hideMenu,
       onPreviousArticle: () {
-        resetContent(this.widget.novelId, currentArticle.preArticleId,
+        chapterIndex = chapterIndex--;
+        print("重置111---$chapterIndex");
+        chapterIndex = resetContent(
+            this.widget.novelId,
+            currentArticle.preArticleId,
+            currentArticle.preLink,
             PageJumpType.firstPage);
       },
       onNextArticle: () {
+        print("重置222---$chapterIndex");
+        chapterIndex = chapterIndex++;
         resetContent(this.widget.novelId, currentArticle.nextArticleId,
-            PageJumpType.firstPage);
+            currentArticle.nextLink, PageJumpType.firstPage);
       },
       onToggleChapter: (Chapter chapter) {
-        resetContent(this.widget.novelId, chapter.id, PageJumpType.firstPage);
+        chapterIndex = chapter.index;
+        print("重置---$chapterIndex");
+        resetContent(this.widget.novelId, chapter.id, chapter.linkUrl,
+            PageJumpType.firstPage);
       },
     );
   }
@@ -356,8 +438,11 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
                 top: 0,
                 right: 0,
                 bottom: 0,
-                child:
-                    Image.asset('assets/images/read_bg.png', fit: BoxFit.cover))
+                child: Image.asset('assets/images/read_bg.png',
+                    fit: BoxFit.cover)),
+            Center(
+              child: Text("加载中..."),
+            ),
           ],
         ),
       );

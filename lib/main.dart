@@ -5,6 +5,7 @@ import 'package:redux/redux.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/home/welcome_page.dart';
+import 'package:thief_book_flutter/views/reader/reader_screen.dart';
 import 'package:thief_book_flutter/views/search/search_screen.dart';
 
 void main() {
@@ -55,7 +56,7 @@ class FlutterReduxApp extends StatelessWidget {
             title: "鱼叉阅读",
             navigatorObservers: [routeObserver],
             home: new SearchSreenWidget(),
-            // home:new ReadScreen(1),
+            // home: new ReaderScene(isOlineRedaer: true),
             // home: new BottomNavigationWidget(store),
             //主题
             theme: store.state.themeData,

@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thief_book_flutter/models/book.dart';
+import 'package:thief_book_flutter/views/reader/reader_screen.dart';
+import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class BookDetailScreen extends StatefulWidget {
   Book book;
@@ -13,16 +15,36 @@ class BookDetailScreen extends StatefulWidget {
 class BookDetailScreenWidget extends State<BookDetailScreen> {
   @override
   void initState() {
+    // RedaerRequest.getAixdzsArticle("/168/168363/p1.html");
+
     super.initState();
   }
 
+  //
   @override
   void dispose() {
     super.dispose();
   }
 
+  //
+  goToRederScreen() async {
+    if (this.widget.book.sourceType == "aixdzs") {
+      Navigator.of(context).push(CustomRoute(
+          widget: new ReaderScene(
+              isOlineRedaer: true, catalogUrl: this.widget.book.catalogUrl),
+          type: 1));
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     new MaterialPageRoute(
+      //         builder: (context) => new ReaderScene(
+      //             isOlineRedaer: true,
+      //             fisrtSourceLink: this.widget.book.catalogUrl + "p1.html")),
+      //     (route) => route == null);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(this.widget.book.toJson());
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -69,7 +91,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
                 onPressed: () {
-                  print("在线阅读");
+                  goToRederScreen();
                 },
               ),
             ],

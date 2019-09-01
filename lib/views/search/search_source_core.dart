@@ -21,6 +21,7 @@ class SearchSourceProcessing {
       var listImg = e.querySelector(".list_img");
       var a = listImg.querySelector("a");
       var detailUrl = a.attributes["href"];
+      var catalogUrl = e.querySelector(".b_r").firstChild.attributes["href"];
       var img = listImg.querySelector("img");
       var imgUrl = img.attributes["src"];
       var bookName = e.querySelector(".b_name").children[0].text;
@@ -40,7 +41,7 @@ class SearchSourceProcessing {
           info: info,
           sourceType: "aixdzs",
           sourceAddress: baseUrl + detailUrl,
-          catalogUrl: baseUrl.replaceAll("www", "read") + detailUrl,
+          catalogUrl: catalogUrl,
           wordCount: count,
           imgUrl: imgUrl,
           status: status);

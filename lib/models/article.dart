@@ -1,6 +1,16 @@
 class Article {
-  Article(this.novelId, this.title, this.content, this.price, this.currentIndex,
-      this.nextArticleId, this.preArticleId);
+  Article(
+      {this.novelId,
+      this.title,
+      this.content,
+      this.price,
+      this.currentIndex,
+      this.nextArticleId,
+      this.preArticleId,
+      this.nextLink,
+      this.preLink,
+      this.currentLink,
+      this.sourceType});
   int id;
   int novelId;
   String title;
@@ -9,6 +19,11 @@ class Article {
   int currentIndex;
   int nextArticleId;
   int preArticleId;
+
+  String nextLink;
+  String preLink;
+  String currentLink;
+  String sourceType;
 
   List<Map<String, int>> pageOffsets;
 
@@ -23,6 +38,10 @@ class Article {
     currentIndex = data['currentIndex'];
     nextArticleId = data['nextArticleId'];
     preArticleId = data['preArticleId'];
+    nextLink = data['nextLink'];
+    preLink = data['preLink'];
+    currentLink = data['currentLink'];
+    sourceType = data["sourceType"];
   }
 
   /// jsonDecode(jsonStr) 方法中会调用实体类的这个方法。如果实体类中没有这个方法，会报错。
@@ -36,6 +55,10 @@ class Article {
     map["currentIndex"] = this.currentIndex;
     map["nextArticleId"] = this.nextArticleId;
     map["preArticleId"] = this.preArticleId;
+    map["nextLink"] = this.nextLink;
+    map["preLink"] = this.preLink;
+    map["currentLink"] = this.currentLink;
+    map["sourceType"] = this.sourceType;
     return map;
   }
 

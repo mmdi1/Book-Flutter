@@ -13,7 +13,6 @@ class Config {
   static String spCacheBookId = "spCacheBookId_key";
   static String spCacheArticleId = "spCacheArticleId_key";
   static String spCachePageIndex = "spCachePageIndex_key";
-
   static String bookPath = "";
 
   /// 当前数据库版本 */

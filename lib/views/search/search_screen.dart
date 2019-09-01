@@ -1,7 +1,6 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:floating_search_bar/floating_search_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix1;
 import 'package:thief_book_flutter/models/book.dart';
@@ -38,6 +37,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
   }
 
   searchBookName() async {
+    isLoadingData = true;
     var searchName = searchStr;
     RegExp exp = new RegExp(r"[\u4e00-\u9fa5]");
     var cnStr = exp.stringMatch(searchStr);
@@ -45,7 +45,9 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
       searchName = Uri.encodeComponent(searchStr);
     }
     await fetchData(searchName);
-    setState(() {});
+    setState(() {
+      isLoadingData = false;
+    });
   }
 
   @override
@@ -58,7 +60,11 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
       body: FloatingSearchBar.builder(
         itemCount: listBooks.length - 1,
         itemBuilder: (BuildContext context, int index) {
-          return _renderRow(context, index);
+          return isLoadingData
+              ? Center(
+                  child: Text("获取中..."),
+                )
+              : _renderRow(context, index);
         },
         trailing: IconButton(
           icon: Icon(Icons.search),
@@ -103,22 +109,28 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
                   }),
                 ),
                 onPressed: () {
-                  Navigator.push(context,
-                      CustomRoute(widget: BookDetailScreen(listBooks[index]), type: 1));
+                  Navigator.push(
+                      context,
+                      CustomRoute(
+                          widget: BookDetailScreen(listBooks[index]), type: 1));
                 },
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   prefix1.Text(listBooks[index].name),
                   prefix1.Text(listBooks[index].wordCount),
                   prefix1.Text(listBooks[index].author),
                   prefix1.Text("是否完结：" + listBooks[index].status),
-                  prefix1.Text("介绍：" +
-                      (listBooks[index].info.trim().length > 18
-                          ? listBooks[index].info.trim().substring(0, 18) + ".."
-                          : listBooks[index].info.trim())),
+                  prefix1.Text(
+                    "介绍：" +
+                        (listBooks[index].info.trim().length > 15
+                            ? listBooks[index].info.trim().substring(0, 15) +
+                                ".."
+                            : listBooks[index].info.trim()),
+                    overflow: TextOverflow.clip,
+                    maxLines: 1,
+                  ),
                 ],
               ),
             ],
