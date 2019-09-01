@@ -9,9 +9,9 @@ class LocalCrud {
     /*将字符串转成json  返回的是键值对的形式*/
     articel.id = await db.insert(
         "articels", new Map<String, dynamic>.from(articel.toJson()));
-    await db.rawUpdate(
-        "update articels set nextArticleId=?,preArticleId=? where id = ?",
-        [articel.id + 1, articel.id - 1, articel.id]);
+    // await db.rawUpdate(
+    //     "update articels set nextArticleId=?,preArticleId=? where id = ?",
+    //     [articel.id + 1, articel.id - 1, articel.id]);
     db.close();
     return articel;
   }

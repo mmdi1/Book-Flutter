@@ -22,7 +22,8 @@ class FlutterReduxApp extends StatelessWidget {
 
     ///初始化数据
     initialState: new ReduxState(
-        themeData: ThemeData(primarySwatch: Colors.blue),
+        themeData:
+            ThemeData(primaryColor: Colors.white),
         progressData: "", //解析进度
         title: "书架"),
     // locale: Locale('zh', 'CH')),
@@ -55,7 +56,8 @@ class FlutterReduxApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: "鱼叉阅读",
             navigatorObservers: [routeObserver],
-            home: new SearchSreenWidget(),
+            // home: new SearchSreenWidget(),
+            home: new SplashScreen(store: store),
             // home: new ReaderScene(isOlineRedaer: true),
             // home: new BottomNavigationWidget(store),
             //主题

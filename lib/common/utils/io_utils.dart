@@ -12,6 +12,11 @@ class IoUtils {
   ///拆解txt文本到章节
   static splitTxtByStream(
       String bookName, String sourcePath, store, path) async {
+    if (sourcePath.indexOf(".zip") > 0) {
+      File zipFile = new File("/Users/joucks/Library/Developer/CoreSimulator/Devices/FDD6A480-A41B-4D73-BFA0-F20A30ECC134/data/Containers/Data/Application/7A1887AF-49C8-4186-AFD6-4E3B0A96F610/Documents/files/58741txt.zip");
+      zipFile.open();
+      return;
+    }
     //bookName, "作者", "介绍", "字数", "imgUrl", "完结", sourcePath
     var book = new Book(
         name: bookName,
@@ -130,7 +135,9 @@ class IoUtils {
       // lastAf.writeAsStringSync(jsonEncode(currAr));
       // await LocalCrud.appendArticel(currAr);
     }
+    // file.deleteSync();
     store.dispatch(new RefreshProgressDataAction(""));
+
     DateTime etime = new DateTime.now();
     debugPrint("结束时间:${etime.hour}:${etime.minute}:${etime.second}");
   }

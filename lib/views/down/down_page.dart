@@ -114,8 +114,8 @@ class DownPageViewState extends State<DownPageView> {
           }
           var subTxt = downUrl.substring(downUrl.lastIndexOf("."));
           if (subTxt.trim() != ".txt") {
-            Toast.show("只能下载.txt地址小说哦~");
-            return;
+            // Toast.show("只能下载.txt地址小说哦~");
+            // return;
           }
           // 获取存储路径
           var path = await Config.getLocalFilePath(context);
@@ -160,7 +160,7 @@ class DownPageViewState extends State<DownPageView> {
         if (pr.isShowing()) {
           pr.hide();
         }
-
+        
         showDialog(
             // 设置点击 dialog 外部不取消 dialog，默认能够取消
             barrierDismissible: false,

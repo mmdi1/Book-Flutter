@@ -393,7 +393,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     return ReaderMenu(
       chapters: chapters,
       articleIndex: this.widget.isOlineRedaer
-          ? chapterIndex
+          ? (chapterIndex + 1)
           : currentArticle.currentIndex,
       onTap: hideMenu,
       onPreviousArticle: () {

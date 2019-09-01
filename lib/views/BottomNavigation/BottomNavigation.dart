@@ -6,6 +6,7 @@ import 'package:thief_book_flutter/views/discovery/discovery_page.dart';
 import 'package:thief_book_flutter/views/home/home_page.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:thief_book_flutter/views/search/search_screen.dart';
+import 'package:thief_book_flutter/views/user/my_setting.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class BottomNavigationWidget extends StatefulWidget {
@@ -19,6 +20,7 @@ class BottomNavigationWidget extends StatefulWidget {
 
 class BottomNavigationWidgetState extends State<BottomNavigationWidget>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String title = "书架";
   List<Widget> pages = new List();
   //Tab页的控制器，可以用来定义Tab标签和内容页的坐标
@@ -27,11 +29,11 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
   @override
   initState() {
     tabcontroller = new TabController(
-      length: 3, vsync: this, //Tab页的个数
+      length: 1, vsync: this, //Tab页的个数
       //动画效果的异步处理，默认格式
     );
     super.initState();
-    pages..add(HomePageWidget())..add(DiscoveryPage())..add(AboutPage());
+    pages..add(HomePageWidget());//..add(DiscoveryPage())..add(AboutPage());
   }
 
   @override
@@ -49,7 +51,27 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
         child: new StoreBuilder<ReduxState>(builder: (context, storew) {
           return DefaultTabController(
             child: new Scaffold(
+              key: _scaffoldKey,
+              drawer: MySetting(),
               appBar: new AppBar(
+                leading: new IconButton(
+                  icon: new Container(
+                    padding: EdgeInsets.all(3.0),
+                    child: ClipOval(
+                      child: Image(
+                        height: 40,
+                        width: 40,
+                        image: NetworkImage(
+                            "https://avatars0.githubusercontent.com/u/24910959?s=460&v=4"),
+                      ),
+                    ),
+                    //    new CircleAvatar(
+                    //       radius: 30.0,
+                    //       backgroundImage:
+                    //           AssetImage("assets/images/avatar.png")),
+                  ),
+                  onPressed: () => _scaffoldKey.currentState.openDrawer(),
+                ),
                 automaticallyImplyLeading: false,
                 actions: <Widget>[
                   IconButton(
@@ -57,6 +79,12 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
                     onPressed: () {
                       Navigator.push(
                           context, CustomRoute(widget: SearchSreenWidget()));
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: () {
+                      print("刷新操作");
                     },
                   ),
                 ],
@@ -73,22 +101,22 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
                 controller: tabcontroller,
                 children: pages,
               ),
-              bottomNavigationBar: new Material(
-                child: TabBar(
-                  onTap: (index) {
-                    tabcontroller.animateTo(index);
-                  },
-                  //tab被选中时的颜色，设置之后选中的时候，icon和text都会变色
-                  labelColor: Colors.amber,
-                  //tab未被选中时的颜色，设置之后选中的时候，icon和text都会变色
-                  unselectedLabelColor: Colors.black,
-                  tabs: <Widget>[
-                    Tab(icon: Icon(Icons.home)),
-                    Tab(icon: Icon(Icons.change_history)),
-                    Tab(icon: Icon(Icons.mood)),
-                  ],
-                ),
-              ),
+              // bottomNavigationBar: new Material(
+              //   child: TabBar(
+              //     onTap: (index) {
+              //       tabcontroller.animateTo(index);
+              //     },
+              //     //tab被选中时的颜色，设置之后选中的时候，icon和text都会变色
+              //     labelColor: Colors.amber,
+              //     //tab未被选中时的颜色，设置之后选中的时候，icon和text都会变色
+              //     unselectedLabelColor: Colors.black,
+              //     tabs: <Widget>[
+              //       Tab(icon: Icon(Icons.home)),
+              //       Tab(icon: Icon(Icons.change_history)),
+              //       Tab(icon: Icon(Icons.mood)),
+              //     ],
+              //   ),
+              // ),
             ),
             length: 3,
           );

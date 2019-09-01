@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/models/book.dart';
+import 'package:thief_book_flutter/views/book/cache_book_core.dart';
 import 'package:thief_book_flutter/views/reader/reader_screen.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
@@ -24,6 +26,12 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  cacheNetBook() async {
+    // 获取存储路径
+    var path = await Config.getLocalFilePath(context);
+    await CacheNetBookCore.splitTxtByStream(this.widget.book, path, "");
   }
 
   //
@@ -83,6 +91,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
                     overflow: TextOverflow.ellipsis),
                 onPressed: () {
                   print("缓存");
+                  cacheNetBook();
                 },
               ),
               RaisedButton(

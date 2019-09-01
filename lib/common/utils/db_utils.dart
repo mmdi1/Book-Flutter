@@ -1,12 +1,35 @@
 // 获取数据库文件的存储路径
 import 'dart:io';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:thief_book_flutter/common/utils/sp_uitls.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
 
 class DbUtils {
   static Future<void> initDbTabel() async {
+    // List<int> bytes = new  File(
+    //         "/Users/joucks/Library/Developer/CoreSimulator/Devices/FDD6A480-A41B-4D73-BFA0-F20A30ECC134/data/Containers/Data/Application/5530E1F9-3885-44E7-AF8B-268F87BFC113/Documents/files/58741txt.zip")
+    //     .readAsBytesSync();
+    //     print(bytes);
+    // Archive archive = ZipDecoder().decodeBytes(bytes);
+    // print("--------------------111");
+    // // Extract the contents of the Zip archive to disk.
+    // for (ArchiveFile file in archive) {
+    //   String filename = file.name;
+    //   print("---------$filename");
+    //   if (file.isFile) {
+    //     List<int> data = file.content;
+    //     File(
+    //         '/Users/joucks/Library/Developer/CoreSimulator/Devices/FDD6A480-A41B-4D73-BFA0-F20A30ECC134/data/Containers/Data/Application/5530E1F9-3885-44E7-AF8B-268F87BFC113/Documents/files/' +
+    //             filename)
+    //       ..createSync(recursive: true)
+    //       ..writeAsBytesSync(data);
+    //   } else {
+    //     Directory(
+    //         '/Users/joucks/Library/Developer/CoreSimulator/Devices/FDD6A480-A41B-4D73-BFA0-F20A30ECC134/data/Containers/Data/Application/5530E1F9-3885-44E7-AF8B-268F87BFC113/Documents/files/' +
+    //             filename)
+    //       ..create(recursive: true);
+    //   }
+    // }
     print("初始数据库");
     var dbPath = await Config.getLocalDbPath();
     print("dbPath:$dbPath");
@@ -37,6 +60,11 @@ class DbUtils {
             imgUrl TEXT,
             status INTEGER,
             importUrl TEXT,
+            info TEXT,
+            wordCount TEXT,
+            catalogUrl TEXT,
+            sourceAddress TEXT,
+            sourceType TEXT,
             createdAt TEXT
           )
           ''');
@@ -50,7 +78,10 @@ class DbUtils {
              price INTEGER,
              nextArticleId INTEGER,
              preArticleId INTEGER,
-             created_at TEXT
+             sourceType TEXT,
+             currentLink TEXT,
+             preLink TEXT,
+             nextLink TEXT
           )
           ''');
       await db.close();

@@ -1,5 +1,7 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'package:archive/archive.dart';
+import 'package:archive/archive_io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
@@ -25,6 +27,7 @@ class SplashScreenState extends State<SplashScreen> {
   Timer _timer;
   int count = 2;
   List<Slide> slides = new List();
+
   startTime() async {
     //设置启动图生效时间
     var _duration = new Duration(seconds: 1);
@@ -47,6 +50,8 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
+    
+
     DownApi.requestPermission();
     DbUtils.initDbTabel();
     startTime();

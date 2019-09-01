@@ -58,7 +58,7 @@ class DownApi {
     await FlutterDownloader.enqueue(
       url: downloadUrl,
       savedDir: savePath,
-      fileName: bookName + ".txt",
+      // fileName: bookName + ".txt",
       showNotification: true,
       // show download progress in status bar (for Android)
       openFileFromNotification:

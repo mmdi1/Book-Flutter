@@ -17,6 +17,9 @@ class RedaerRequest {
 
   static Future<List<Chapter>> getAixdzsCatalog(String linkUrl) async {
     final res = await Http.get(linkUrl);
+    if (res == null) {
+      return [];
+    }
     var str = utf8.decode(res);
     var html = parse(str);
     var listLi = html.querySelectorAll(".chapter");
@@ -34,14 +37,15 @@ class RedaerRequest {
     });
     return catalogs;
   }
-  
+
   static Future<Article> getAixdzsArticle(String linkUrl) async {
     var catalog = linkUrl.substring(0, linkUrl.lastIndexOf("/"));
     final res = await Http.get(linkUrl);
-
+    if (res == null) {
+      return null;
+    }
     var str = utf8.decode(res);
     var html = parse(str);
-    print("地址:${linkUrl}--$catalog-------------");
     var body = html.querySelector("body");
     var title = body.querySelector("h1").text;
     var nextLink = catalog +

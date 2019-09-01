@@ -15,14 +15,19 @@ class AppNavigator {
   }
 
   static pushNovelDetail(BuildContext context, Book book) {
-    AppNavigator.push(context, ReaderScene(novelId: book.id));
+    AppNavigator.push(
+        context,
+        ReaderScene(
+          novelId: book.id,
+          isOlineRedaer: false,
+        ));
   }
 
   static pushDownloadPage(BuildContext context) {
     AppNavigator.push(context, DownPageView());
   }
 
-  static pushHome(BuildContext context,store) {
+  static pushHome(BuildContext context, store) {
     Navigator.of(context).pushAndRemoveUntil(
         new MaterialPageRoute(
             builder: (context) => BottomNavigationWidget(store)),

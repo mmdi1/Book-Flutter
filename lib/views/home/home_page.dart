@@ -5,7 +5,7 @@ import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
-import 'package:thief_book_flutter/views/bookshelf/bookshelf_item_view.dart';
+import 'package:thief_book_flutter/views/book/bookshelf_item_view.dart';
 import 'package:thief_book_flutter/views/home/home_banner.dart';
 
 class HomePageWidget extends StatefulWidget {
@@ -43,7 +43,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
           padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
           child: Column(
             children: <Widget>[
-              HomeBanner(),
+              // HomeBanner(),
               Padding(padding: EdgeInsets.all(5)),
               Wrap(
                 spacing: 23,

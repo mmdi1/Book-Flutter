@@ -3,12 +3,17 @@ import 'package:http/http.dart' as http;
 
 class Http {
   static Future get(String url) async {
-    // var userToken = Config.USER_TOKEN;
-    // Map<String, String> mapHeaders = {"x-access-token": userToken.toString()};
-    // final res = await http.get(url, headers: mapHeaders);
-    final res = await http.get(url);
-    // String data = gbk.decode(res.bodyBytes);
-    return res.bodyBytes;
+    try {
+      // var userToken = Config.USER_TOKEN;
+      // Map<String, String> mapHeaders = {"x-access-token": userToken.toString()};
+      // final res = await http.get(url, headers: mapHeaders);
+      final res = await http.get(url);
+      // String data = gbk.decode(res.bodyBytes);
+      return res.bodyBytes;
+    } catch (e) {
+      print("请求错误-------------------------------------url:$url");
+      return null;
+    }
   }
 
   static post(String url, body) async {

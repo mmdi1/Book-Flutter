@@ -57,46 +57,95 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
     }
     return new Scaffold(
       backgroundColor: Colors.white,
-      body: FloatingSearchBar.builder(
-        itemCount: listBooks.length - 1,
-        itemBuilder: (BuildContext context, int index) {
-          return isLoadingData
-              ? Center(
-                  child: Text("获取中..."),
-                )
-              : _renderRow(context, index);
-        },
-        trailing: IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            print("搜索内容：$searchStr");
-            searchBookName();
+      body: Container(
+        padding: EdgeInsets.only(top: 15),
+        child: FloatingSearchBar.builder(
+          itemCount: listBooks.length - 1,
+          itemBuilder: (BuildContext context, int index) {
+            return isLoadingData
+                ? Center(
+                    child: Text("获取中..."),
+                  )
+                : _renderRow(context, index);
           },
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.keyboard_arrow_left),
-          onPressed: () {
-            print("点击返回");
+          trailing: IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              print("搜索内容：$searchStr");
+              searchBookName();
+            },
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.keyboard_arrow_left),
+            onPressed: () {
+              print("点击返回");
+              Navigator.pop(context);
+            },
+          ),
+          onChanged: (String value) {
+            searchStr = value;
           },
-        ),
-        onChanged: (String value) {
-          searchStr = value;
-        },
-        onTap: () {
-          print("点击了搜索框");
-        },
-        decoration: InputDecoration.collapsed(
-          hintText: "Search...",
+          onTap: () {
+            print("点击了搜索框");
+          },
+          decoration: InputDecoration.collapsed(
+            hintText: "Search...",
+          ),
         ),
       ),
     );
   }
 
+  Color hexToColor(String s) {
+    // 如果传入的十六进制颜色值不符合要求，返回默认值
+    return new Color(int.parse(s.substring(1, 7), radix: 16) + 0xFF000000);
+  }
+
   _renderRow(BuildContext context, int index) {
     if (index < listBooks.length) {
       return Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            contentView(index),
+            Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+            ),
+            contentView(index)
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget contentView(int index) {
+    return Container(
+      width: 150,
+      height: 200,
+      //设置背景图片
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        image: new DecorationImage(
+          image: CachedNetworkImageProvider(
+            listBooks[index].imgUrl,
+          ),
+          //这里是从assets静态文件中获取的，也可以new NetworkImage(）从网络上获取
+          centerSlice: new Rect.fromLTRB(270.0, 180.0, 1360.0, 730.0),
+        ),
+        // border: new Border.all(width: 1.0, color: Colors.red),
+        boxShadow: [
+          BoxShadow(
+            // color: hexToColor("#EFF0F1"),
+            blurRadius: 1.0,
+          ),
+        ],
+        borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+      ),
+      alignment: Alignment.center,
+      child: Padding(
           padding: EdgeInsets.all(10),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               FlatButton(
@@ -115,26 +164,43 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
                           widget: BookDetailScreen(listBooks[index]), type: 1));
                 },
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  prefix1.Text(listBooks[index].name),
-                  prefix1.Text(listBooks[index].wordCount),
-                  prefix1.Text(listBooks[index].author),
-                  prefix1.Text("是否完结：" + listBooks[index].status),
-                  prefix1.Text(
-                    "介绍：" +
-                        (listBooks[index].info.trim().length > 15
-                            ? listBooks[index].info.trim().substring(0, 15) +
-                                ".."
-                            : listBooks[index].info.trim()),
-                    overflow: TextOverflow.clip,
-                    maxLines: 1,
-                  ),
-                ],
+              Container(
+                width: 150,
+                decoration: new BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white,
+                    ),
+                  ],
+                ),
+                // child: textContentView(index),
               ),
             ],
-          ));
-    }
+          )),
+    );
+  }
+
+  Widget textContentView(index) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        prefix1.Text(listBooks[index].name),
+        // prefix1.Text(listBooks[index].wordCount),
+        prefix1.Text(listBooks[index].author),
+        // prefix1.Text("是否完结：" + listBooks[index].status),
+        // prefix1.Text(
+        //   "介绍：" +
+        //       (listBooks[index].info.trim().length > 1
+        //           ? listBooks[index]
+        //                   .info
+        //                   .trim()
+        //                   .substring(0, 1) +
+        //               ".."
+        //           : listBooks[index].info.trim()),
+        //   overflow: TextOverflow.clip,
+        //   maxLines: 1,
+        // ),
+      ],
+    );
   }
 }

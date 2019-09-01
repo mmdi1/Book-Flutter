@@ -14,9 +14,9 @@ class Book {
   String name;
   String author;
   String imgUrl;
-  String wordCount;
   String info;
   String status;
+  String wordCount;
   String catalogUrl;
   String importUrl;
   String sourceAddress;
