@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:thief_book_flutter/common/server/books_curd.dart';
+import 'package:thief_book_flutter/common/style/app_style.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
@@ -43,7 +44,6 @@ class HomePageWidgetState extends State<HomePageWidget> {
           padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
           child: Column(
             children: <Widget>[
-              // HomeBanner(),
               Padding(padding: EdgeInsets.all(5)),
               Wrap(
                 spacing: 23,
@@ -65,11 +65,14 @@ class HomePageWidgetState extends State<HomePageWidget> {
         AppNavigator.pushDownloadPage(context);
       },
       child: Container(
-        color: Colors.deepOrange[200],
+        decoration: new BoxDecoration(
+          color: Colors.white,
+          border: new Border.all(width: 1.2, color: AppColor.black),
+        ),
         width: width,
         height: width / 0.75,
         child: Center(
-          child: Icon(Icons.add, color: Colors.white70, size: 32),
+          child: Icon(Icons.add, color: AppColor.black, size: 32),
         ),
       ),
     );

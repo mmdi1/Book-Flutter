@@ -33,7 +33,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
       //动画效果的异步处理，默认格式
     );
     super.initState();
-    pages..add(HomePageWidget());//..add(DiscoveryPage())..add(AboutPage());
+    pages..add(HomePageWidget()); //..add(DiscoveryPage())..add(AboutPage());
   }
 
   @override

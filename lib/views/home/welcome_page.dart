@@ -25,7 +25,7 @@ class SplashScreen extends StatefulWidget {
 
 class SplashScreenState extends State<SplashScreen> {
   Timer _timer;
-  int count = 2;
+  int count = 1;
   List<Slide> slides = new List();
 
   startTime() async {
