@@ -39,11 +39,14 @@ class HomePageWidgetState extends State<HomePageWidget> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
           child: Column(
             children: <Widget>[
-              Padding(padding: EdgeInsets.all(5)),
+              Padding(
+                  padding:
+                      EdgeInsets.only(left: 5, top: 10, right: 5, bottom: 5)),
               Wrap(
                 spacing: 23,
                 children: bookItems,

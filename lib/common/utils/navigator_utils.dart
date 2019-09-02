@@ -20,6 +20,7 @@ class AppNavigator {
         ReaderScene(
           novelId: book.id,
           isOlineRedaer: book.isCache < 1,
+          catalogUrl: book.catalogUrl,
         ));
   }
 

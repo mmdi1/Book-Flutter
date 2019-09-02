@@ -32,11 +32,12 @@ class _ReaderMenuState extends State<ReaderMenu>
     with SingleTickerProviderStateMixin {
   AnimationController animationController;
   Animation<double> animation;
+
   double progressValue;
   bool isTipVisible = false;
-  Color themColor = Colors.white;
+
   bool isShow = false;
-  String isShowType = "";
+
   @override
   initState() {
     super.initState();
@@ -113,8 +114,9 @@ class _ReaderMenuState extends State<ReaderMenu>
                 onTap: () {
                   print("--------");
                   Toast.show("功能暂未开放~");
-                  isShow = !isShow;
-                  setState(() {});
+                  isShow=true;
+                  setState(() {
+                  });
                 },
                 child: Image.asset('assets/images/read_icon_more.png'),
               ),
@@ -182,7 +184,6 @@ class _ReaderMenuState extends State<ReaderMenu>
 
   buildProgressView() {
     return Container(
-      color: Colors.grey[200],
       padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Row(
         children: <Widget>[
@@ -223,102 +224,6 @@ class _ReaderMenuState extends State<ReaderMenu>
     );
   }
 
-  //间隔线、
-  buildRowLineWg() {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        border: new Border.all(
-          color: Colors.black,
-          width: 0.5,
-        ),
-      ),
-    );
-  }
-
-  //字体设置
-  buildFontSettingView() {
-    return Container(
-        color: Colors.grey[200],
-        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Text("字号",
-                    style: TextStyle(
-                        fontSize: fixedFontSize(14),
-                        fontWeight: FontWeight.w500,
-                        color: SQColor.darkGray)),
-                SizedBox(height: 5),
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.font_download),
-                      onPressed: () {},
-                    ),
-                    Text("20"),
-                    IconButton(
-                      icon: Icon(Icons.font_download),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            buildRowLineWg(),
-            Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text("段落",
-                        style: TextStyle(
-                            fontSize: fixedFontSize(14),
-                            fontWeight: FontWeight.w500,
-                            color: SQColor.darkGray)),
-                  ],
-                ),
-                SizedBox(height: 5),
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.format_align_center),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.format_align_center),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.format_align_center),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            buildRowLineWg(),
-            Column(
-              children: <Widget>[
-                Text("行间距",
-                    style: TextStyle(
-                        fontSize: fixedFontSize(14),
-                        fontWeight: FontWeight.w500,
-                        color: SQColor.darkGray)),
-                SizedBox(height: 5),
-                IconButton(
-                  icon: Icon(Icons.format_align_right),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-          ],
-        ));
-  }
-
-  final _emptyKey = GlobalKey<State>();
   buildBottomView() {
     return Positioned(
       bottom: -(Screen.bottomSafeHeight + 110) * (1 - animation.value),
@@ -327,12 +232,14 @@ class _ReaderMenuState extends State<ReaderMenu>
       child: Column(
         children: <Widget>[
           // buildProgressTipView(),
-          buildAnimatedSettingMenu(),
           Container(
-            decoration: BoxDecoration(color: Colors.white),
+            decoration: BoxDecoration(color: SQColor.paper, boxShadow: [
+              BoxShadow(color: Color(0x22000000), blurRadius: 8)
+            ]),
             padding: EdgeInsets.only(bottom: Screen.bottomSafeHeight),
             child: Column(
               children: <Widget>[
+                isShow ? buildProgressView() : Container(),
                 buildBottomMenus(),
               ],
             ),
@@ -342,42 +249,19 @@ class _ReaderMenuState extends State<ReaderMenu>
     );
   }
 
-  buildAnimatedSettingMenu() {
-    Widget secondChild;
-    if (isShowType == "font") {
-      secondChild = buildFontSettingView();
-    } else if (isShowType == "progress") {
-      secondChild = buildProgressView();
-    } else {
-      return Container();
-    }
-    return AnimatedCrossFade(
-      duration: Duration(milliseconds: 200),
-      crossFadeState:
-          isShow ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-      firstChild: Container(),
-      secondChild: secondChild,
-    );
-  }
-
-  //底部按钮
   buildBottomMenus() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        buildBottomItem(
-            'list', 'assets/images/read_icon_catalog.png', Icons.list),
-        // buildBottomItem('亮度', 'assets/images/read_icon_brightness.png'),
-        buildBottomItem('progress', 'assets/images/read_icon_setting.png',
-            Icons.all_inclusive),
-        buildBottomItem(
-            'font', 'assets/images/read_icon_font.png', Icons.format_size),
+        buildBottomItem('目录', 'assets/images/read_icon_catalog.png'),
+        buildBottomItem('亮度', 'assets/images/read_icon_brightness.png'),
+        buildBottomItem('字体', 'assets/images/read_icon_font.png'),
+        buildBottomItem('设置', 'assets/images/read_icon_setting.png'),
       ],
     );
   }
 
-  //底部按钮单个
-  buildBottomItem(String title, String iconImg, IconData icon) {
+  buildBottomItem(String title, String icon) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 7),
       child: GestureDetector(
@@ -386,32 +270,15 @@ class _ReaderMenuState extends State<ReaderMenu>
         },
         child: Column(
           children: <Widget>[
-            IconButton(
-              icon: Icon(icon),
-              onPressed: () {
-                _onPressedMenu(title);
-              },
-            ),
-
+            Image.asset(icon),
             SizedBox(height: 5),
-            // Text(title,
-            //     style: TextStyle(
-            //         fontSize: fixedFontSize(12), color: SQColor.darkGray)),
+            Text(title,
+                style: TextStyle(
+                    fontSize: fixedFontSize(12), color: SQColor.darkGray)),
           ],
         ),
       ),
     );
-  }
-
-  //点击底部菜单按钮
-  _onPressedMenu(String title) {
-    isShowType = title;
-    if (title == isShowType) {
-      isShow = !isShow;
-    } else {
-      isShow = true;
-    }
-    setState(() {});
   }
 
   @override

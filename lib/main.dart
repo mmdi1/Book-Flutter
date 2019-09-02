@@ -22,10 +22,9 @@ class FlutterReduxApp extends StatelessWidget {
 
     ///初始化数据
     initialState: new ReduxState(
-        themeData:
-            ThemeData(primaryColor: Colors.white),
+        themeData: ThemeData(primaryColor: Colors.white),
         progressData: "", //解析进度
-        title: "书架"),
+        title: "当前1.8元/总共10.05元"),
     // locale: Locale('zh', 'CH')),
   );
 

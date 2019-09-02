@@ -21,7 +21,7 @@ class BottomNavigationWidget extends StatefulWidget {
 class BottomNavigationWidgetState extends State<BottomNavigationWidget>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String title = "书架";
+  String title = "当前1.70元/总共100.05元";
   List<Widget> pages = new List();
   //Tab页的控制器，可以用来定义Tab标签和内容页的坐标
   TabController tabcontroller;
@@ -54,6 +54,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
               key: _scaffoldKey,
               drawer: MySetting(),
               appBar: new AppBar(
+                elevation: 0,
                 leading: new IconButton(
                   icon: new Container(
                     padding: EdgeInsets.all(3.0),
@@ -62,7 +63,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
                         height: 40,
                         width: 40,
                         image: NetworkImage(
-                            "https://avatars0.githubusercontent.com/u/24910959?s=460&v=4"),
+                            "http://7xqekd.com1.z0.glb.clouddn.com/imgs/24910959%20%281%29.jpeg"),
                       ),
                     ),
                     //    new CircleAvatar(
@@ -88,7 +89,16 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
                     },
                   ),
                 ],
-                title: new Text(title),
+                title: Center(
+                  child: new Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
                 // flexibleSpace: Column(
                 //   children: <Widget>[
                 //     Padding(padding: new EdgeInsets.fromLTRB(0, 40, 0, 0)),
@@ -118,7 +128,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
               //   ),
               // ),
             ),
-            length: 3,
+            length: 1,
           );
         }));
   }
@@ -185,7 +195,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
   //               } else if (i == 2) {
   //                 title = "关于";
   //               }
-  //               //进行状态更新，将系统返回的你点击的标签位标赋予当前位标属性，告诉系统当前要显示的导航标签被用户改变了。
+  //               //进行状态更新，��系统返回的你点击的标签位标赋予当前位标属性，告诉系统当前要显示的导航标签被用户改变了。
   //               setState(() {
   //                 _currentIndex = i;
   //               });
