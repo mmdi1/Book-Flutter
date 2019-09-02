@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/utils/SQColor.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
+import 'package:thief_book_flutter/common/utils/sp_uitls.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/common/utils/utility.dart';
 import 'dart:async';
 
 import 'package:thief_book_flutter/models/chapter.dart';
+import 'package:thief_book_flutter/views/reader/reader_config.dart';
 
 class ReaderMenu extends StatefulWidget {
   final List<Chapter> chapters;
@@ -14,6 +17,7 @@ class ReaderMenu extends StatefulWidget {
   final VoidCallback onTap;
   final VoidCallback onPreviousArticle;
   final VoidCallback onNextArticle;
+  final VoidCallback onEditSetting;
   final void Function(Chapter chapter) onToggleChapter;
 
   ReaderMenu(
@@ -22,7 +26,8 @@ class ReaderMenu extends StatefulWidget {
       this.onTap,
       this.onPreviousArticle,
       this.onNextArticle,
-      this.onToggleChapter});
+      this.onToggleChapter,
+      this.onEditSetting});
 
   @override
   _ReaderMenuState createState() => _ReaderMenuState();
@@ -37,10 +42,12 @@ class _ReaderMenuState extends State<ReaderMenu>
   Color themColor = Colors.white;
   bool isShow = false;
   String isShowType = "";
+  bool isEditSetting = false;
+  int initFontSize = ReaderConfig.instance.fontSize.toInt();
   @override
   initState() {
     super.initState();
-
+    initAsyncData();
     progressValue =
         this.widget.articleIndex / (this.widget.chapters.length - 1);
     animationController = AnimationController(
@@ -50,6 +57,13 @@ class _ReaderMenuState extends State<ReaderMenu>
       setState(() {});
     });
     animationController.forward();
+  }
+
+  //初始化异步参数
+  initAsyncData() async {
+    var spFontSize = await SpUtils.getInt(Config.spCacheFontSize);
+    initFontSize = spFontSize;
+    setState(() {});
   }
 
   @override
@@ -62,10 +76,14 @@ class _ReaderMenuState extends State<ReaderMenu>
   @override
   void dispose() {
     animationController.dispose();
+
     super.dispose();
   }
 
   hide() {
+    if (isEditSetting) {
+      this.widget.onEditSetting();
+    }
     animationController.reverse();
     Timer(Duration(milliseconds: 200), () {
       this.widget.onTap();
@@ -113,8 +131,6 @@ class _ReaderMenuState extends State<ReaderMenu>
                 onTap: () {
                   print("--------");
                   Toast.show("功能暂未开放~");
-                  isShow = !isShow;
-                  setState(() {});
                 },
                 child: Image.asset('assets/images/read_icon_more.png'),
               ),
@@ -180,6 +196,7 @@ class _ReaderMenuState extends State<ReaderMenu>
     });
   }
 
+  //进度视图
   buildProgressView() {
     return Container(
       color: Colors.grey[200],
@@ -230,10 +247,17 @@ class _ReaderMenuState extends State<ReaderMenu>
       decoration: BoxDecoration(
         border: new Border.all(
           color: Colors.black,
-          width: 0.5,
+          width: 0.2,
         ),
       ),
     );
+  }
+
+  //设置字体大小
+  settingFontSizeFunc(size) {
+    SpUtils.setInt(Config.spCacheFontSize, size);
+    isEditSetting = true;
+    setState(() {});
   }
 
   //字体设置
@@ -243,10 +267,11 @@ class _ReaderMenuState extends State<ReaderMenu>
         padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                SizedBox(height: 8),
                 Text("字号",
                     style: TextStyle(
                         fontSize: fixedFontSize(14),
@@ -257,12 +282,18 @@ class _ReaderMenuState extends State<ReaderMenu>
                   children: <Widget>[
                     IconButton(
                       icon: Icon(Icons.font_download),
-                      onPressed: () {},
+                      onPressed: () {
+                        initFontSize--;
+                        settingFontSizeFunc(initFontSize);
+                      },
                     ),
-                    Text("20"),
+                    Text(initFontSize.toString().substring(0, 2)),
                     IconButton(
                       icon: Icon(Icons.font_download),
-                      onPressed: () {},
+                      onPressed: () {
+                        initFontSize++;
+                        settingFontSizeFunc(initFontSize);
+                      },
                     ),
                   ],
                 ),
@@ -270,7 +301,9 @@ class _ReaderMenuState extends State<ReaderMenu>
             ),
             buildRowLineWg(),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                SizedBox(height: 8),
                 Row(
                   children: <Widget>[
                     Text("段落",
@@ -301,16 +334,30 @@ class _ReaderMenuState extends State<ReaderMenu>
             ),
             buildRowLineWg(),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                SizedBox(height: 8),
                 Text("行间距",
                     style: TextStyle(
                         fontSize: fixedFontSize(14),
                         fontWeight: FontWeight.w500,
                         color: SQColor.darkGray)),
                 SizedBox(height: 5),
-                IconButton(
-                  icon: Icon(Icons.format_align_right),
-                  onPressed: () {},
+                Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.format_align_left),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.format_align_justify),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.format_align_right),
+                      onPressed: () {},
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -318,7 +365,7 @@ class _ReaderMenuState extends State<ReaderMenu>
         ));
   }
 
-  final _emptyKey = GlobalKey<State>();
+  //底部
   buildBottomView() {
     return Positioned(
       bottom: -(Screen.bottomSafeHeight + 110) * (1 - animation.value),
@@ -326,7 +373,7 @@ class _ReaderMenuState extends State<ReaderMenu>
       right: 0,
       child: Column(
         children: <Widget>[
-          // buildProgressTipView(),
+          buildProgressTipView(),
           buildAnimatedSettingMenu(),
           Container(
             decoration: BoxDecoration(color: Colors.white),
@@ -349,14 +396,14 @@ class _ReaderMenuState extends State<ReaderMenu>
     } else if (isShowType == "progress") {
       secondChild = buildProgressView();
     } else {
-      return Container();
+      secondChild = Container();
     }
     return AnimatedCrossFade(
       duration: Duration(milliseconds: 200),
       crossFadeState:
           isShow ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-      firstChild: Container(),
-      secondChild: secondChild,
+      firstChild: secondChild,
+      secondChild: Container(),
     );
   }
 
@@ -405,12 +452,13 @@ class _ReaderMenuState extends State<ReaderMenu>
 
   //点击底部菜单按钮
   _onPressedMenu(String title) {
-    isShowType = title;
     if (title == isShowType) {
       isShow = !isShow;
     } else {
       isShow = true;
     }
+    isShowType = title;
+
     setState(() {});
   }
 

@@ -54,7 +54,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
               key: _scaffoldKey,
               drawer: MySetting(),
               appBar: new AppBar(
-                elevation: 0,
+                elevation: 1,
                 leading: new IconButton(
                   icon: new Container(
                     padding: EdgeInsets.all(3.0),

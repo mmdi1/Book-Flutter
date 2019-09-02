@@ -33,6 +33,7 @@ class ReaderScene extends StatefulWidget {
 }
 
 class ReaderSceneState extends State<ReaderScene> with RouteAware {
+  double spFontSize = ReaderConfig.instance.fontSize;
   int pageIndex = 0;
   bool isMenuVisiable = false;
   PageController pageController;
@@ -141,6 +142,11 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   resetContent(
       int novelId, int articleId, String linkUrl, PageJumpType jumpType) async {
     print("重置章节:---------------------------$jumpType");
+    var fontSize = await ReaderConfig.instance.getFontSize();
+    if (fontSize != null) {
+      print("fontszie:$fontSize");
+      spFontSize = fontSize;
+    }
     currentArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
     if (currentArticle.preLink != null || currentArticle.preArticleId > 0) {
       preArticle = await fetchArticle(
@@ -365,7 +371,11 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         onTap(details.globalPosition);
       },
       child: ReaderView(
-          article: article, page: page, topSafeHeight: topSafeHeight),
+        article: article,
+        page: page,
+        topSafeHeight: topSafeHeight,
+        fontSize: spFontSize,
+      ),
     );
   }
 
@@ -391,33 +401,36 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       return Container();
     }
     return ReaderMenu(
-      chapters: chapters,
-      articleIndex: this.widget.isOlineRedaer
-          ? (chapterIndex + 1)
-          : currentArticle.currentIndex,
-      onTap: hideMenu,
-      onPreviousArticle: () {
-        chapterIndex = chapterIndex--;
-        print("重置111---$chapterIndex");
-        chapterIndex = resetContent(
-            this.widget.novelId,
-            currentArticle.preArticleId,
-            currentArticle.preLink,
-            PageJumpType.firstPage);
-      },
-      onNextArticle: () {
-        print("重置222---$chapterIndex");
-        chapterIndex = chapterIndex++;
-        resetContent(this.widget.novelId, currentArticle.nextArticleId,
-            currentArticle.nextLink, PageJumpType.firstPage);
-      },
-      onToggleChapter: (Chapter chapter) {
-        chapterIndex = chapter.index;
-        print("重置---$chapterIndex");
-        resetContent(this.widget.novelId, chapter.id, chapter.linkUrl,
-            PageJumpType.firstPage);
-      },
-    );
+        chapters: chapters,
+        articleIndex: this.widget.isOlineRedaer
+            ? (chapterIndex + 1)
+            : currentArticle.currentIndex,
+        onTap: hideMenu,
+        onPreviousArticle: () {
+          chapterIndex = chapterIndex--;
+          print("重置111---$chapterIndex");
+          chapterIndex = resetContent(
+              this.widget.novelId,
+              currentArticle.preArticleId,
+              currentArticle.preLink,
+              PageJumpType.firstPage);
+        },
+        onNextArticle: () {
+          print("重置222---$chapterIndex");
+          chapterIndex = chapterIndex++;
+          resetContent(this.widget.novelId, currentArticle.nextArticleId,
+              currentArticle.nextLink, PageJumpType.firstPage);
+        },
+        onToggleChapter: (Chapter chapter) {
+          chapterIndex = chapter.index;
+          print("重置---$chapterIndex");
+          resetContent(this.widget.novelId, chapter.id, chapter.linkUrl,
+              PageJumpType.firstPage);
+        },
+        onEditSetting: () {
+          resetContent(this.widget.novelId, currentArticle.currentIndex,
+              currentArticle.currentLink, PageJumpType.firstPage);
+        });
   }
 
   hideMenu() {

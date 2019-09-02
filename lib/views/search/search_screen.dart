@@ -42,6 +42,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
 
   searchBookName() async {
     isLoadingData = true;
+    setState(() {});
     var searchName = searchStr;
     RegExp exp = new RegExp(r"[\u4e00-\u9fa5]");
     var cnStr = exp.stringMatch(searchStr);
@@ -49,6 +50,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
       searchName = Uri.encodeComponent(searchStr);
     }
     await fetchData(searchName);
+    // await Future.delayed(const Duration(milliseconds: 6000), () {});
     setState(() {
       isLoadingData = false;
     });
@@ -66,23 +68,33 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
         child: FloatingSearchBar.builder(
           itemCount: listBooks.length - 1,
           itemBuilder: (BuildContext context, int index) {
-            return isLoadingData
-                ? Center(
-                    child: Text("获取中..."),
-                  )
-                : _renderRow(context, index);
+            return _renderRow(context, index);
           },
-          trailing: IconButton(
-            padding: EdgeInsets.only(bottom: 10),
-            icon: Icon(
-              Icons.search,
-              // color: AppColor.black,
-            ),
-            onPressed: () {
-              print("搜索内容：$searchStr");
-              searchBookName();
-            },
-          ),
+          trailing: isLoadingData
+              ? Padding(
+                  child: Image.asset(
+                    'assets/images/search_loading.gif',
+                    height: 20,
+                  ),
+                  padding: EdgeInsets.only(bottom: 10, right: 10),
+                )
+              : IconButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  padding: EdgeInsets.only(bottom: 10),
+                  icon: Icon(
+                    Icons.search,
+                    // color: AppColor.black,
+                  ),
+                  onPressed: () {
+                    if (searchStr.trim() == "") {
+                      Toast.show("请输入书名搜索");
+                      return;
+                    }
+                    print("搜索内容：$searchStr");
+                    searchBookName();
+                  },
+                ),
           leading: IconButton(
             padding: EdgeInsets.only(bottom: 10, right: 20),
             icon: Icon(
@@ -129,6 +141,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
 
   Widget contentView(int index) {
     return Container(
+      color: Colors.white,
       alignment: Alignment.centerLeft,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
