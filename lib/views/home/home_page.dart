@@ -26,8 +26,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
   List<Widget> bookItems = [];
   //初始数据
   Future<void> fetchData() async {
-    var bookApi = new BookApi();
-    var books = await bookApi.getBooks();
+    var books = await BookApi.getBooks();
     books.forEach((book) {
       bookItems.add(BookshelfItemView(book));
     });

@@ -2,7 +2,7 @@ import 'package:thief_book_flutter/common/utils/db_utils.dart';
 import 'package:thief_book_flutter/models/book.dart';
 
 class BookApi {
-  Future<Book> insertBook(Book book) async {
+  static Future<Book> insertBook(Book book) async {
     var con = new LocalDb();
     var db = await con.getConn();
     /*将字符串转成json  返回的是键值对的形式*/
@@ -12,12 +12,21 @@ class BookApi {
     return book;
   }
 
-  Future<List<Book>> getBooks() async {
+  static Future<List<Book>> getBooks() async {
     var list = new List<Book>();
     var con = new LocalDb();
     var db = await con.getConn();
-    List<Map> maps = await db.query("books",
-        columns: ["id", "name", "status", "imgUrl", "importUrl", "author"]);
+    List<Map> maps = await db.query("books", columns: [
+      "id",
+      "name",
+      "status",
+      "imgUrl",
+      "importUrl",
+      "author",
+      "isCache",
+      "catalogUrl",
+      "sourceType"
+    ]);
     if (maps.length > 0) {
       maps.forEach((s) => {list.add(Book.fromJson(s))});
       return list;

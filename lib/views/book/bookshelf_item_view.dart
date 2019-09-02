@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:thief_book_flutter/common/style/app_style.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/models/book.dart';
@@ -23,12 +24,19 @@ class BookshelfItemView extends StatelessWidget {
             DecoratedBox(
               child: Container(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Image.asset(
-                      'assets/images/book_cover.png',
+                    Image(
                       fit: BoxFit.cover,
                       width: width,
                       height: width / 0.75,
+                      image: CachedNetworkImageProvider(
+                        book.imgUrl,
+                        errorListener: () {
+                          print("图片加载错误---${book.imgUrl}");
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -40,9 +48,9 @@ class BookshelfItemView extends StatelessWidget {
               ]),
             ),
             SizedBox(height: 10),
-            Text(book.name,
-                style: TextStyle(fontSize: 14),
-                maxLines: 1,
+            Text(" " + book.name,
+                style: TextStyle(fontSize: 14, color: AppColor.grey),
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis),
             SizedBox(height: 25),
           ],

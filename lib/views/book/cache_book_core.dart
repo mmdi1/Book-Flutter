@@ -16,9 +16,8 @@ class CacheNetBookCore {
   ///拆解txt文本到章节
   static splitAixdzsCore(Book book, String path) async {
     //bookName, "作者", "介绍", "字数", "imgUrl", "完结", sourcePath
-    var bookApi = new BookApi();
     book.id = null;
-    book = await bookApi.insertBook(book);
+    book = await BookApi.insertBook(book);
     Directory bf = new Directory(path + "/" + book.id.toString());
     if (!bf.existsSync()) {
       bf.createSync();

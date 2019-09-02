@@ -3,9 +3,12 @@ import 'package:floating_search_bar/floating_search_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix1;
+import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
+import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/models/book.dart';
 import 'package:thief_book_flutter/views/book/book_detail_screen.dart';
+import 'package:thief_book_flutter/views/reader/reader_screen.dart';
 import 'package:thief_book_flutter/views/search/search_source_core.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
@@ -98,7 +101,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
             print("点击了搜索框");
           },
           decoration: InputDecoration.collapsed(
-            hintText: "Search...",
+            hintText: "输入书名、作者...",
           ),
         ),
       ),
@@ -113,7 +116,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
   _renderRow(BuildContext context, int index) {
     if (index < listBooks.length) {
       return Padding(
-        padding: EdgeInsets.only(top: 10, left: 20),
+        padding: EdgeInsets.only(top: 10, left: 23),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -126,25 +129,6 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
 
   Widget contentView(int index) {
     return Container(
-      //设置背景图片
-      // decoration: new BoxDecoration(
-      //   color: Colors.white,
-      //   image: new DecorationImage(
-      //     image: CachedNetworkImageProvider(
-      //       listBooks[index].imgUrl,
-      //     ),
-      //     //这里是从assets静态文件中获取的，也可以new NetworkImage(）从网络上获取
-      //     centerSlice: new Rect.fromLTRB(270.0, 180.0, 1360.0, 730.0),
-      //   ),
-      //   // border: new Border.all(width: 1.0, color: Colors.red),
-      //   boxShadow: [
-      //     BoxShadow(
-      //       // color: hexToColor("#EFF0F1"),
-      //       blurRadius: 1.0,
-      //     ),
-      //   ],
-      //   borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
-      // ),
       alignment: Alignment.centerLeft,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,14 +136,38 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
         children: <Widget>[
           FlatButton(
             padding: EdgeInsets.zero,
-            child: Image(
+            child:
+                //设置背景图片
+                Container(
               width: 120,
-              fit: BoxFit.cover,
-              image: CachedNetworkImageProvider(listBooks[index].imgUrl,
-                  errorListener: () {
-                print("没有找到图片");
-              }),
+              height: 158,
+              decoration: new BoxDecoration(
+                image: new DecorationImage(
+                  image: CachedNetworkImageProvider(
+                    listBooks[index].imgUrl,
+                    errorListener: () {
+                      print("图片加载错误---$index");
+                    },
+                  ),
+                ),
+                // border: new Border.all(width: 1, color: AppColor.black),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColor.black,
+                    blurRadius: 1.0,
+                  ),
+                ],
+                // borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+              ),
             ),
+            // Image(
+            //   width: 120,
+            //   fit: BoxFit.cover,
+            //   image: CachedNetworkImageProvider(listBooks[index].imgUrl,
+            //       errorListener: () {
+            //     print("没有找到图片");
+            //   }),
+            // ),
             onPressed: () {
               Navigator.push(
                   context,
@@ -210,20 +218,26 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
         Row(
           children: <Widget>[
             RaisedButton(
-              textTheme: ButtonTextTheme.normal,
+              color: Colors.white,
               child: Text(
                 '加入书桌',
               ),
-              onPressed: () {},
+              onPressed: () {
+                print("加入书桌");
+                addBookshelfApi(index);
+              },
             ),
             Padding(
               padding: EdgeInsets.only(left: 5),
             ),
             RaisedButton(
+              color: Colors.white,
               child: Text(
                 '开始阅读',
               ),
-              onPressed: () {},
+              onPressed: () {
+                goToRederScreen(index);
+              },
             ),
           ],
         ),
@@ -242,5 +256,34 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
         // ),
       ],
     );
+  }
+
+  //
+  goToRederScreen(int index) async {
+    if (this.listBooks[index].sourceType == "aixdzs") {
+      Navigator.of(context).push(CustomRoute(
+          widget: new ReaderScene(
+              isOlineRedaer: true,
+              catalogUrl: this.listBooks[index].catalogUrl),
+          type: 1));
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     new MaterialPageRoute(
+      //         builder: (context) => new ReaderScene(
+      //             isOlineRedaer: true,
+      //             fisrtSourceLink: this.widget.book.catalogUrl + "p1.html")),
+      //     (route) => route == null);
+    }
+  }
+
+  addBookshelfApi(index) async {
+    var book = this.listBooks[index];
+    book.isCache = 0;
+    book = await BookApi.insertBook(book);
+    print("============${book.toJson()}");
+    if (book.id != null && book.id > 0) {
+      Toast.show("已加入书桌");
+    } else {
+      Toast.show("加入失败");
+    }
   }
 }

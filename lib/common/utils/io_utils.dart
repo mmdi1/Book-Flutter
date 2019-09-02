@@ -13,7 +13,8 @@ class IoUtils {
   static splitTxtByStream(
       String bookName, String sourcePath, store, path) async {
     if (sourcePath.indexOf(".zip") > 0) {
-      File zipFile = new File("/Users/joucks/Library/Developer/CoreSimulator/Devices/FDD6A480-A41B-4D73-BFA0-F20A30ECC134/data/Containers/Data/Application/7A1887AF-49C8-4186-AFD6-4E3B0A96F610/Documents/files/58741txt.zip");
+      File zipFile = new File(
+          "/Users/joucks/Library/Developer/CoreSimulator/Devices/FDD6A480-A41B-4D73-BFA0-F20A30ECC134/data/Containers/Data/Application/7A1887AF-49C8-4186-AFD6-4E3B0A96F610/Documents/files/58741txt.zip");
       zipFile.open();
       return;
     }
@@ -29,8 +30,7 @@ class IoUtils {
         imgUrl: "封面地址",
         status: "完结",
         importUrl: sourcePath);
-    var bookApi = new BookApi();
-    book = await bookApi.insertBook(book);
+    book = await BookApi.insertBook(book);
     File file = new File(sourcePath);
     //读取字节，并用Utf8解码
     // var fileSize = file.lengthSync();

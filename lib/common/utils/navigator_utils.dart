@@ -19,7 +19,7 @@ class AppNavigator {
         context,
         ReaderScene(
           novelId: book.id,
-          isOlineRedaer: false,
+          isOlineRedaer: book.isCache < 1,
         ));
   }
 
