@@ -21,6 +21,7 @@ class AppNavigator {
           novelId: book.id,
           isOlineRedaer: book.isCache < 1,
           catalogUrl: book.catalogUrl,
+          sourceType: book.sourceType,
         ));
   }
 

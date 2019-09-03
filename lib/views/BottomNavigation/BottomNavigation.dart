@@ -52,8 +52,8 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
         child: new StoreBuilder<ReduxState>(builder: (context, storew) {
           return DefaultTabController(
             child: new Scaffold(
-              key: _scaffoldKey,
-              drawer: MySetting(),
+             
+             
               //主体显示的页面跟随当前导航标签的位标值在pages页面列表中选择。
               body: TabBarView(
                 controller: tabcontroller,

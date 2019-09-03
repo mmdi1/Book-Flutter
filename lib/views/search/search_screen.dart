@@ -1,19 +1,26 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:floating_search_bar/floating_search_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix1;
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/models/book.dart';
+import 'package:thief_book_flutter/models/catalog.dart';
 import 'package:thief_book_flutter/views/book/book_detail_screen.dart';
 import 'package:thief_book_flutter/views/reader/reader_screen.dart';
+import 'package:thief_book_flutter/views/reader/reader_source_core.dart';
 import 'package:thief_book_flutter/views/search/search_source_core.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
+import 'package:thief_book_flutter/widgets/progress_dialog.dart';
 
 class SearchSreenWidget extends StatefulWidget {
   final VoidCallback onSetState;
@@ -79,7 +86,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
         body: Container(
           padding: EdgeInsets.only(top: 15),
           child: FloatingSearchBar.builder(
-            itemCount: listBooks.length ,
+            itemCount: listBooks.length,
             itemBuilder: (BuildContext context, int index) {
               return _renderRow(context, index);
             },
@@ -287,8 +294,10 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
     if (this.listBooks[index].sourceType == "aixdzs") {
       Navigator.of(context).push(CustomRoute(
           widget: new ReaderScene(
-              isOlineRedaer: true,
-              catalogUrl: this.listBooks[index].catalogUrl),
+            isOlineRedaer: true,
+            catalogUrl: this.listBooks[index].catalogUrl,
+            sourceType: this.listBooks[index].sourceType,
+          ),
           type: 1));
       // Navigator.of(context).pushAndRemoveUntil(
       //     new MaterialPageRoute(
@@ -300,14 +309,35 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
   }
 
   addBookshelfApi(index) async {
+    ProgressDialog.showLoadingDialog(context, "正在加入书桌...");
     var book = this.listBooks[index];
     book.isCache = 0;
     book = await BookApi.insertBook(book);
+    var listCatalog =
+        await RedaerRequest.getCotalogByOline(book.catalogUrl, book.sourceType);
+    var listCatalogJson = '{"data":[';
+    var i = 0;
+    listCatalog.forEach((s) {
+      var cJson = new Catalog(s.id, s.title, s.linkUrl, i);
+      listCatalogJson += jsonEncode(cJson) + ",";
+    });
+    var path = await Config.getLocalFilePath(context);
+    Directory bf = new Directory(path + "/" + book.id.toString());
+    if (!bf.existsSync()) {
+      bf.createSync();
+    }
+    File cf = new File(path + "/" + book.id.toString() + "/catalog.json");
+    print("写入地址:${cf.path}");
+    cf.createSync();
+    listCatalogJson =
+        listCatalogJson.substring(0, listCatalogJson.lastIndexOf(",")) + "]}";
+    cf.writeAsStringSync(listCatalogJson);
     print("============${book.toJson()}");
     if (book.id != null && book.id > 0) {
       Toast.show("已加入书桌");
     } else {
       Toast.show("加入失败");
     }
+    Navigator.pop(context);
   }
 }

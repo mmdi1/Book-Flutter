@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   void initState() {
     super.initState();
     if (this.widget.isOlineRedaer) {
-      onlineSetup();
+      onlineSetup(this.widget.novelId);
     } else {
       setup(this.widget.novelId);
     }
@@ -82,7 +83,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   //在线阅读初始方法
-  void onlineSetup() async {
+  void onlineSetup(novelId) async {
     var currentArticleId = 1;
     await SystemChrome.setEnabledSystemUIOverlays([]);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
@@ -90,9 +91,24 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     //setSystemUIOverlayStyle 用来设置状态栏顶部和底部样式，默认有 light 和 dark 模式，也可以按照需求自定义样式；
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     print("目录源链接：${this.widget.catalogUrl}");
-    chapters = await RedaerRequest.getCotalogByOline(
-        this.widget.catalogUrl, this.widget.sourceType);
-    //
+    if (basePath == "") {
+      basePath = await Config.getLocalFilePath(this.context);
+    }
+    var okPath = basePath + '/' + novelId.toString() + "/catalog.json";
+    File f = new File(okPath);
+    if (!f.existsSync()) {
+      //不存在缓存目录则走在线抓取
+      chapters = await RedaerRequest.getCotalogByOline(
+          this.widget.catalogUrl, this.widget.sourceType);
+    } else {
+      var responseStr = await rootBundle.loadString(okPath);
+      var jsonStr = json.decode(responseStr);
+      List<dynamic> chaptersResponse = jsonStr["data"];
+      chaptersResponse.forEach((data) {
+        chapters.add(Chapter.fromJson(data));
+      });
+    }
+
     topSafeHeight = Screen.topSafeHeight;
     if (chapters.length < 3) {}
     var linkUrl = chapters[0].linkUrl;
@@ -149,7 +165,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       spFontSize = fontSize;
     }
     currentArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
-    if (currentArticle.preLink != null || currentArticle.preArticleId > 0) {
+    if (currentArticle.preLink != null ||
+        (currentArticle.preArticleId != null &&
+            currentArticle.preArticleId > 0)) {
       preArticle = await fetchArticle(
         articleId: currentArticle.preArticleId,
         linkUrl: currentArticle.preLink,
@@ -157,7 +175,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     } else {
       preArticle = null;
     }
-    if (currentArticle.nextLink != null || currentArticle.nextArticleId > 0) {
+    if (currentArticle.nextLink != null ||
+        (currentArticle.nextArticleId != null &&
+            currentArticle.nextArticleId > 0)) {
       nextArticle = await fetchArticle(
         articleId: currentArticle.nextArticleId,
         linkUrl: currentArticle.nextLink,
@@ -203,6 +223,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   onScroll() {
+    print("onScroll");
     var page = pageController.offset / Screen.width;
     var idStr = this.widget.novelId.toString();
     var nextArtilePage = currentArticle.pageCount +
@@ -235,7 +256,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       fetchPreviousArticle(
           articleId: currentArticle.preArticleId,
           linkUrl: currentArticle.preLink);
-      print('到达上个章节了,存入已读的���节:${currentArticle.id}');
+      print('到达上个章节了,存入已读的章节:${currentArticle.id}');
       if (this.widget.isOlineRedaer) {
         SpUtils.setValue(Config.spCacheArticleId + fisrtSourceLink,
             currentArticle.currentLink);
@@ -311,6 +332,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   onPageChanged(int index) {
+    print("onPageChanged:$index");
     var page = index - (preArticle != null ? preArticle.pageCount : 0);
     if (page < currentArticle.pageCount && page >= 0) {
       setState(() {
@@ -389,7 +411,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         currentArticle.pageCount +
         (nextArticle != null ? nextArticle.pageCount : 0);
     return PageView.builder(
-      //  scrollDirection: Axis.vertical,
+      scrollDirection: Axis.vertical,
       physics: BouncingScrollPhysics(),
       controller: pageController,
       itemCount: itemCount,

@@ -8,6 +8,7 @@ import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/views/book/bookshelf_item_view.dart';
 import 'package:thief_book_flutter/views/search/search_screen.dart';
+import 'package:thief_book_flutter/views/user/my_setting.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class HomePageWidget extends StatefulWidget {
@@ -62,7 +63,9 @@ class HomePageWidgetState extends State<HomePageWidget> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
+      drawer: MySetting(),
       appBar: buildAppBarView(),
       body: Container(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 15),

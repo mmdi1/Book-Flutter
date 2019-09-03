@@ -9,14 +9,20 @@ class RedaerRequest {
   //在线获取章节
   static Future<Article> getArticleByOline(
       {String linkUrl, String sourceType}) async {
-    // return await getAixdzsArticle(linkUrl);
+    print("源类型:$sourceType");
+    if (sourceType == "aixdzs") {
+      return await getAixdzsArticle(linkUrl);
+    }
     return await getXbiqugeArticle(linkUrl);
   }
 
   //在线获取目录
   static Future<List<Chapter>> getCotalogByOline(
       String linkUrl, String sourceType) async {
-    // return await getAixdzsCatalog(linkUrl);
+    print("源类型目录:$sourceType");
+    if (sourceType == "aixdzs") {
+      return await getAixdzsCatalog(linkUrl);
+    }
     return await getXbiqugeCatalog(linkUrl);
   }
 
@@ -68,7 +74,7 @@ class RedaerRequest {
       contentTxt += "\n   " + p.text;
     });
     if (preLink.indexOf(".html") < 0) {
-      preLink = linkUrl;
+      preLink = null;
     }
     var article = new Article(
         novelId: -1,
@@ -129,9 +135,10 @@ class RedaerRequest {
     var content = body.querySelector("#content");
     var contentTxt = content.text;
     if (preLink.indexOf(".html") < 0) {
-      preLink = linkUrl;
+      preLink = null;
     }
-    var file = new File("/Users/joucks/Library/Developer/CoreSimulator/Devices/FDD6A480-A41B-4D73-BFA0-F20A30ECC134/data/Containers/Data/Application/4B57B339-689E-4738-B764-4C973447D97F/Documents/test.txt");
+    var file = new File(
+        "/Users/joucks/Library/Developer/CoreSimulator/Devices/FDD6A480-A41B-4D73-BFA0-F20A30ECC134/data/Containers/Data/Application/4B57B339-689E-4738-B764-4C973447D97F/Documents/test.txt");
     file.createSync();
     contentTxt = contentTxt.replaceAll('。', '。\n   ');
     file.writeAsStringSync(contentTxt);
