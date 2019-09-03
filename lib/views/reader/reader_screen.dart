@@ -138,6 +138,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     if (basePath == "") {
       basePath = await Config.getLocalFilePath(this.context);
     }
+    ///storage/emulated/0/Android/data/com.example.thief_book_flutter/files/2/catalog.json
     var responseStr = await rootBundle
         .loadString(basePath + '/' + novelId.toString() + "/catalog.json");
     var jsonStr = json.decode(responseStr);
@@ -411,7 +412,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         currentArticle.pageCount +
         (nextArticle != null ? nextArticle.pageCount : 0);
     return PageView.builder(
-      scrollDirection: Axis.vertical,
+      // scrollDirection: Axis.vertical,
       physics: BouncingScrollPhysics(),
       controller: pageController,
       itemCount: itemCount,

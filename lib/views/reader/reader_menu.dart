@@ -63,8 +63,10 @@ class _ReaderMenuState extends State<ReaderMenu>
   //初始化异步参数
   initAsyncData() async {
     var spFontSize = await SpUtils.getInt(Config.spCacheFontSize);
-    print("========$initFontSize,$spFontSize");
-    initFontSize = spFontSize;
+    print("initFontSize========$initFontSize,$spFontSize");
+    if (spFontSize != null) {
+      initFontSize = spFontSize;
+    }
     setState(() {});
   }
 
@@ -264,113 +266,104 @@ class _ReaderMenuState extends State<ReaderMenu>
 
   //字体设置
   buildFontSettingView() {
+    var widthNum = (Screen.width - 1) / 3;
+    var iconWidthNum = widthNum / 3;
     return Container(
         color: Colors.grey[200],
-        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: 8),
-                Text("字号",
-                    style: TextStyle(
-                        fontSize: fixedFontSize(14),
-                        fontWeight: FontWeight.w500,
-                        color: SQColor.darkGray)),
-                SizedBox(height: 5),
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.font_download),
-                      onPressed: () {
+            Container(
+              width: widthNum,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 8),
+                  buildTitleWdget("字号"),
+                  SizedBox(height: 5),
+                  Row(
+                    children: <Widget>[
+                      buidIconBtnWdget(Icons.font_download, () {
                         initFontSize--;
                         settingFontSizeFunc(initFontSize);
-                      },
-                    ),
-                    Text(initFontSize.toString().substring(0, 2)),
-                    IconButton(
-                      icon: Icon(Icons.font_download),
-                      onPressed: () {
+                      }),
+                      Container(
+                        width: iconWidthNum,
+                        child: Text(
+                          initFontSize.toString().substring(0, 2),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      buidIconBtnWdget(Icons.font_download, () {
                         initFontSize++;
                         settingFontSizeFunc(initFontSize);
-                      },
-                    ),
-                  ],
-                ),
-              ],
+                      }),
+                    ],
+                  ),
+                ],
+              ),
             ),
             buildRowLineWg(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: 8),
-                Row(
-                  children: <Widget>[
-                    Text("段落",
-                        style: TextStyle(
-                            fontSize: fixedFontSize(14),
-                            fontWeight: FontWeight.w500,
-                            color: SQColor.darkGray)),
-                  ],
-                ),
-                SizedBox(height: 5),
-                Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.format_align_center),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.format_align_center),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.format_align_center),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ],
+            Container(
+              width: widthNum,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 8),
+                  buildTitleWdget("段落"),
+                  SizedBox(height: 5),
+                  Row(
+                    children: <Widget>[
+                      buidIconBtnWdget(Icons.format_align_center, () {}),
+                      buidIconBtnWdget(Icons.format_align_center, () {}),
+                      buidIconBtnWdget(Icons.format_align_center, () {}),
+                    ],
+                  ),
+                ],
+              ),
             ),
             buildRowLineWg(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: 8),
-                Text("行间距",
-                    style: TextStyle(
-                        fontSize: fixedFontSize(14),
-                        fontWeight: FontWeight.w500,
-                        color: SQColor.darkGray)),
-                SizedBox(height: 5),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      child: IconButton(
-                        padding: EdgeInsets.all(0),
-                        icon: Icon(Icons.format_align_left),
-                        onPressed: () {},
-                      ),
-                      color: Colors.red,
-                    ),
-                    IconButton(
-                      padding: EdgeInsets.all(0),
-                      icon: Icon(Icons.format_align_justify),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      padding: EdgeInsets.all(0),
-                      icon: Icon(Icons.format_align_right),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ],
+            Container(
+              width: widthNum,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 8),
+                  buildTitleWdget("行间距"),
+                  SizedBox(height: 5),
+                  Row(
+                    children: <Widget>[
+                      buidIconBtnWdget(Icons.format_align_left, () {}),
+                      buidIconBtnWdget(Icons.format_align_justify, () {}),
+                      buidIconBtnWdget(Icons.format_align_right, () {}),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ));
+  }
+
+  Widget buildTitleWdget(String title) {
+    return Text(title,
+        style: TextStyle(
+            fontSize: fixedFontSize(14),
+            fontWeight: FontWeight.w500,
+            color: SQColor.darkGray));
+  }
+
+  Widget buidIconBtnWdget(IconData icon, Function _onPressed) {
+    var widthNum = (Screen.width - 11) / 3;
+    var iconWidthNum = widthNum / 3;
+    return Container(
+      width: iconWidthNum,
+      child: IconButton(
+        padding: EdgeInsets.all(0),
+        icon: Icon(icon),
+        onPressed: _onPressed,
+      ),
+    );
   }
 
   //底部

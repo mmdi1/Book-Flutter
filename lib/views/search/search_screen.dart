@@ -322,6 +322,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
       listCatalogJson += jsonEncode(cJson) + ",";
     });
     var path = await Config.getLocalFilePath(context);
+    print("加入书桌的地址:${path + "/" + book.id.toString()}");
     Directory bf = new Directory(path + "/" + book.id.toString());
     if (!bf.existsSync()) {
       bf.createSync();
