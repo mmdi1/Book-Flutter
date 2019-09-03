@@ -33,7 +33,7 @@ class Article {
     title = data['title'];
     content = data['content'];
     // content = '　　' + content;
-    content = content.replaceAll('    ', '\n     ');
+    content = content.replaceAll('  ', '\n    ');
     price = data['price'];
     currentIndex = data['currentIndex'];
     nextArticleId = data['nextArticleId'];

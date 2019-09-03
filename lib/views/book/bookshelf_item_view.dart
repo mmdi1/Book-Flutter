@@ -16,6 +16,10 @@ class BookshelfItemView extends StatelessWidget {
       onTap: () {
         AppNavigator.pushNovelDetail(context, book);
       },
+      //长按
+      onLongPress: () {
+        print("长按了book........");
+      },
       child: Container(
         width: width,
         child: Column(

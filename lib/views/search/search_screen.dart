@@ -3,8 +3,11 @@ import 'package:floating_search_bar/floating_search_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart' as prefix1;
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
+import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/models/book.dart';
 import 'package:thief_book_flutter/views/book/book_detail_screen.dart';
@@ -13,6 +16,8 @@ import 'package:thief_book_flutter/views/search/search_source_core.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class SearchSreenWidget extends StatefulWidget {
+  final VoidCallback onSetState;
+  SearchSreenWidget({this.onSetState});
   @override
   State<StatefulWidget> createState() {
     return new SearchSreenWidgetState();
@@ -28,6 +33,12 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    print('释放了搜索');
+  }
+
   List<Widget> bookItems = [];
   List<Book> listBooks = new List<Book>(); //列表要展示的数据
   //https://www.aixdzs.com/爱下电子书
@@ -35,7 +46,8 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
   fetchData(searchName) async {
     if (searchName != "") {
       listBooks = [];
-      var books = await SearchSourceProcessing.aixdzsData(searchName);
+      var books = await SearchSourceProcessing.searchAllNetWork(searchName);
+      print("-----------搜索的长度：${books.length}");
       listBooks.addAll(books);
     }
   }
@@ -61,68 +73,67 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
     if (isflag) {
       fetchData("");
     }
-    return new Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        padding: EdgeInsets.only(top: 15),
-        child: FloatingSearchBar.builder(
-          itemCount: listBooks.length - 1,
-          itemBuilder: (BuildContext context, int index) {
-            return _renderRow(context, index);
-          },
-          trailing: isLoadingData
-              ? Padding(
-                  child: Image.asset(
-                    'assets/images/search_loading.gif',
-                    height: 20,
-                  ),
-                  padding: EdgeInsets.only(bottom: 10, right: 10),
-                )
-              : IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  padding: EdgeInsets.only(bottom: 10),
-                  icon: Icon(
-                    Icons.search,
-                    // color: AppColor.black,
-                  ),
-                  onPressed: () {
-                    if (searchStr.trim() == "") {
-                      Toast.show("请输入书名搜索");
-                      return;
-                    }
-                    print("搜索内容：$searchStr");
-                    searchBookName();
-                  },
-                ),
-          leading: IconButton(
-            padding: EdgeInsets.only(bottom: 10, right: 20),
-            icon: Icon(
-              Icons.keyboard_arrow_left,
-              color: AppColor.black,
-            ),
-            onPressed: () {
-              print("点击返回");
-              Navigator.pop(context);
+    return new StoreBuilder<ReduxState>(builder: (context, store) {
+      return new Scaffold(
+        backgroundColor: Colors.white,
+        body: Container(
+          padding: EdgeInsets.only(top: 15),
+          child: FloatingSearchBar.builder(
+            itemCount: listBooks.length ,
+            itemBuilder: (BuildContext context, int index) {
+              return _renderRow(context, index);
             },
-          ),
-          onChanged: (String value) {
-            searchStr = value;
-          },
-          onTap: () {
-            print("点击了搜索框");
-          },
-          decoration: InputDecoration.collapsed(
-            hintText: "输入书名、作者...",
+            trailing: isLoadingData
+                ? Padding(
+                    child: Image.asset(
+                      'assets/images/search_loading.gif',
+                      height: 20,
+                    ),
+                    padding: EdgeInsets.only(bottom: 10, right: 10),
+                  )
+                : IconButton(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    padding: EdgeInsets.only(bottom: 10),
+                    icon: Icon(
+                      Icons.search,
+                      // color: AppColor.black,
+                    ),
+                    onPressed: () {
+                      if (searchStr.trim() == "") {
+                        Toast.show("请输入书名搜索");
+                        return;
+                      }
+                      print("搜索内容：$searchStr");
+                      searchBookName();
+                    },
+                  ),
+            leading: IconButton(
+              padding: EdgeInsets.only(bottom: 10, right: 20),
+              icon: Icon(
+                Icons.keyboard_arrow_left,
+                color: AppColor.black,
+              ),
+              onPressed: () {
+                this.widget.onSetState();
+                // print("点击返回");
+                // AppNavigator.pushHome(context, store);
+                Navigator.pop(context);
+              },
+            ),
+            onChanged: (String value) {
+              searchStr = value;
+            },
+            onTap: () {
+              print("点击了搜索框");
+            },
+            decoration: InputDecoration.collapsed(
+              hintText: "输入书名、作者...",
+            ),
           ),
         ),
-      ),
-    );
-  }
-
-  Color hexToColor(String s) {
-    // 如果传入的十六进制颜色值不符合要求，返回默认值
-    return new Color(int.parse(s.substring(1, 7), radix: 16) + 0xFF000000);
+      );
+    });
   }
 
   _renderRow(BuildContext context, int index) {

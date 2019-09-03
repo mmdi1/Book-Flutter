@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
-import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/home/welcome_page.dart';
-import 'package:thief_book_flutter/views/reader/reader_screen.dart';
-import 'package:thief_book_flutter/views/search/search_screen.dart';
 
 void main() {
   runApp(new FlutterReduxApp());
@@ -59,6 +55,7 @@ class FlutterReduxApp extends StatelessWidget {
             home: new SplashScreen(store: store),
             // home: new ReaderScene(isOlineRedaer: true),
             // home: new BottomNavigationWidget(store),
+            // home: ListPage(),
             //主题
             theme: store.state.themeData,
           );

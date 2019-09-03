@@ -9,6 +9,7 @@ import 'package:intro_slider/slide_object.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/utils/db_utils.dart';
+import 'package:thief_book_flutter/common/utils/test.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
 import 'package:redux/redux.dart';
@@ -50,8 +51,7 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    
-
+    TestFunction.test();
     DownApi.requestPermission();
     DbUtils.initDbTabel();
     startTime();

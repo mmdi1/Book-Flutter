@@ -94,6 +94,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         this.widget.catalogUrl, this.widget.sourceType);
     //
     topSafeHeight = Screen.topSafeHeight;
+    if (chapters.length < 3) {}
     var linkUrl = chapters[0].linkUrl;
     fisrtSourceLink = linkUrl;
     //获取已读到的章节
@@ -287,8 +288,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         ReaderUtils.bottomOffset -
         20;
     var contentWidth = Screen.width - 15 - 10;
-    article.pageOffsets = ReaderPageAgent.getPageOffsets(article.content,
-        contentHeight, contentWidth, ReaderConfig.instance.fontSize);
+    var fontSize = await ReaderConfig.instance.getFontSize();
+    article.pageOffsets = ReaderPageAgent.getPageOffsets(
+        article.content, contentHeight, contentWidth, fontSize);
 
     return article;
   }

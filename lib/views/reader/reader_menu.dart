@@ -8,6 +8,7 @@ import 'package:thief_book_flutter/common/utils/utility.dart';
 import 'dart:async';
 
 import 'package:thief_book_flutter/models/chapter.dart';
+import 'package:thief_book_flutter/views/reader/reader_catalog.dart';
 import 'package:thief_book_flutter/views/reader/reader_config.dart';
 
 class ReaderMenu extends StatefulWidget {
@@ -62,6 +63,7 @@ class _ReaderMenuState extends State<ReaderMenu>
   //初始化异步参数
   initAsyncData() async {
     var spFontSize = await SpUtils.getInt(Config.spCacheFontSize);
+    print("========$initFontSize,$spFontSize");
     initFontSize = spFontSize;
     setState(() {});
   }
@@ -345,15 +347,21 @@ class _ReaderMenuState extends State<ReaderMenu>
                 SizedBox(height: 5),
                 Row(
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.format_align_left),
-                      onPressed: () {},
+                    Container(
+                      child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(Icons.format_align_left),
+                        onPressed: () {},
+                      ),
+                      color: Colors.red,
                     ),
                     IconButton(
+                      padding: EdgeInsets.all(0),
                       icon: Icon(Icons.format_align_justify),
                       onPressed: () {},
                     ),
                     IconButton(
+                      padding: EdgeInsets.all(0),
                       icon: Icon(Icons.format_align_right),
                       onPressed: () {},
                     ),
@@ -395,6 +403,15 @@ class _ReaderMenuState extends State<ReaderMenu>
       secondChild = buildFontSettingView();
     } else if (isShowType == "progress") {
       secondChild = buildProgressView();
+    } else if (isShowType == "list") {
+      secondChild = ReaderCatalog(
+        chapters: this.widget.chapters,
+        articleIndex: this.widget.articleIndex,
+        onToggleCatalog: (Chapter chapter) {
+          hide();
+          this.widget.onToggleChapter(chapter);
+        },
+      );
     } else {
       secondChild = Container();
     }

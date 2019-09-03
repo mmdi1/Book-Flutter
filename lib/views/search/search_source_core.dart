@@ -6,6 +6,10 @@ import 'package:thief_book_flutter/common/utils/http.dart';
 import 'package:thief_book_flutter/models/book.dart';
 
 class SearchSourceProcessing {
+  static Future<List<Book>> searchAllNetWork(String bookName) async {
+    return await aixdzsData(bookName);
+  }
+  //爱下电子书搜索
   static Future<List<Book>> aixdzsData(String bookName) async {
     var baseUrl = "https://www.aixdzs.com";
     // var path = await Config.getLocalFilePath(context);
@@ -43,6 +47,44 @@ class SearchSourceProcessing {
           sourceAddress: baseUrl + detailUrl,
           catalogUrl: catalogUrl,
           wordCount: count,
+          imgUrl: imgUrl,
+          status: status);
+      books.add(book);
+      print(book.toJson());
+    });
+    return books;
+  }
+
+  //新笔趣阁搜索
+  static Future<List<Book>> xbiqugeData(String bookName) async {
+    var baseUrl = "https://www.xbiquge6.com";
+    final str = await Http.getBody(baseUrl + "/search.php?keyword=" + bookName);
+    var html = parse(str);
+    List<Element> list = html.querySelectorAll(".result-item");
+    var books = new List<Book>();
+    list.forEach((e) {
+      var listImg = e.querySelector(".result-game-item-pic");
+      var a = listImg.querySelector("a");
+      var detailUrl = a.attributes["href"];
+      var catalogUrl = detailUrl;
+      var img = listImg.querySelector("img");
+      var imgUrl = img.attributes["src"];
+      var bookName =
+          e.querySelector(".result-game-item-title-link").children[0].text;
+      var info = e.querySelector(".result-game-item-desc").text;
+      var author =
+          e.querySelectorAll(".result-game-item-info-tag")[0].children[1].text;
+      var status =
+          e.querySelectorAll(".result-game-item-info-tag")[1].children[1].text;
+      var book = new Book(
+          importUrl: "",
+          name: bookName,
+          author: author,
+          info: info,
+          sourceType: "xbiquge",
+          sourceAddress: baseUrl + detailUrl,
+          catalogUrl: catalogUrl,
+          wordCount: "",
           imgUrl: imgUrl,
           status: status);
       books.add(book);

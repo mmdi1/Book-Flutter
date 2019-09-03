@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AppColor   {
-
+class AppColor {
   static const Color grey = Colors.grey;
   static const Color black = Colors.black;
   static const String primaryValueString = "#24292E";
@@ -43,4 +42,9 @@ class AppColor   {
       900: const Color(primaryDarkValue),
     },
   );
+
+  static Color hexToColor(String s) {
+    // 如果传入的十六进制颜色值不符合要求，返回默认值
+    return new Color(int.parse(s.substring(1, 7), radix: 16) + 0xFF000000);
+  }
 }
