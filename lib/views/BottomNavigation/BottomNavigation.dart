@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:thief_book_flutter/common/localization/default_localizations.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/views/about/about_page.dart';
 import 'package:thief_book_flutter/views/discovery/discovery_page.dart';
@@ -20,6 +23,7 @@ class BottomNavigationWidget extends StatefulWidget {
 
 class BottomNavigationWidgetState extends State<BottomNavigationWidget>
     with SingleTickerProviderStateMixin {
+  StreamController<int> _streamController;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String title = "当前1.70元/总共100.05元";
   List<Widget> pages = new List();
@@ -34,11 +38,13 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
       //动画效果的异步处理，默认格式
     );
     super.initState();
+    _streamController = StreamController.broadcast();
     pages..add(HomePageWidget()); //..add(DiscoveryPage())..add(AboutPage());
   }
 
   @override
   void dispose() {
+    _streamController.close();
     if (tabcontroller != null) {
       tabcontroller.dispose();
     }
@@ -52,8 +58,6 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
         child: new StoreBuilder<ReduxState>(builder: (context, storew) {
           return DefaultTabController(
             child: new Scaffold(
-             
-             
               //主体显示的页面跟随当前导航标签的位标值在pages页面列表中选择。
               body: TabBarView(
                 controller: tabcontroller,
@@ -80,6 +84,65 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
           );
         }));
   }
+
+  Widget buildAppBarView() {
+    return new AppBar(
+      elevation: 1,
+      leading: new IconButton(
+        icon: new Container(
+          padding: EdgeInsets.all(3.0),
+          child: ClipOval(
+            child: Image(
+              height: 40,
+              width: 40,
+              image: NetworkImage(
+                  "http://7xqekd.com1.z0.glb.clouddn.com/imgs/24910959%20%281%29.jpeg"),
+            ),
+          ),
+          //    new CircleAvatar(
+          //       radius: 30.0,
+          //       backgroundImage:
+          //           AssetImage("assets/images/avatar.png")),
+        ),
+        onPressed: () => _scaffoldKey.currentState.openDrawer(),
+      ),
+      automaticallyImplyLeading: false,
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            Navigator.push(
+                context,
+                CustomRoute(
+                    widget: SearchSreenWidget(
+                  onSetState: () {},
+                )));
+          },
+        ),
+        IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: () {},
+        ),
+      ],
+      title: Center(
+        child: new Text(
+          DefaultAppLocalizations.of(context).title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      // flexibleSpace: Column(
+      //   children: <Widget>[
+      //     Padding(padding: new EdgeInsets.fromLTRB(0, 40, 0, 0)),
+      //     Text(storew.state.progressData)
+      //   ],
+      // ),
+    );
+  }
+
   // @override
   // Widget build(BuildContext context) {
   //   return new StoreProvider(
@@ -143,7 +206,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
   //               } else if (i == 2) {
   //                 title = "关于";
   //               }
-  //               //进行状态更新，��系统返回的你点击的标签位标赋予当前位标属性，告诉系统当前要显示的导航标签被用户改变了。
+  //               //进行状态更新，��系统返回的你点击的标签位标赋予当前位标属性，告诉系统当前要显示的导航标签被用���改变了。
   //               setState(() {
   //                 _currentIndex = i;
   //               });

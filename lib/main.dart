@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:thief_book_flutter/common/localization/default_localizations.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/views/home/welcome_page.dart';
 
@@ -31,6 +33,20 @@ class FlutterReduxApp extends StatelessWidget {
         store: store,
         child: new StoreBuilder<ReduxState>(builder: (context, store) {
           return new MaterialApp(
+            locale: Locale('en', 'US'),
+            // localeResolutionCallback:
+            //     (Locale locale, Iterable<Locale> supportedLocales) {
+            //   return locale;
+            // },
+            localizationsDelegates: [
+              DefaultAppLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: [
+              Locale('en', 'US'),
+              Locale('zh', 'CN'),
+            ],
             // initialRoute: "/search",
             // routes: {
             //   "/": (context) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:thief_book_flutter/common/localization/default_localizations.dart';
 
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
@@ -20,13 +21,18 @@ class HomePageWidget extends StatefulWidget {
 
 class HomePageWidgetState extends State<HomePageWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String title = "当前1.70元/总共100.05元";
+
   var pageCount = 0;
   @override
   void initState() {
     print("+====初始Home_page");
     super.initState();
     fetchData();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   List<Widget> bookItems = [];
@@ -40,8 +46,10 @@ class HomePageWidgetState extends State<HomePageWidget> {
     });
     print("书:${books.length},${bookItems.length / 9}");
     pageCount = (bookItems.length / 9).floor() + 1;
-    print("-----------共多少页:$pageCount");
-    setState(() {});
+    print("主页加载书:${books.length},分页:${bookItems.length / 9},共多少页:$pageCount");
+    setState(() {
+      
+    });
   }
 
   Widget _pageItemBuilder(BuildContext context, int index) {
@@ -53,7 +61,6 @@ class HomePageWidgetState extends State<HomePageWidget> {
     } else {
       list = bookItems.sublist(starIndex, endIndex);
     }
-    print("+==========$starIndex, $endIndex");
     return Wrap(
       spacing: 23,
       children: list,
@@ -63,19 +70,18 @@ class HomePageWidgetState extends State<HomePageWidget> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      drawer: MySetting(),
-      appBar: buildAppBarView(),
-      body: Container(
-          padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
-          child: PageView.builder(
-            itemCount: pageCount,
-            pageSnapping: true,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: _pageItemBuilder,
-          )),
-    );
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        drawer: MySetting(),
+        appBar: buildAppBarView(),
+        body: Container(
+            padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
+            child: PageView.builder(
+              itemCount: pageCount,
+              pageSnapping: true,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: _pageItemBuilder,
+            )));
   }
 
   Widget buildAppBarView() {
@@ -120,7 +126,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
       ],
       title: Center(
         child: new Text(
-          title,
+          DefaultAppLocalizations.of(context).title,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,

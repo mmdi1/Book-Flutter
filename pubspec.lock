@@ -104,6 +104,11 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.9"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_redux:
     dependency: "direct main"
     description:
@@ -122,7 +127,7 @@ packages:
       name: fluttertoast
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.2"
+    version: "3.1.0"
   gbk2utf8:
     dependency: "direct main"
     description:
@@ -164,14 +169,14 @@ packages:
       name: intl
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.16.0"
+    version: "0.15.8"
   intro_slider:
     dependency: "direct main"
     description:
       name: intro_slider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.8"
+    version: "2.2.7"
   matcher:
     dependency: transitive
     description:
@@ -248,7 +253,7 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.3+4"
+    version: "0.5.1+2"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -267,7 +272,7 @@ packages:
       name: sqflite
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.6+4"
+    version: "1.1.0"
   stack_trace:
     dependency: transitive
     description:
@@ -340,4 +345,4 @@ packages:
     version: "3.5.0"
 sdks:
   dart: ">=2.4.0 <3.0.0"
-  flutter: ">=1.5.0 <2.0.0"
+  flutter: ">=0.1.4 <2.0.0"

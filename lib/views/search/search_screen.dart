@@ -11,7 +11,6 @@ import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
-import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/models/book.dart';
 import 'package:thief_book_flutter/models/catalog.dart';
@@ -33,7 +32,6 @@ class SearchSreenWidget extends StatefulWidget {
 
 class SearchSreenWidgetState extends State<SearchSreenWidget> {
   String searchStr = "";
-  var isflag = true;
   var isLoadingData = false;
   @override
   void initState() {
@@ -77,9 +75,6 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (isflag) {
-      fetchData("");
-    }
     return new StoreBuilder<ReduxState>(builder: (context, store) {
       return new Scaffold(
         backgroundColor: Colors.white,
