@@ -14,6 +14,7 @@ class Config {
   static String spCacheArticleId = "spCacheArticleId_key";
   static String spCachePageIndex = "spCachePageIndex_key";
   static String spCacheFontSize = "spCacheFontSize_key";
+  static String spCacheVertical = "spCacheVertical_key";
   static String bookPath = "";
 
   /// 当前数据库版本 */

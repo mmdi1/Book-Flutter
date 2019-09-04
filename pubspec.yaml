@@ -37,6 +37,7 @@ dependencies:
   gbk2utf8: 1.0.1
   html: 0.14.0+2
   floating_search_bar: 0.2.0
+  fab_circular_menu: 0.1.1
   flutter_localizations:
     sdk: flutter
 

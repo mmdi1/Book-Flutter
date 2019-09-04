@@ -1,47 +1,32 @@
-import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:thief_book_flutter/common/localization/more_localization.dart';
 
-class DefaultAppLocalizations {
-  final Locale locale;
+class FZLocalizationDelegate
+    extends LocalizationsDelegate<CupertinoLocalizations> {
+  FZLocalizationDelegate();
 
-  DefaultAppLocalizations(this.locale);
-
-  static DefaultAppLocalizations of(BuildContext context) {
-    return Localizations.of<DefaultAppLocalizations>(
-        context, DefaultAppLocalizations);
-  }
-
-  static Map<String, Map<String, String>> _localized = {
-    'en': {
-      'title': 'Home',
-    },
-    'zh': {
-      'title': '当前1.8元/总共10.05元',
-    }
-  };
-
-  String get title {
-    return _localized[locale.languageCode]['title'];
-  }
-}
-
-class DefaultAppLocalizationsDelegate
-    extends LocalizationsDelegate<DefaultAppLocalizations> {
-  DefaultAppLocalizationsDelegate();
-
-  @override
-  Future<DefaultAppLocalizations> load(Locale locale) {
-    return SynchronousFuture<DefaultAppLocalizations>(
-        DefaultAppLocalizations(locale));
-  }
-
+  ///是否支持某个Local
+  ///支持中文和英语
   @override
   bool isSupported(Locale locale) {
-    return true;
+    return ['zh', 'en'].contains(locale.languageCode);
   }
 
+  ///shouldReload的返回值决定当Localizations Widget重新build时，是否调用load方法重新加载Locale资源
   @override
-  bool shouldReload(LocalizationsDelegate<DefaultAppLocalizations> old) {
+  bool shouldReload(LocalizationsDelegate<CupertinoLocalizations> old) {
     return false;
   }
+
+  ///根据locale，创建一个对象用于提供当前locale下的文本显示
+  ///Flutter会调用此类加载相应的Locale资源类
+  @override
+  Future<CupertinoLocalizations> load(Locale locale) {
+    return SynchronousFuture<CupertinoLocalizations>(MoreLocalization(locale));
+  }
+
+  static FZLocalizationDelegate delegate = FZLocalizationDelegate();
 }

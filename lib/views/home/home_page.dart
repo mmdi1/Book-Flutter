@@ -1,7 +1,6 @@
 import 'dart:async';
+import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
-import 'package:thief_book_flutter/common/localization/default_localizations.dart';
-
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
@@ -22,7 +21,12 @@ class HomePageWidget extends StatefulWidget {
 class HomePageWidgetState extends State<HomePageWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
+  void stateChanged(bool isShow) {
+    print('menu is ${isShow ? 'showing' : 'closed'}');
+  }
+
   var pageCount = 0;
+  var isBuildMenu = false;
   @override
   void initState() {
     print("+====初始Home_page");
@@ -47,9 +51,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     print("书:${books.length},${bookItems.length / 9}");
     pageCount = (bookItems.length / 9).floor() + 1;
     print("主页加载书:${books.length},分页:${bookItems.length / 9},共多少页:$pageCount");
-    setState(() {
-      
-    });
+    setState(() {});
   }
 
   Widget _pageItemBuilder(BuildContext context, int index) {
@@ -98,10 +100,6 @@ class HomePageWidgetState extends State<HomePageWidget> {
                   "http://7xqekd.com1.z0.glb.clouddn.com/imgs/24910959%20%281%29.jpeg"),
             ),
           ),
-          //    new CircleAvatar(
-          //       radius: 30.0,
-          //       backgroundImage:
-          //           AssetImage("assets/images/avatar.png")),
         ),
         onPressed: () => _scaffoldKey.currentState.openDrawer(),
       ),
@@ -118,15 +116,16 @@ class HomePageWidgetState extends State<HomePageWidget> {
           },
         ),
         IconButton(
-          icon: Icon(Icons.refresh),
+          icon: Icon(Icons.more_vert),
           onPressed: () {
-            fetchData();
+            showDialogWithOffset(handle: fromRight);
           },
-        ),
+        )
       ],
       title: Center(
         child: new Text(
-          DefaultAppLocalizations.of(context).title,
+          "当前1.8元/总共10.05元",
+          // MoreLocalization.of(context).,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
@@ -176,6 +175,123 @@ class HomePageWidgetState extends State<HomePageWidget> {
         child: Center(
           child: Icon(Icons.add, color: AppColor.black, size: 32),
         ),
+      ),
+    );
+  }
+
+  Offset fromLeft(Animation animation) {
+    return Offset(animation.value - 1, 0);
+  }
+
+  Offset fromRight(Animation animation) {
+    return Offset(1 - animation.value, 0);
+  }
+
+  Offset fromTop(Animation animation) {
+    return Offset(0, animation.value - 1);
+  }
+
+  Offset fromBottom(Animation animation) {
+    return Offset(0, 1 - animation.value);
+  }
+
+  Offset fromTopLeft(Animation anim) {
+    return fromLeft(anim) + fromTop(anim);
+  }
+
+  Widget buildButton(
+    String text,
+    Function onPressed, {
+    Color color = Colors.white,
+  }) {
+    return FlatButton(
+      color: color,
+      child: Text(text),
+      onPressed: onPressed,
+    );
+  }
+
+  var value;
+  //遮罩并显示菜单
+  showDialogWithOffset({handle}) {
+    showGeneralDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      barrierLabel: "",
+      barrierDismissible: true,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (
+        BuildContext context,
+        Animation animation,
+        Animation secondaryAnimation,
+      ) {
+        return Container(
+          alignment: Alignment.topRight,
+          padding: EdgeInsets.only(top: 100, right: 0),
+          child: Column(
+            children: <Widget>[
+              buildMenuRadius(new BorderRadius.only(
+                  topLeft: new Radius.circular(5.0),
+                  topRight: new Radius.circular(5.0))),
+              buildMenu(),
+              buildMenu(),
+              buildMenuRadius(new BorderRadius.only(
+                  bottomLeft: new Radius.circular(5.0),
+                  bottomRight: new Radius.circular(5.0))),
+            ],
+          ),
+        );
+      },
+      transitionBuilder: (ctx, animation, _, child) {
+        return FractionalTranslation(
+          translation: handle(animation),
+          child: child,
+        );
+      },
+    );
+  }
+
+  Widget buildMenu() {
+    return Container(
+      width: 60,
+      decoration: new BoxDecoration(
+          color: Colors.white,
+          border: new Border.all(
+            color: Colors.white,
+            width: 1,
+          )),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Icon(Icons.settings),
+          Text("设置",
+              style: TextStyle(
+                fontSize: 12,
+              ))
+        ],
+      ),
+    );
+  }
+
+  Widget buildMenuRadius(BorderRadiusGeometry borderRadius) {
+    return Container(
+      width: 60,
+      decoration: new BoxDecoration(
+          color: Colors.white,
+          border: new Border.all(
+            color: Colors.white10,
+            width: 1,
+          ),
+          borderRadius: borderRadius),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Icon(Icons.settings),
+          Text("设置",
+              style: TextStyle(
+                fontSize: 12,
+              ))
+        ],
       ),
     );
   }

@@ -33,20 +33,30 @@ class FlutterReduxApp extends StatelessWidget {
         store: store,
         child: new StoreBuilder<ReduxState>(builder: (context, store) {
           return new MaterialApp(
-            locale: Locale('en', 'US'),
-            // localeResolutionCallback:
-            //     (Locale locale, Iterable<Locale> supportedLocales) {
-            //   return locale;
-            // },
+            // locale: Locale('en', 'US'),
+            localeResolutionCallback:
+                (Locale locale, Iterable<Locale> supportedLocales) {
+              return locale;
+            },
             localizationsDelegates: [
-              DefaultAppLocalizationsDelegate(),
+              /// 本地化的代理类
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
+              /// 注册我们的Delegate
+              FZLocalizationDelegate.delegate
             ],
             supportedLocales: [
-              Locale('en', 'US'),
-              Locale('zh', 'CN'),
+              const Locale('en', 'US'), // 美国英语
+              const Locale('zh', 'CN'), // 中文简体
             ],
+
+            /// 监听系统语言切换
+            localeListResolutionCallback: (deviceLocale, supportedLocales) {
+              print('deviceLocale: $deviceLocale');
+              // 系统语言是英语： deviceLocale: [en_CN, en_CN, zh_Hans_CN]
+              // 系统语言是中文： deviceLocale: [zh_CN, zh_Hans_CN, en_CN]
+              print('supportedLocales: $supportedLocales');
+            },
             // initialRoute: "/search",
             // routes: {
             //   "/": (context) {

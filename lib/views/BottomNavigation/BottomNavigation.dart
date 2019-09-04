@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thief_book_flutter/common/localization/default_localizations.dart';
+import 'package:thief_book_flutter/common/localization/more_localization.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/views/about/about_page.dart';
 import 'package:thief_book_flutter/views/discovery/discovery_page.dart';
@@ -126,7 +127,8 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
       ],
       title: Center(
         child: new Text(
-          DefaultAppLocalizations.of(context).title,
+          "当前1.8元/总共10.05元",
+          // MoreLocalization.of(context).alertDialogLabel,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,

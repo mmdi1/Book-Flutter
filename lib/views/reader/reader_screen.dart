@@ -35,6 +35,7 @@ class ReaderScene extends StatefulWidget {
 
 class ReaderSceneState extends State<ReaderScene> with RouteAware {
   double spFontSize = ReaderConfig.instance.fontSize;
+  bool isVertical = false;
   int pageIndex = 0;
   bool isMenuVisiable = false;
   PageController pageController;
@@ -138,6 +139,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     if (basePath == "") {
       basePath = await Config.getLocalFilePath(this.context);
     }
+
     ///storage/emulated/0/Android/data/com.example.thief_book_flutter/files/2/catalog.json
     var responseStr = await rootBundle
         .loadString(basePath + '/' + novelId.toString() + "/catalog.json");
@@ -164,6 +166,11 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     if (fontSize != null) {
       print("fontszie:$fontSize");
       spFontSize = fontSize;
+    }
+    var spIsVertical = await ReaderConfig.instance.isVertical();
+    if (spIsVertical != null) {
+      print("横屏竖屏:$spIsVertical");
+      isVertical = spIsVertical;
     }
     currentArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
     if (currentArticle.preLink != null ||
@@ -224,8 +231,8 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   onScroll() {
-    print("onScroll");
-    var page = pageController.offset / Screen.width;
+    var sreenWidth = isVertical ? Screen.height : Screen.width;
+    var page = pageController.offset / sreenWidth;
     var idStr = this.widget.novelId.toString();
     var nextArtilePage = currentArticle.pageCount +
         (preArticle != null ? preArticle.pageCount : 0);
@@ -318,7 +325,8 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   onTap(Offset position) async {
-    double xRate = position.dx / Screen.width;
+    var sreenWidth = isVertical ? Screen.height : Screen.width;
+    double xRate = position.dx / sreenWidth;
     if (xRate > 0.33 && xRate < 0.66) {
       SystemChrome.setEnabledSystemUIOverlays(
           [SystemUiOverlay.top, SystemUiOverlay.bottom]);
