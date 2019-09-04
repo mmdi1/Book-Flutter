@@ -401,6 +401,7 @@ class _ReaderMenuState extends State<ReaderMenu>
         chapters: this.widget.chapters,
         articleIndex: this.widget.articleIndex,
         onToggleCatalog: (Chapter chapter) {
+          print("回调章节:${chapter.index},${chapter.title}");
           hide();
           this.widget.onToggleChapter(chapter);
         },

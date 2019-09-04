@@ -25,6 +25,8 @@ class BookApi {
       "author",
       "isCache",
       "catalogUrl",
+      "isCacheIndex",
+      "isCacheArticleId",
       "sourceType"
     ]);
     if (maps.length > 0) {
@@ -33,5 +35,14 @@ class BookApi {
     }
     db.close();
     return [];
+  }
+
+  static Future<int> update(Book book) async {
+    var con = new LocalDb();
+    var db = await con.getConn();
+    var result = await db
+        .update("books", book.toJson(), where: 'id = ?', whereArgs: [book.id]);
+    db.close();
+    return result;
   }
 }

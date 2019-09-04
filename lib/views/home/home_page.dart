@@ -46,6 +46,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     bookItems = [];
     // bookItems.add(addItemView());
     books.forEach((book) {
+      print("forEach------book:${book.toJson()}");
       bookItems.add(BookshelfItemView(book));
     });
     print("书:${books.length},${bookItems.length / 9}");
@@ -230,14 +231,12 @@ class HomePageWidgetState extends State<HomePageWidget> {
           padding: EdgeInsets.only(top: 100, right: 0),
           child: Column(
             children: <Widget>[
-              buildMenuRadius(new BorderRadius.only(
-                  topLeft: new Radius.circular(5.0),
-                  topRight: new Radius.circular(5.0))),
+              buildMenuRadius(
+                  new BorderRadius.only(topLeft: new Radius.circular(5.0))),
               buildMenu(),
               buildMenu(),
-              buildMenuRadius(new BorderRadius.only(
-                  bottomLeft: new Radius.circular(5.0),
-                  bottomRight: new Radius.circular(5.0))),
+              buildMenuRadius(
+                  new BorderRadius.only(bottomLeft: new Radius.circular(5.0))),
             ],
           ),
         );

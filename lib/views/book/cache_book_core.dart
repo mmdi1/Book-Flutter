@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:thief_book_flutter/common/server/articels_curd.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/models/article.dart';
@@ -9,20 +10,21 @@ import 'package:thief_book_flutter/models/catalog.dart';
 import 'package:thief_book_flutter/views/reader/reader_source_core.dart';
 
 class CacheNetBookCore {
-  static splitTxtByStream(Book book, String path, String srouceType) {
+  static splitTxtByStream(Book book, String path) {
     splitAixdzsCore(book, path);
   }
 
   ///拆解txt文本到章节
   static splitAixdzsCore(Book book, String path) async {
     //bookName, "作者", "介绍", "字数", "imgUrl", "完结", sourcePath
-    book.id = null;
-    book = await BookApi.insertBook(book);
-    Directory bf = new Directory(path + "/" + book.id.toString());
-    if (!bf.existsSync()) {
-      bf.createSync();
-    }
-    var lists = await RedaerRequest.getAixdzsCatalog(book.catalogUrl);
+    var responseStr = await rootBundle
+        .loadString(path + "/" + book.id.toString() + "/catalog.json");
+    var jsonStr = json.decode(responseStr);
+    List<Catalog> catalogs = [];
+    List<dynamic> chaptersResponse = jsonStr["data"];
+    chaptersResponse.sublist(book.isCacheIndex).forEach((data) {
+      catalogs.add(Catalog.fromJson(data));
+    });
     Article currAr = new Article(
         novelId: book.id,
         title: book.name,
@@ -32,51 +34,46 @@ class CacheNetBookCore {
         nextArticleId: 0,
         preArticleId: 0);
     await LocalCrud.deleteAll();
-    //章节索引
-    var index = 0;
+    //章节索引  如果是续存则从缓存的地方开始
+    var index = book.isCacheArticleId;
     DateTime time = new DateTime.now();
     debugPrint("开始时间:${time.hour}:${time.minute}:${time.second}");
-    var listCatalogJson = '{"data":[';
-    var lock = 0;
-    for (var catalog in lists) {
-      // if (lock == 3) {
-      // await Future.delayed(const Duration(milliseconds: 2000), () {});
-      //   lock = 0;
-      // }
-      // lock++;
+    for (var catalog in catalogs) {
       currAr.novelId = book.id;
       currAr.id = index;
       currAr.currentLink = catalog.linkUrl;
-      currAr.nextArticleId = currAr.id + 1;
-      currAr.preArticleId = (currAr.id - 1) <= 0 ? null : (currAr.id - 1);
+      currAr.nextArticleId = index + 1;
+      currAr.preArticleId = (index - 1) < 0 ? null : (currAr.id - 1);
       currAr.currentIndex = index;
-      await ioWriteSync(currAr, catalog.linkUrl, path, book.id.toString());
+      var isOk =
+          await ioWriteSync(currAr, catalog.linkUrl, path, book.id.toString());
+      if (isOk) {
+        book.isCacheArticleId = index;
+        book.isCacheIndex = index;
+        if (index == chaptersResponse.length - 1) {
+          book.isCacheIndex = 2;
+        }
+        print("更新书籍信息:${book.toJson()}");
+        await BookApi.update(book);
+      }
+
       // store.dispatch(new RefreshProgressDataAction("开始解析:" + match));
       index++;
       print("-------------------------$index");
-      var cJson = new Catalog(
-          currAr.currentIndex, catalog.title, null, currAr.currentIndex);
-      listCatalogJson += jsonEncode(cJson) + ",";
     }
-    File cf = new File(path + "/" + book.id.toString() + "/catalog.json");
-    print("写入地址:${cf.path}");
-    cf.createSync();
-    listCatalogJson =
-        listCatalogJson.substring(0, listCatalogJson.lastIndexOf(",")) + "]}";
-    cf.writeAsStringSync(listCatalogJson);
     // store.dispatch(new RefreshProgressDataAction(""));
     DateTime etime = new DateTime.now();
     debugPrint("结束时间:${etime.hour}:${etime.minute}:${etime.second}");
   }
 
-  static Future ioWriteSync(
+  static Future<bool> ioWriteSync(
       Article currAr, String linkUrl, String path, String bookid) async {
     var reqData = await RedaerRequest.getAixdzsArticle(linkUrl);
     if (reqData == null) {
       print("为空写入--------------------------------------");
       //获取失败则写入数据库，等待再次缓存
       LocalCrud.insertArticel(currAr);
-      return;
+      return false;
     }
     reqData.novelId = currAr.novelId;
     reqData.id = currAr.id;
@@ -88,5 +85,6 @@ class CacheNetBookCore {
         path + "/" + bookid + "/article_" + currAr.id.toString() + ".json");
     af.createSync();
     af.writeAsStringSync(jsonEncode(reqData));
+    return true;
   }
 }

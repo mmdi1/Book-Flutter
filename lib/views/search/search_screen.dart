@@ -15,6 +15,7 @@ import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/models/book.dart';
 import 'package:thief_book_flutter/models/catalog.dart';
 import 'package:thief_book_flutter/views/book/book_detail_screen.dart';
+import 'package:thief_book_flutter/views/book/cache_book_core.dart';
 import 'package:thief_book_flutter/views/reader/reader_screen.dart';
 import 'package:thief_book_flutter/views/reader/reader_source_core.dart';
 import 'package:thief_book_flutter/views/search/search_source_core.dart';
@@ -306,14 +307,18 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
   addBookshelfApi(index) async {
     ProgressDialog.showLoadingDialog(context, "正在加入书桌...");
     var book = this.listBooks[index];
-    book.isCache = 0;
+    book.id = null;
+    book.isCache = 1;
+    book.isCacheIndex = 0;
+    book.isCacheArticleId = 0;
     book = await BookApi.insertBook(book);
     var listCatalog =
         await RedaerRequest.getCotalogByOline(book.catalogUrl, book.sourceType);
     var listCatalogJson = '{"data":[';
     var i = 0;
-    listCatalog.forEach((s) {
+    listCatalog.forEach((s) { 
       var cJson = new Catalog(s.id, s.title, s.linkUrl, i);
+      i++;
       listCatalogJson += jsonEncode(cJson) + ",";
     });
     var path = await Config.getLocalFilePath(context);
@@ -328,9 +333,12 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
     listCatalogJson =
         listCatalogJson.substring(0, listCatalogJson.lastIndexOf(",")) + "]}";
     cf.writeAsStringSync(listCatalogJson);
+
     print("============${book.toJson()}");
     if (book.id != null && book.id > 0) {
       Toast.show("已加入书桌");
+      // 获取存储路径
+      CacheNetBookCore.splitTxtByStream(book, path);
     } else {
       Toast.show("加入失败");
     }

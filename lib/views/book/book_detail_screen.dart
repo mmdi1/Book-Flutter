@@ -31,7 +31,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   cacheNetBook() async {
     // 获取存储路径
     var path = await Config.getLocalFilePath(context);
-    await CacheNetBookCore.splitTxtByStream(this.widget.book, path, "");
+    await CacheNetBookCore.splitTxtByStream(this.widget.book, path);
   }
 
   //

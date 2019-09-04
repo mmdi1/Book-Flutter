@@ -66,6 +66,8 @@ class DbUtils {
             sourceAddress TEXT,
             sourceType TEXT,
             isCache INTEGER,
+            isCacheIndex INTEGER,
+            isCacheArticleId INTEGER,
             cacheToUrl  TEXT,
             createdAt TEXT
           )

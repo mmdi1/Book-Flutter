@@ -1,6 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SpUtils {
+  static clearAll() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.clear();
+  }
+
   /*
    * 利用SharedPreferences存储数据
    */
@@ -21,6 +26,7 @@ class SpUtils {
 
   static Future<int> getInt(String key) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
     return sharedPreferences.getInt(key);
   }
 

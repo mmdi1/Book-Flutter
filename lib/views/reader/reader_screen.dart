@@ -126,7 +126,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   //缓存阅读初始方法
   void setup(novelId) async {
-    var currentArticleId = 1;
+    var currentArticleId = 0;
     await SystemChrome.setEnabledSystemUIOverlays([]);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
     await Future.delayed(const Duration(milliseconds: 300), () {});
@@ -280,7 +280,12 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       return;
     }
     isLoading = true;
-    preArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
+    if (articleId != null) {
+      preArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
+    } else {
+      preArticle = null;
+    }
+
     pageController.jumpToPage(preArticle.pageCount + pageIndex);
     isLoading = false;
     print('33333333');

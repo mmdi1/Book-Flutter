@@ -11,9 +11,13 @@ class Book {
       this.catalogUrl,
       this.importUrl,
       this.isCache,
-      this.cacheToUrl});
+      this.cacheToUrl,
+      this.isCacheIndex,
+      this.isCacheArticleId});
   int id;
-  int isCache; //是否缓存了  0无缓存 1续存   2全本缓存
+  int isCache; //是否缓存了  0无缓存 1续存中   2全本缓存
+  int isCacheIndex; //缓存至目录的index值  最高为目录length-1
+  int isCacheArticleId; //缓存至当前章节id
   String cacheToUrl; //缓存至url地址  方便续存
   String name;
   String author;
@@ -40,11 +44,13 @@ class Book {
     sourceType = data["sourceType"];
     isCache = data['isCache'];
     cacheToUrl = data['cacheToUrl'];
+    isCacheIndex = data['isCacheIndex'];
+    isCacheArticleId = data['isCacheArticleId'];
   }
 
   /// jsonDecode(jsonStr) 方法中会调用实体类的这个方法。如果实体类中没有这个方法，会报错。
   Map toJson() {
-    Map map = new Map();
+    var map = new Map<String, dynamic>();
     map["id"] = this.id;
     map["name"] = this.name;
     map["author"] = this.author;
@@ -58,6 +64,8 @@ class Book {
     map["sourceType"] = this.sourceType;
     map["isCache"] = this.isCache;
     map["cacheToUrl"] = this.cacheToUrl;
+    map["isCacheIndex"] = this.isCacheIndex;
+    map["isCacheArticleId"] = this.isCacheArticleId;
     return map;
   }
 }
