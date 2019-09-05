@@ -40,6 +40,12 @@ class HomePageWidgetState extends State<HomePageWidget> {
   }
 
   List<Widget> bookItems = [];
+  //底部框的回调
+  bottomCallback() {
+    print("---回调了-");
+    fetchData();
+  }
+
   //初始数据
   Future<void> fetchData() async {
     var books = await BookApi.getBooks();
@@ -47,7 +53,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     // bookItems.add(addItemView());
     books.forEach((book) {
       print("forEach------book:${book.toJson()}");
-      bookItems.add(BookshelfItemView(book));
+      bookItems.add(BookshelfItemView(book: book, cb: bottomCallback));
     });
     print("书:${books.length},${bookItems.length / 9}");
     pageCount = (bookItems.length / 9).floor() + 1;
@@ -109,11 +115,15 @@ class HomePageWidgetState extends State<HomePageWidget> {
         IconButton(
           icon: Icon(Icons.search),
           onPressed: () {
-            Navigator.push(context, CustomRoute(widget: SearchSreenWidget(
-              onSetState: () {
-                fetchData();
-              },
-            )));
+            Navigator.push(
+                context,
+                CustomRoute(
+                    direction: 2,
+                    widget: SearchSreenWidget(
+                      onSetState: () {
+                        fetchData();
+                      },
+                    )));
           },
         ),
         IconButton(

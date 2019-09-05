@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -10,11 +8,11 @@ import 'package:sqflite/sqflite.dart';
 class Config {
   static String dbPath = "";
   static String filePath = "";
-  static String spCacheBookId = "spCacheBookId_key";
-  static String spCacheArticleId = "spCacheArticleId_key";
-  static String spCachePageIndex = "spCachePageIndex_key";
-  static String spCacheFontSize = "spCacheFontSize_key";
-  static String spCacheVertical = "spCacheVertical_key";
+  static String spCacheBookId = "spCacheBookId_key"; ////最后打开的小说id
+  static String spCacheArticleId = "spCacheArticleId_key";//阅读的当前章节
+  static String spCachePageIndex = "spCachePageIndex_key";//阅读的当前页数
+  static String spCacheFontSize = "spCacheFontSize_key"; //字体大小
+  static String spCacheVertical = "spCacheVertical_key"; //是否横屏换页
   static String bookPath = "";
 
   /// 当前数据库版本 */

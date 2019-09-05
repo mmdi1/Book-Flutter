@@ -21,6 +21,8 @@ class BookApi {
       "name",
       "status",
       "imgUrl",
+      "info",
+      "wordCount",
       "importUrl",
       "author",
       "isCache",
@@ -44,5 +46,11 @@ class BookApi {
         .update("books", book.toJson(), where: 'id = ?', whereArgs: [book.id]);
     db.close();
     return result;
+  }
+  // 根据ID删除书籍信息
+  static Future<int> delete(int id) async {
+    var con = new LocalDb();
+    var db = await con.getConn();
+    return await db.delete("books", where: 'id = ?', whereArgs: [id]);
   }
 }

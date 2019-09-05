@@ -60,26 +60,29 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
       ),
       body: Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Image(
-                width: 80,
-                image: CachedNetworkImageProvider(this.widget.book.imgUrl,
-                    errorListener: () {
-                  print("没有找到图片");
-                }),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(this.widget.book.name),
-                  Text(this.widget.book.wordCount),
-                  Text(this.widget.book.author),
-                  Text("是否完结：" + this.widget.book.status),
-                ],
-              ),
-            ],
+          Container(
+            height: 150,
+            child: Row(
+              children: <Widget>[
+                Image(
+                  width: 80,
+                  image: CachedNetworkImageProvider(this.widget.book.imgUrl,
+                      errorListener: () {
+                    print("没有找到图片");
+                  }),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(this.widget.book.name),
+                    Text(this.widget.book.wordCount),
+                    Text(this.widget.book.author),
+                    Text("是否完结：" + this.widget.book.status),
+                  ],
+                ),
+              ],
+            ),
           ),
           Text("介绍：" + (this.widget.book.info.trim())),
           ButtonBar(

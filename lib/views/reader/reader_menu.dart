@@ -68,8 +68,6 @@ class _ReaderMenuState extends State<ReaderMenu>
       initFontSize = spFontSize;
     }
     var spCacheVertical = await SpUtils.getBool(Config.spCacheVertical);
-    print("initFontSize========$initFontSize,$spFontSize");
-    print("initisVertical========$spCacheVertical,$isVertical");
     if (spCacheVertical != null) {
       isVertical = spCacheVertical;
     }
@@ -91,12 +89,12 @@ class _ReaderMenuState extends State<ReaderMenu>
   }
 
   hide() {
-    if (isEditSetting) {
-      this.widget.onEditSetting();
-    }
     animationController.reverse();
     Timer(Duration(milliseconds: 200), () {
       this.widget.onTap();
+      if (isEditSetting) {
+        this.widget.onEditSetting();
+      }
     });
     setState(() {
       isTipVisible = false;
@@ -121,6 +119,8 @@ class _ReaderMenuState extends State<ReaderMenu>
               child: GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
+                  // Navigator.pushNamedAndRemoveUntil(
+                  //     context, "/home", (router) => router == null);
                 },
                 child: Image.asset('assets/images/pub_back_gray.png'),
               ),
@@ -139,7 +139,6 @@ class _ReaderMenuState extends State<ReaderMenu>
               width: 44,
               child: GestureDetector(
                 onTap: () {
-                  print("--------");
                   Toast.show("功能暂未开放~");
                 },
                 child: Image.asset('assets/images/read_icon_more.png'),
@@ -263,7 +262,7 @@ class _ReaderMenuState extends State<ReaderMenu>
     );
   }
 
-  //设置字体大小
+  //设置��体大小
   settingFontSizeFunc(size) {
     SpUtils.setInt(Config.spCacheFontSize, size);
     isEditSetting = true;
@@ -290,6 +289,10 @@ class _ReaderMenuState extends State<ReaderMenu>
                   Row(
                     children: <Widget>[
                       buidIconBtnWdget(Icons.font_download, () {
+                        if (initFontSize == 12) {
+                          Toast.show("已经是最小字号了");
+                          return;
+                        }
                         initFontSize--;
                         settingFontSizeFunc(initFontSize);
                       }),
@@ -301,6 +304,10 @@ class _ReaderMenuState extends State<ReaderMenu>
                         ),
                       ),
                       buidIconBtnWdget(Icons.font_download, () {
+                        if (initFontSize == 24) {
+                          Toast.show("已经是最大字号了");
+                          return;
+                        }
                         initFontSize++;
                         settingFontSizeFunc(initFontSize);
                       }),
@@ -321,7 +328,7 @@ class _ReaderMenuState extends State<ReaderMenu>
                   Row(
                     children: <Widget>[
                       buildAnimatedIcon(
-                          Icons.swap_horizontal_circle, Icons.swap_horiz),
+                          Icons.swap_horizontal_circle, Icons.swap_horiz, true),
                       Container(
                         width: iconWidthNum,
                         child: Text(
@@ -330,7 +337,7 @@ class _ReaderMenuState extends State<ReaderMenu>
                         ),
                       ),
                       buildAnimatedIcon(
-                          Icons.swap_vert, Icons.swap_vertical_circle),
+                          Icons.swap_vert, Icons.swap_vertical_circle, false),
                     ],
                   ),
                 ],
@@ -381,17 +388,19 @@ class _ReaderMenuState extends State<ReaderMenu>
   }
 
   //二级菜单横竖平设置
-  buildAnimatedIcon(IconData icon1, IconData icon2) {
+  buildAnimatedIcon(IconData icon1, IconData icon2, bool left) {
     var widthNum = (Screen.width - 11) / 3;
     var iconWidthNum = widthNum / 3;
     return Container(
       width: iconWidthNum,
       child: GestureDetector(
-        onTap: settingIsVerticalFucn,
+        onTap: left ? settingLeftToRightFunc : settingTopToBottomFunc,
         child: Center(
           child: AnimatedCrossFade(
-            firstChild: Icon(icon1),
-            secondChild: Icon(icon2),
+            firstChild: Container(
+                child: Icon(icon1, size: 24), padding: EdgeInsets.all(11)),
+            secondChild: Container(
+                child: Icon(icon2, size: 24), padding: EdgeInsets.all(11)),
             //用于控制显示哪个widget
             crossFadeState: isVertical
                 ? CrossFadeState.showFirst
@@ -403,11 +412,18 @@ class _ReaderMenuState extends State<ReaderMenu>
     );
   }
 
-  //设置为上下或左右翻页
-  settingIsVerticalFucn() {
-    isVertical = !isVertical;
-    print("ccccccccccccccccccccccccccccccc$isVertical");
-    SpUtils.setBool(Config.spCacheVertical, isVertical);
+  //设置为左右翻页
+  settingLeftToRightFunc() {
+    isVertical = true;
+    SpUtils.setBool(Config.spCacheVertical, true);
+    isEditSetting = true;
+    setState(() {});
+  }
+
+  //设置为上下翻页
+  settingTopToBottomFunc() {
+    isVertical = false;
+    SpUtils.setBool(Config.spCacheVertical, false);
     isEditSetting = true;
     setState(() {});
   }
@@ -508,7 +524,7 @@ class _ReaderMenuState extends State<ReaderMenu>
     );
   }
 
-  //点击底部菜单按钮
+  //点击底���菜单按钮
   _onPressedMenu(String title) {
     if (title == isShowType) {
       isShow = !isShow;

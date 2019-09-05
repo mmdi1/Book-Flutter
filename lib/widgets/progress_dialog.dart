@@ -120,7 +120,6 @@ class _SpinKitCubeGridState extends State<SpinKitCubeGrid>
 
   @override
   void dispose() {
-    print("遮罩释放--");
     _controller.dispose();
     super.dispose();
   }

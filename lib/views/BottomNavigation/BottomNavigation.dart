@@ -2,15 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:thief_book_flutter/common/localization/default_localizations.dart';
-import 'package:thief_book_flutter/common/localization/more_localization.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
-import 'package:thief_book_flutter/views/about/about_page.dart';
-import 'package:thief_book_flutter/views/discovery/discovery_page.dart';
 import 'package:thief_book_flutter/views/home/home_page.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:thief_book_flutter/views/search/search_screen.dart';
-import 'package:thief_book_flutter/views/user/my_setting.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class BottomNavigationWidget extends StatefulWidget {
@@ -45,6 +40,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
 
   @override
   void dispose() {
+    print("释放了bottomNavigation-----------------");
     _streamController.close();
     if (tabcontroller != null) {
       tabcontroller.dispose();

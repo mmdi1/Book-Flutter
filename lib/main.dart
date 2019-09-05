@@ -4,7 +4,9 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:thief_book_flutter/common/localization/default_localizations.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
+import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/home/welcome_page.dart';
+import 'package:thief_book_flutter/views/reader/reader_screen.dart';
 
 void main() {
   runApp(new FlutterReduxApp());
@@ -42,6 +44,7 @@ class FlutterReduxApp extends StatelessWidget {
               /// 本地化的代理类
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
+
               /// 注册我们的Delegate
               FZLocalizationDelegate.delegate
             ],
@@ -57,19 +60,24 @@ class FlutterReduxApp extends StatelessWidget {
               // 系统语言是中文： deviceLocale: [zh_CN, zh_Hans_CN, en_CN]
               print('supportedLocales: $supportedLocales');
             },
-            // initialRoute: "/search",
-            // routes: {
-            //   "/": (context) {
-            //     print("welcome------router");
-            //     store.state.platformLocale = Localizations.localeOf(context);
-            //     return new SplashScreen(
-            //       store: store,
-            //     );
-            //   },
-            //   "/home": (context) {
-            //     print("home------router");
-            //     return new BottomNavigationWidget(store);
-            //   },
+            initialRoute: "/",
+            routes: {
+              "/": (context) {
+                print("welcome------router");
+                store.state.platformLocale = Localizations.localeOf(context);
+                return new SplashScreen(
+                  store: store,
+                );
+              },
+              "/home": (context) {
+                print("home------router");
+                return new BottomNavigationWidget(store);
+              },
+              "/redaer": (context) {
+                print("+======================-------------------:跳转至阅读");
+                return new ReaderScene();
+              }
+            },
             //   "/search": (context) {
             //     return new SearchSreenWidget();
             //   }
@@ -78,7 +86,7 @@ class FlutterReduxApp extends StatelessWidget {
             title: "鱼叉阅读",
             navigatorObservers: [routeObserver],
             // home: new SearchSreenWidget(),
-            home: new SplashScreen(store: store),
+            // home: new SplashScreen(store: store),
             // home: new ReaderScene(isOlineRedaer: true),
             // home: new BottomNavigationWidget(store),
             // home: ListPage(),
