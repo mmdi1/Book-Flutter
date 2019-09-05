@@ -18,7 +18,7 @@ class BookshelfItemView extends StatelessWidget {
       },
       //长按
       onLongPress: () {
-        print("长按了book........");
+        _openModalBottomSheet(context, book);
       },
       child: Container(
         width: width,
@@ -61,5 +61,35 @@ class BookshelfItemView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future _openModalBottomSheet(BuildContext context, Book book) async {
+    final option = await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 150.0,
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(Icons.book),
+                  title: Text('详情'),
+                  onTap: () {
+                    Navigator.pop(context, 'A');
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.delete),
+                  title: Text('删除'),
+                  onTap: () {
+                    Navigator.pop(context, 'C');
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+
+    print(option);
   }
 }

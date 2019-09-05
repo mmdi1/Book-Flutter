@@ -53,7 +53,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     TestFunction.test();
-    SpUtils.clearAll();
+    // SpUtils.clearAll();
     DownApi.requestPermission();
     DbUtils.initDbTabel();
     startTime();

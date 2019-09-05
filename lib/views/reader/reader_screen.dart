@@ -35,7 +35,7 @@ class ReaderScene extends StatefulWidget {
 
 class ReaderSceneState extends State<ReaderScene> with RouteAware {
   double spFontSize = ReaderConfig.instance.fontSize;
-  bool isVertical = false;
+  bool isVertical = true; //是否横屏
   int pageIndex = 0;
   bool isMenuVisiable = false;
   PageController pageController;
@@ -168,8 +168,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       spFontSize = fontSize;
     }
     var spIsVertical = await ReaderConfig.instance.isVertical();
+    print("默认横屏竖屏:$isVertical,历史竖屏:$spIsVertical");
     if (spIsVertical != null) {
-      print("横屏竖屏:$spIsVertical");
+      print("横屏竖屏缓存:$spIsVertical");
       isVertical = spIsVertical;
     }
     currentArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
@@ -231,7 +232,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   onScroll() {
-    var sreenWidth = isVertical ? Screen.height : Screen.width;
+    var sreenWidth = isVertical ? Screen.width : Screen.height;
     var page = pageController.offset / sreenWidth;
     var idStr = this.widget.novelId.toString();
     var nextArtilePage = currentArticle.pageCount +
@@ -330,8 +331,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   onTap(Offset position) async {
-    var sreenWidth = isVertical ? Screen.height : Screen.width;
-    double xRate = position.dx / sreenWidth;
+    var sreenWidth = isVertical ? Screen.width : Screen.height;
+    var positionNum = isVertical ? position.dx : position.dy;
+    double xRate = positionNum / sreenWidth;
     if (xRate > 0.33 && xRate < 0.66) {
       SystemChrome.setEnabledSystemUIOverlays(
           [SystemUiOverlay.top, SystemUiOverlay.bottom]);
@@ -424,8 +426,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     int itemCount = (preArticle != null ? preArticle.pageCount : 0) +
         currentArticle.pageCount +
         (nextArticle != null ? nextArticle.pageCount : 0);
+    print("===================$isVertical");
     return PageView.builder(
-      // scrollDirection: Axis.vertical,
+      scrollDirection: isVertical ? Axis.horizontal : Axis.vertical,
       physics: BouncingScrollPhysics(),
       controller: pageController,
       itemCount: itemCount,

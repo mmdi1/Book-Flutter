@@ -36,6 +36,7 @@ class DbUtils {
     var exists = await SpUtils.getBool("initDbKey");
     if (exists == true) {
       print("已存在数据库");
+      
       //已存在数据库
       return;
     }

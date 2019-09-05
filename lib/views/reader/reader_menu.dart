@@ -44,6 +44,7 @@ class _ReaderMenuState extends State<ReaderMenu>
   bool isShow = false;
   String isShowType = "";
   bool isEditSetting = false;
+  bool isVertical = true;
   int initFontSize = ReaderConfig.instance.fontSize.toInt();
   @override
   initState() {
@@ -63,9 +64,14 @@ class _ReaderMenuState extends State<ReaderMenu>
   //初始化异步参数
   initAsyncData() async {
     var spFontSize = await SpUtils.getInt(Config.spCacheFontSize);
-    print("initFontSize========$initFontSize,$spFontSize");
     if (spFontSize != null) {
       initFontSize = spFontSize;
+    }
+    var spCacheVertical = await SpUtils.getBool(Config.spCacheVertical);
+    print("initFontSize========$initFontSize,$spFontSize");
+    print("initisVertical========$spCacheVertical,$isVertical");
+    if (spCacheVertical != null) {
+      isVertical = spCacheVertical;
     }
     setState(() {});
   }
@@ -264,7 +270,7 @@ class _ReaderMenuState extends State<ReaderMenu>
     setState(() {});
   }
 
-  //字体设置
+  //二级菜单字体设置
   buildFontSettingView() {
     var widthNum = (Screen.width - 1) / 3;
     var iconWidthNum = widthNum / 3;
@@ -310,13 +316,21 @@ class _ReaderMenuState extends State<ReaderMenu>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: 8),
-                  buildTitleWdget("段落"),
+                  buildTitleWdget("翻页方向"),
                   SizedBox(height: 5),
                   Row(
                     children: <Widget>[
-                      buidIconBtnWdget(Icons.format_align_center, () {}),
-                      buidIconBtnWdget(Icons.format_align_center, () {}),
-                      buidIconBtnWdget(Icons.format_align_center, () {}),
+                      buildAnimatedIcon(
+                          Icons.swap_horizontal_circle, Icons.swap_horiz),
+                      Container(
+                        width: iconWidthNum,
+                        child: Text(
+                          " ",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      buildAnimatedIcon(
+                          Icons.swap_vert, Icons.swap_vertical_circle),
                     ],
                   ),
                 ],
@@ -366,6 +380,38 @@ class _ReaderMenuState extends State<ReaderMenu>
     );
   }
 
+  //二级菜单横竖平设置
+  buildAnimatedIcon(IconData icon1, IconData icon2) {
+    var widthNum = (Screen.width - 11) / 3;
+    var iconWidthNum = widthNum / 3;
+    return Container(
+      width: iconWidthNum,
+      child: GestureDetector(
+        onTap: settingIsVerticalFucn,
+        child: Center(
+          child: AnimatedCrossFade(
+            firstChild: Icon(icon1),
+            secondChild: Icon(icon2),
+            //用于控制显示哪个widget
+            crossFadeState: isVertical
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            duration: Duration(milliseconds: 200),
+          ),
+        ),
+      ),
+    );
+  }
+
+  //设置为上下或左右翻页
+  settingIsVerticalFucn() {
+    isVertical = !isVertical;
+    print("ccccccccccccccccccccccccccccccc$isVertical");
+    SpUtils.setBool(Config.spCacheVertical, isVertical);
+    isEditSetting = true;
+    setState(() {});
+  }
+
   //底部
   buildBottomView() {
     return Positioned(
@@ -390,6 +436,7 @@ class _ReaderMenuState extends State<ReaderMenu>
     );
   }
 
+  //二级菜单切换
   buildAnimatedSettingMenu() {
     Widget secondChild;
     if (isShowType == "font") {
@@ -418,7 +465,7 @@ class _ReaderMenuState extends State<ReaderMenu>
     );
   }
 
-  //底部按钮
+  //一级菜单底部按钮
   buildBottomMenus() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
