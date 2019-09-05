@@ -33,10 +33,11 @@ class CacheNetBookCore {
         currentIndex: 0,
         nextArticleId: 0,
         preArticleId: 0);
-    await LocalCrud.deleteAll();
+    // await LocalCrud.deleteAll();
     //章节索引  如果是续存则从缓存的地方开始
     var index = book.isCacheArticleId;
     DateTime time = new DateTime.now();
+    var lock = 0;
     debugPrint("开始时间:${time.hour}:${time.minute}:${time.second}");
     for (var catalog in catalogs) {
       currAr.novelId = book.id;
@@ -55,6 +56,14 @@ class CacheNetBookCore {
         }
         print("更新书籍信息:${book.toJson()}");
         await BookApi.update(book);
+      } else {
+        print("可能因网速原因终止缓存,页面地址:${catalog.linkUrl}");
+        //等待30秒继续缓存.如果一次缓存中出现两次错误，则停止
+        lock++;
+        await Future.delayed(const Duration(seconds: 30), () {});
+        if (lock == 2) {
+          return;
+        }
       }
 
       // store.dispatch(new RefreshProgressDataAction("开始解析:" + match));

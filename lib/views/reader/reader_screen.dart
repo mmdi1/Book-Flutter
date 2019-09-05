@@ -87,6 +87,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   void onlineSetup(novelId) async {
     var currentArticleId = 1;
     await SystemChrome.setEnabledSystemUIOverlays([]);
+    SpUtils.setInt(Config.spCacheBookId, novelId);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
     await Future.delayed(const Duration(milliseconds: 300), () {});
     //setSystemUIOverlayStyle 用来设置状态栏顶部和底部样式，默认有 light 和 dark 模式，也可以按照需求自定义样式；
@@ -128,6 +129,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   void setup(novelId) async {
     var currentArticleId = 0;
     await SystemChrome.setEnabledSystemUIOverlays([]);
+    SpUtils.setInt(Config.spCacheBookId, novelId);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
     await Future.delayed(const Duration(milliseconds: 300), () {});
     //setSystemUIOverlayStyle 用来设置状态栏顶部和底部样式，默认有 light 和 dark 模式，也可以按照需求自定义样式；
@@ -286,7 +288,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     } else {
       preArticle = null;
     }
-
+    if (preArticle == null) {
+      return;
+    }
     pageController.jumpToPage(preArticle.pageCount + pageIndex);
     isLoading = false;
     print('33333333');
@@ -448,6 +452,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
             : currentArticle.currentIndex,
         onTap: hideMenu,
         onPreviousArticle: () {
+          clearSpCachePageIndex();
           chapterIndex = chapterIndex--;
           print("重置111---$chapterIndex");
           chapterIndex = resetContent(
@@ -457,21 +462,45 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
               PageJumpType.firstPage);
         },
         onNextArticle: () {
+          clearSpCachePageIndex();
           print("重置222---$chapterIndex");
           chapterIndex = chapterIndex++;
           resetContent(this.widget.novelId, currentArticle.nextArticleId,
               currentArticle.nextLink, PageJumpType.firstPage);
         },
         onToggleChapter: (Chapter chapter) {
+          clearSpCachePageIndex();
           chapterIndex = chapter.index;
           print("重置---$chapterIndex");
           resetContent(this.widget.novelId, chapter.id, chapter.linkUrl,
               PageJumpType.firstPage);
         },
         onEditSetting: () {
-          resetContent(this.widget.novelId, currentArticle.currentIndex,
-              currentArticle.currentLink, PageJumpType.firstPage);
+          // clearSpCachePageIndex();
+          // Navigator.pushNamedAndRemoveUntil(context, '/page_c', ModalRoute.withName('/'));
+          Navigator.of(context).pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => ReaderScene(
+                      novelId: this.widget.novelId,
+                      isOlineRedaer: this.widget.isOlineRedaer,
+                      catalogUrl: this.widget.catalogUrl,
+                      sourceType: this.widget.sourceType)));
+          // resetContent(
+          //   this.widget.novelId,
+          //   currentArticle.currentIndex,
+          //   currentArticle.currentLink,
+          //   PageJumpType.firstPage,
+          // );
         });
+  }
+
+  //重置当前缓存的页数，重置为0 第一页
+  clearSpCachePageIndex() {
+    print("重置缓存的页数---------------");
+    var idStr = this.widget.novelId.toString();
+    SpUtils.setInt(Config.spCachePageIndex + idStr, 0);
   }
 
   hideMenu() {

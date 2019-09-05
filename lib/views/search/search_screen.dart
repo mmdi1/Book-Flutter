@@ -305,7 +305,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
   }
 
   addBookshelfApi(index) async {
-    ProgressDialog.showLoadingDialog(context, "正在加入书桌...");
+    ProgressDialog.showLoadingDialog(context, "解析目录中...");
     var book = this.listBooks[index];
     book.id = null;
     book.isCache = 1;
@@ -333,14 +333,13 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
     listCatalogJson =
         listCatalogJson.substring(0, listCatalogJson.lastIndexOf(",")) + "]}";
     cf.writeAsStringSync(listCatalogJson);
-
     print("============${book.toJson()}");
     if (book.id != null && book.id > 0) {
       Toast.show("已加入书桌");
       // 获取存储路径
       CacheNetBookCore.splitTxtByStream(book, path);
     } else {
-      Toast.show("加入失败");
+      Toast.show("加入失败，请检查网络");
     }
     Navigator.pop(context);
   }

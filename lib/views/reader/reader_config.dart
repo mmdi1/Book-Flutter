@@ -23,7 +23,7 @@ class ReaderConfig {
   //横屏竖屏切换
   Future<bool> isVertical() async {
     var cacheData = await SpUtils.getBool(Config.spCacheVertical);
-    if (cacheData == null) {
+    if (cacheData != null) {
       return cacheData;
     }
     return _isVertical;

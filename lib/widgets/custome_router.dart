@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 class CustomRoute extends PageRouteBuilder {
   final Widget widget;
   final int type;
-  CustomRoute({this.widget, this.type})
+  final int direction; //上下左右  1234
+  CustomRoute({this.widget, this.type, this.direction})
       : super(
           transitionDuration: const Duration(milliseconds: 500),
           pageBuilder: (BuildContext context, Animation<double> animation,
@@ -45,12 +46,23 @@ class CustomRoute extends PageRouteBuilder {
 //                child: child,
 //              ),
 //            );
+            double indexA = 1.0;
+            double indexB = 0;
+            if (direction == 4) {
+              //右进
+              indexA = 1.0;
+              indexB = 0;
+            } else if (direction == 2) {
+              //下进
+              indexA = 0;
+              indexB = 1.0;
+            }
             //幻灯片路由
             return SlideTransition(
-              position:
-                  Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset(0.0, 0.0))
-                      .animate(CurvedAnimation(
-                          parent: animation, curve: Curves.fastOutSlowIn)),
+              position: Tween<Offset>(
+                      begin: Offset(indexA, indexB), end: Offset(0.0, 0.0))
+                  .animate(CurvedAnimation(
+                      parent: animation, curve: Curves.fastOutSlowIn)),
               child: child,
             );
           },
