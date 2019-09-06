@@ -102,7 +102,6 @@ class BookApi {
     db.close();
     return result;
   }
-
   // 根据ID删除书籍信息
   static Future<int> delete(int id) async {
     var con = new LocalDb();
