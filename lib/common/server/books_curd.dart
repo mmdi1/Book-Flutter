@@ -12,6 +12,61 @@ class BookApi {
     return book;
   }
 
+  static Future<Book> getBook(int id) async {
+    var con = new LocalDb();
+    var db = await con.getConn();
+    List<Map> maps = await db.query("books",
+        columns: [
+          "id",
+          "name",
+          "status",
+          "imgUrl",
+          "info",
+          "wordCount",
+          "importUrl",
+          "author",
+          "isCache",
+          "catalogUrl",
+          "isCacheIndex",
+          "isCacheArticleId",
+          "sourceType"
+        ],
+        where: "id = ?",
+        whereArgs: [id]);
+    if (maps.length > 0) {
+      return Book.fromJson(maps.first);
+    }
+    db.close();
+    return null;
+  }
+
+  static Future<Book> getBookByAnyIsCache() async {
+    var con = new LocalDb();
+    var db = await con.getConn();
+    List<Map> maps = await db.query("books",
+        columns: [
+          "id",
+          "name",
+          "status",
+          "imgUrl",
+          "info",
+          "wordCount",
+          "importUrl",
+          "author",
+          "isCache",
+          "catalogUrl",
+          "isCacheIndex",
+          "isCacheArticleId",
+          "sourceType"
+        ],
+        where: "isCache = ?",
+        whereArgs: [1]);
+    if (maps.length > 0) {
+      return Book.fromJson(maps.first);
+    }
+    db.close();
+    return null;
+  }
   static Future<List<Book>> getBooks() async {
     var list = new List<Book>();
     var con = new LocalDb();
@@ -47,6 +102,7 @@ class BookApi {
     db.close();
     return result;
   }
+
   // 根据ID删除书籍信息
   static Future<int> delete(int id) async {
     var con = new LocalDb();

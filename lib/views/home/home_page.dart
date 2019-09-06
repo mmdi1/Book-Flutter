@@ -52,7 +52,6 @@ class HomePageWidgetState extends State<HomePageWidget> {
     bookItems = [];
     // bookItems.add(addItemView());
     books.forEach((book) {
-      print("forEach------book:${book.toJson()}");
       bookItems.add(BookshelfItemView(book: book, cb: bottomCallback));
     });
     print("书:${books.length},${bookItems.length / 9}");

@@ -52,7 +52,8 @@ class CacheNetBookCore {
         book.isCacheArticleId = index;
         book.isCacheIndex = index;
         if (index == chaptersResponse.length - 1) {
-          book.isCacheIndex = 2;
+          //如果缓存的章节到最后一章，则完成当前正本缓存
+          book.isCache= 2;
         }
         print("更新书籍信息:${book.toJson()}");
         await BookApi.update(book);

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:thief_book_flutter/common/utils/screen.dart';
 
 import 'package:thief_book_flutter/models/chapter.dart';
 
@@ -82,9 +83,13 @@ class _ReaderCatalogState extends State<ReaderCatalog> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 50, left: 20, right: 20),
+      margin: EdgeInsets.only(
+          top: Screen.navigationBarHeight,
+          bottom: Screen.bottomSafeHeight,
+          left: 30,
+          right: 30),
       color: Colors.grey,
-      height: 600,
+      height: Screen.height - 350,
       padding: EdgeInsets.all(3.0),
       child: new Column(children: <Widget>[
         Padding(

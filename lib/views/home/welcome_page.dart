@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/utils/db_utils.dart';
 import 'package:thief_book_flutter/common/utils/sp_uitls.dart';
@@ -14,6 +15,7 @@ import 'package:thief_book_flutter/common/utils/test.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
 import 'package:redux/redux.dart';
+import 'package:thief_book_flutter/views/home/home_core.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -42,6 +44,7 @@ class SplashScreenState extends State<SplashScreen> {
           _timer.cancel();
           Navigator.of(context).push(CustomFindInRoute(
               BottomNavigationWidget(this.widget.store), 2000));
+          initApp();
         } else {
           setState(() {});
         }
@@ -117,6 +120,12 @@ class SplashScreenState extends State<SplashScreen> {
   void _setHasSkip() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool("hasSkip", true);
+  }
+
+  initApp() async {
+    //自动续存
+    var path = await Config.getLocalFilePath(context);
+    // HomeApi.cacheBook(path);
   }
 
   @override

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
+import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/utils/request.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/sp_uitls.dart';
@@ -26,7 +27,7 @@ class ReaderScene extends StatefulWidget {
   final int novelId;
   final String sourceType; //来源
   final String catalogUrl;
-  final isOlineRedaer; //在线阅读?
+  bool isOlineRedaer; //在线阅读?
   ReaderScene(
       {this.novelId, this.sourceType, this.isOlineRedaer, this.catalogUrl});
   @override
@@ -76,7 +77,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   @override
   void dispose() {
     if (pageController != null) {
-      print("释放pageController");
+      print("释放阅读页pageController");
       pageController.dispose();
     }
     routeObserver.unsubscribe(this);
@@ -166,13 +167,11 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     print("重置章节:---------------------------$jumpType");
     var fontSize = await ReaderConfig.instance.getFontSize();
     if (fontSize != null) {
-      print("fontszie:$fontSize");
       spFontSize = fontSize;
     }
     var spIsVertical = await ReaderConfig.instance.isVertical();
     print("默认横屏竖屏:$isVertical,历史竖屏:$spIsVertical");
     if (spIsVertical != null) {
-      print("横屏竖屏缓存:$spIsVertical");
       isVertical = spIsVertical;
     }
     currentArticle = await fetchArticle(articleId: articleId, linkUrl: linkUrl);
@@ -220,7 +219,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       } else {
         var idStr = this.widget.novelId.toString();
         exPageIndex = await SpUtils.getInt(Config.spCachePageIndex + idStr);
-        print("已存在的页数:$exPageIndex");
+        print("缓存已存在的页数:$exPageIndex");
         if (exPageIndex != null) {
           print("取出缓存页数:$exPageIndex");
           pageIndex = exPageIndex;
@@ -293,9 +292,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     }
     pageController.jumpToPage(preArticle.pageCount + pageIndex);
     isLoading = false;
-    print('33333333');
     setState(() {
-      print('33333333--------------${preArticle.pageCount + pageIndex}');
     });
   }
 
@@ -352,7 +349,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   onPageChanged(int index) {
-    print("onPageChanged:$index");
+    print("换页触发onPageChanged");
     var page = index - (preArticle != null ? preArticle.pageCount : 0);
     if (page < currentArticle.pageCount && page >= 0) {
       setState(() {
@@ -430,7 +427,6 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     int itemCount = (preArticle != null ? preArticle.pageCount : 0) +
         currentArticle.pageCount +
         (nextArticle != null ? nextArticle.pageCount : 0);
-    print("===================$isVertical");
     return PageView.builder(
       scrollDirection: isVertical ? Axis.horizontal : Axis.vertical,
       physics: BouncingScrollPhysics(),
@@ -454,7 +450,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         onPreviousArticle: () {
           clearSpCachePageIndex();
           chapterIndex = chapterIndex--;
-          print("重置111---$chapterIndex");
+          print("点击上一章重置章节索引:$chapterIndex");
           chapterIndex = resetContent(
               this.widget.novelId,
               currentArticle.preArticleId,
@@ -463,15 +459,23 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         },
         onNextArticle: () {
           clearSpCachePageIndex();
-          print("重置222---$chapterIndex");
+          print("点击下一章重置章节索引:$chapterIndex");
           chapterIndex = chapterIndex++;
           resetContent(this.widget.novelId, currentArticle.nextArticleId,
               currentArticle.nextLink, PageJumpType.firstPage);
         },
-        onToggleChapter: (Chapter chapter) {
+        onToggleChapter: (Chapter chapter) async {
           clearSpCachePageIndex();
           chapterIndex = chapter.index;
-          print("重置---$chapterIndex");
+          print("拖动进度条充值章节索引:$chapterIndex");
+          var book = await BookApi.getBook(this.widget.novelId);
+          print("拖动进度条获取到的book已缓存的索引:${book.isCacheIndex}");
+          if (book.isCacheIndex < chapter.index) {
+            //如果选中的索引越过缓存的索引则切换为在线阅读模式
+            this.widget.isOlineRedaer = true;
+          } else {
+            this.widget.isOlineRedaer = false;
+          }
           resetContent(this.widget.novelId, chapter.id, chapter.linkUrl,
               PageJumpType.firstPage);
         },
@@ -498,7 +502,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   //重置当前缓存的页数，重置为0 第一页
   clearSpCachePageIndex() {
-    print("重置缓存的页数---------------");
+    print("清空已缓存的页数！");
     var idStr = this.widget.novelId.toString();
     SpUtils.setInt(Config.spCachePageIndex + idStr, 0);
   }

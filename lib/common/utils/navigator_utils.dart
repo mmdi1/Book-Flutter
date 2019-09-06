@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:thief_book_flutter/common/config/config.dart';
+import 'package:thief_book_flutter/common/utils/sp_uitls.dart';
 import 'package:thief_book_flutter/models/book.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_page.dart';
@@ -14,12 +16,20 @@ class AppNavigator {
     );
   }
 
-  static pushNovelDetail(BuildContext context, Book book) {
+  static pushNovelDetail(BuildContext context, Book book) async {
+    var arIndex =
+        await SpUtils.getInt(Config.spCacheArticleId + book.id.toString());
+    var isOlineR = book.isCache == 0 ? true : false;
+    if (arIndex != null) {
+      isOlineR = book.isCacheArticleId < arIndex;
+    }
+    print(
+        "当前小说缓存的章节id:$arIndex,已缓存至章节:${book.isCacheArticleId},是否在线阅读:$isOlineR");
     AppNavigator.push(
         context,
         ReaderScene(
           novelId: book.id,
-          isOlineRedaer: book.isCache < 1,
+          isOlineRedaer: isOlineR,
           catalogUrl: book.catalogUrl,
           sourceType: book.sourceType,
         ));

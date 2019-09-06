@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/models/book.dart';
+import 'package:thief_book_flutter/views/book/book_detail_core.dart';
 import 'package:thief_book_flutter/views/book/cache_book_core.dart';
 import 'package:thief_book_flutter/views/reader/reader_screen.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
@@ -18,7 +19,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   @override
   void initState() {
     // RedaerRequest.getAixdzsArticle("/168/168363/p1.html");
-
+    // initScore();
     super.initState();
   }
 
@@ -27,7 +28,9 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   void dispose() {
     super.dispose();
   }
-
+  initScore()async{
+    BookDetailApi.getScoreByQiDian();
+  }
   cacheNetBook() async {
     // 获取存储路径
     var path = await Config.getLocalFilePath(context);
@@ -50,63 +53,25 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    print(this.widget.book.toJson());
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: <Widget>[
-          buildTopView(),
-          buildNetScoreView(),
-          // Text("介绍：" + (this.widget.book.info.trim())),
-          // ButtonBar(
-          //   children: <Widget>[
-          //     RaisedButton(
-          //       child: new Text("缓存",
-          //           style: new TextStyle(fontSize: 20),
-          //           maxLines: 1,
-          //           overflow: TextOverflow.ellipsis),
-          //       onPressed: () {
-          //         print("缓存");
-          //         cacheNetBook();
-          //       },
-          //     ),
-          //     RaisedButton(
-          //       child: new Text("在线阅读",
-          //           style: new TextStyle(fontSize: 20),
-          //           maxLines: 1,
-          //           overflow: TextOverflow.ellipsis),
-          //       onPressed: () {
-          //         goToRederScreen();
-          //       },
-          //     ),
-          //   ],
-          // ),
-        ],
-      ),
-    );
-  }
-
   Widget buildTopView() {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
-          // border: Border.all(
-          //     style: BorderStyle.solid, width: 3, color: Colors.black)
-          // border: BorderDirectional(
-          //   start: new BorderSide(color: Colors.black, width:3 ),
-          //   top: new BorderSide(color: Colors.black, width: 3),
-          //   end: new BorderSide(color: Colors.black, width: 3),
-          // ),
-          image: new DecorationImage(
-            fit: BoxFit.fitHeight,
-            image: CachedNetworkImageProvider(
-              "https://img.51miz.com/Element/00/81/16/70/d76fb54b_E811670_5867bd35.jpg!/quality/90/unsharp/true/compress/true/format/jpg",
-              errorListener: () {},
-            ),
+        color: Colors.white,
+        // border: Border.all(
+        //     style: BorderStyle.solid, width: 3, color: Colors.black)
+        // border: BorderDirectional(
+        //   start: new BorderSide(color: Colors.black, width:3 ),
+        //   top: new BorderSide(color: Colors.black, width: 3),
+        //   end: new BorderSide(color: Colors.black, width: 3),
+        // ),
+        image: new DecorationImage(
+          fit: BoxFit.fitHeight,
+          image: CachedNetworkImageProvider(
+            "https://img.51miz.com/Element/00/81/16/70/d76fb54b_E811670_5867bd35.jpg!/quality/90/unsharp/true/compress/true/format/jpg",
+            errorListener: () {},
           ),
-          ),
+        ),
+      ),
       height: 200,
       child: Row(
         children: <Widget>[
@@ -162,12 +127,13 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
 
   Widget buildNetScoreView() {
     return Container(
-      // decoration: BoxDecoration(
-      //     color: Colors.white,
-      //     border: Border.all(
-      //         style: BorderStyle.solid, width: 3, color: Colors.black)),
-      // border: BorderDirectional(
-      //     bottom: new BorderSide(color: Colors.black, width: 2))),
+      decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     border: Border.all(
+          //         style: BorderStyle.solid, width: 3, color: Colors.black)),
+          border: BorderDirectional(
+              bottom: new BorderSide(color: Colors.grey[100], width: 2),
+              top: new BorderSide(color: Colors.grey[100], width: 2))),
       padding: EdgeInsets.only(left: 20, top: 20, bottom: 20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
           Widget>[
@@ -236,6 +202,49 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
               style: TextStyle(fontSize: heightAndFontSize)),
         )
       ],
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
+    print(this.widget.book.toJson());
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: <Widget>[
+          buildTopView(),
+          buildNetScoreView(),
+          FlatButton(
+            onPressed: (){
+              Navigator.pop(context);
+            },
+            child: Text("返回"),
+          ),
+          // Text("介绍：" + (this.widget.book.info.trim())),
+          // ButtonBar(
+          //   children: <Widget>[
+          //     RaisedButton(
+          //       child: new Text("缓存",
+          //           style: new TextStyle(fontSize: 20),
+          //           maxLines: 1,
+          //           overflow: TextOverflow.ellipsis),
+          //       onPressed: () {
+          //         print("缓存");
+          //         cacheNetBook();
+          //       },
+          //     ),
+          //     RaisedButton(
+          //       child: new Text("在线阅读",
+          //           style: new TextStyle(fontSize: 20),
+          //           maxLines: 1,
+          //           overflow: TextOverflow.ellipsis),
+          //       onPressed: () {
+          //         goToRederScreen();
+          //       },
+          //     ),
+          //   ],
+          // ),
+        ],
+      ),
     );
   }
 }
