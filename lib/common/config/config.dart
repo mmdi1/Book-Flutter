@@ -30,9 +30,6 @@ class Config {
 
   //获取文件路径
   static Future<String> getLocalFilePath(BuildContext context) async {
-    if (filePath != "") {
-      return filePath;
-    }
     if (Theme.of(context).platform == TargetPlatform.android) {
       var path = await getExternalStorageDirectory();
       return path.path;
@@ -41,7 +38,6 @@ class Config {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String dir = appDocDir.path;
     var path = dir + "/files";
-    filePath = path;
     return path;
   }
 }

@@ -260,9 +260,11 @@ class HomePageWidgetState extends State<HomePageWidget> {
     );
   }
 
+  double menuWidth = 100;
   Widget buildMenu() {
     return Container(
-      width: 60,
+      padding: EdgeInsets.all(5),
+      width: menuWidth,
       decoration: new BoxDecoration(
           color: Colors.white,
           border: new Border.all(
@@ -270,7 +272,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
             width: 1,
           )),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(Icons.settings),
           Text("设置",
@@ -284,7 +286,8 @@ class HomePageWidgetState extends State<HomePageWidget> {
 
   Widget buildMenuRadius(BorderRadiusGeometry borderRadius) {
     return Container(
-      width: 60,
+      width: menuWidth,
+      padding: EdgeInsets.all(5),
       decoration: new BoxDecoration(
           color: Colors.white,
           border: new Border.all(
@@ -293,7 +296,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
           ),
           borderRadius: borderRadius),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(Icons.settings),
           Text("设置",

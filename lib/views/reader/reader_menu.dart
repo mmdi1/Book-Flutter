@@ -489,7 +489,7 @@ class _ReaderMenuState extends State<ReaderMenu>
         buildBottomItem(
             'list', 'assets/images/read_icon_catalog.png', Icons.list),
         // buildBottomItem('亮度', 'assets/images/read_icon_brightness.png'),
-        buildBottomItem('progress', 'assets/images/read_icon_setting.png',
+        buildBottomItem('progress', 'assets/icons/zj.svg',
             Icons.all_inclusive),
         buildBottomItem(
             'font', 'assets/images/read_icon_font.png', Icons.format_size),

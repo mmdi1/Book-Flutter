@@ -316,20 +316,20 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
         await RedaerRequest.getCotalogByOline(book.catalogUrl, book.sourceType);
     var listCatalogJson = '{"data":[';
     var i = 0;
-    listCatalog.forEach((s) { 
+    listCatalog.forEach((s) {
       var cJson = new Catalog(s.id, s.title, s.linkUrl, i);
       i++;
       listCatalogJson += jsonEncode(cJson) + ",";
     });
     var path = await Config.getLocalFilePath(context);
     print("加入书桌的地址:${path + "/" + book.id.toString()}");
-    Directory bf = new Directory(path + "/" + book.id.toString());
-    if (!bf.existsSync()) {
-      bf.createSync();
+    Directory bfb = new Directory(path + "/" + book.id.toString());
+    if (!bfb.existsSync()) {
+      bfb.createSync(recursive: true);
     }
     File cf = new File(path + "/" + book.id.toString() + "/catalog.json");
     print("写入地址:${cf.path}");
-    cf.createSync();
+    cf.createSync(recursive: true);
     listCatalogJson =
         listCatalogJson.substring(0, listCatalogJson.lastIndexOf(",")) + "]}";
     cf.writeAsStringSync(listCatalogJson);

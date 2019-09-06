@@ -55,61 +55,187 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     print(this.widget.book.toJson());
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(this.widget.book.name),
-      ),
       body: Column(
         children: <Widget>[
-          Container(
-            height: 150,
-            child: Row(
-              children: <Widget>[
-                Image(
-                  width: 80,
-                  image: CachedNetworkImageProvider(this.widget.book.imgUrl,
-                      errorListener: () {
-                    print("没有找到图片");
-                  }),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(this.widget.book.name),
-                    Text(this.widget.book.wordCount),
-                    Text(this.widget.book.author),
-                    Text("是否完结：" + this.widget.book.status),
-                  ],
-                ),
-              ],
+          buildTopView(),
+          buildNetScoreView(),
+          // Text("介绍：" + (this.widget.book.info.trim())),
+          // ButtonBar(
+          //   children: <Widget>[
+          //     RaisedButton(
+          //       child: new Text("缓存",
+          //           style: new TextStyle(fontSize: 20),
+          //           maxLines: 1,
+          //           overflow: TextOverflow.ellipsis),
+          //       onPressed: () {
+          //         print("缓存");
+          //         cacheNetBook();
+          //       },
+          //     ),
+          //     RaisedButton(
+          //       child: new Text("在线阅读",
+          //           style: new TextStyle(fontSize: 20),
+          //           maxLines: 1,
+          //           overflow: TextOverflow.ellipsis),
+          //       onPressed: () {
+          //         goToRederScreen();
+          //       },
+          //     ),
+          //   ],
+          // ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTopView() {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          // border: Border.all(
+          //     style: BorderStyle.solid, width: 3, color: Colors.black)
+          // border: BorderDirectional(
+          //   start: new BorderSide(color: Colors.black, width:3 ),
+          //   top: new BorderSide(color: Colors.black, width: 3),
+          //   end: new BorderSide(color: Colors.black, width: 3),
+          // ),
+          image: new DecorationImage(
+            fit: BoxFit.fitHeight,
+            image: CachedNetworkImageProvider(
+              "https://img.51miz.com/Element/00/81/16/70/d76fb54b_E811670_5867bd35.jpg!/quality/90/unsharp/true/compress/true/format/jpg",
+              errorListener: () {},
             ),
           ),
-          Text("介绍：" + (this.widget.book.info.trim())),
-          ButtonBar(
+          ),
+      height: 200,
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: 20,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              RaisedButton(
-                child: new Text("缓存",
-                    style: new TextStyle(fontSize: 20),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                onPressed: () {
-                  print("缓存");
-                  cacheNetBook();
-                },
+              SizedBox(height: 30),
+              Text(this.widget.book.name,
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24)),
+              SizedBox(height: 8),
+              Text(this.widget.book.author),
+              SizedBox(height: 8),
+              Text(this.widget.book.status +
+                  "   " +
+                  "共2918章" +
+                  "  " +
+                  this.widget.book.wordCount.substring(3)),
+            ],
+          ),
+          Container(
+            height: 85,
+            margin: EdgeInsets.only(top: 35, left: 50),
+            decoration: BoxDecoration(
+              border: Border.all(
+                  width: 1, color: Colors.black, style: BorderStyle.solid),
+            ),
+          ),
+          SizedBox(width: 50),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 30),
+              Text(
+                "蒲牢评分",
+                style: TextStyle(fontSize: 16),
               ),
-              RaisedButton(
-                child: new Text("在线阅读",
-                    style: new TextStyle(fontSize: 20),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                onPressed: () {
-                  goToRederScreen();
-                },
-              ),
+              SizedBox(height: 10),
+              Text("97.8",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+              SizedBox(height: 8),
+              Text("★★★★★", style: TextStyle(color: Colors.orange)),
             ],
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildNetScoreView() {
+    return Container(
+      // decoration: BoxDecoration(
+      //     color: Colors.white,
+      //     border: Border.all(
+      //         style: BorderStyle.solid, width: 3, color: Colors.black)),
+      // border: BorderDirectional(
+      //     bottom: new BorderSide(color: Colors.black, width: 2))),
+      padding: EdgeInsets.only(left: 20, top: 20, bottom: 20),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+          Widget>[
+        Row(children: <Widget>[
+          Text("豆瓣评分",
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18))
+        ]),
+        SizedBox(height: 8),
+        Row(children: <Widget>[
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
+            Text("9.8",
+                style: TextStyle(fontSize: 34, fontWeight: FontWeight.w600)),
+            SizedBox(height: 8),
+            Text("★★★★★", style: TextStyle(color: Colors.orange, fontSize: 14)),
+          ]),
+          SizedBox(width: 100),
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
+            buildRowStarView(5, 78),
+            buildRowStarView(4, 6),
+            buildRowStarView(3, 10),
+            buildRowStarView(2, 4),
+            buildRowStarView(1, 2),
+            SizedBox(height: 8),
+          ]),
+        ]),
+        Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                child: Text("123216评分", style: TextStyle(fontSize: 10)),
+                margin: EdgeInsets.only(right: 40),
+              ),
+            ])
+      ]),
+    );
+  }
+
+  Widget buildRowStarView(int n, double rate) {
+    //rate 星级占比
+    var txt = "";
+    for (var i = 0; i < n; i++) {
+      txt += "★";
+    }
+    double heightAndFontSize = 9;
+    return Row(
+      children: <Widget>[
+        Text(txt,
+            style:
+                TextStyle(color: Colors.orange, fontSize: heightAndFontSize)),
+        SizedBox(width: 2),
+        Container(
+          height: heightAndFontSize,
+          margin: EdgeInsets.all(0.5),
+          width: 120,
+          color: Colors.grey[100],
+          child: Container(
+            margin: EdgeInsets.only(right: (120 - (rate * 1.2))),
+            color: Colors.grey,
+          ),
+        ),
+        SizedBox(width: 2),
+        SizedBox(
+          width: 30,
+          child: Text(rate.toString() + "%",
+              style: TextStyle(fontSize: heightAndFontSize)),
+        )
+      ],
     );
   }
 }
