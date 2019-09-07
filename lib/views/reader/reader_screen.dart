@@ -14,6 +14,7 @@ import 'package:thief_book_flutter/main.dart';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/chapter.dart';
 import 'package:thief_book_flutter/views/reader/reader_source_core.dart';
+import 'package:thief_book_flutter/widgets/progress_dialog.dart';
 import 'dart:async';
 import 'reader_utils.dart';
 import 'reader_config.dart';
@@ -41,6 +42,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   bool isMenuVisiable = false;
   PageController pageController;
   bool isLoading = false;
+  bool idLoadingOline = false;
   double topSafeHeight = 0;
   int chapterIndex = 0;
   Article preArticle;
@@ -164,6 +166,14 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   resetContent(
       int novelId, int articleId, String linkUrl, PageJumpType jumpType) async {
+    var isExists = await Request.isExistsCacheByArticle(
+        basePath, this.widget.novelId.toString(), articleId.toString());
+    print("当前章节是否存在缓存:$isExists,id:$articleId");
+    //是否在线阅读 this.widget.isOlineRedaer
+    if (!isExists) {
+      idLoadingOline = true;
+      ProgressDialog.showLoadingDialog(context, "在线加载中..");
+    }
     print("重置章节:---------------------------$jumpType");
     var fontSize = await ReaderConfig.instance.getFontSize();
     if (fontSize != null) {
@@ -229,7 +239,12 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       pageController = PageController(keepPage: false, initialPage: pageIndex);
       pageController.addListener(onScroll);
     }
-    setState(() {});
+    setState(() {
+      if (idLoadingOline) {
+        idLoadingOline = false;
+        Navigator.pop(context);
+      }
+    });
   }
 
   onScroll() {
@@ -292,8 +307,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     }
     pageController.jumpToPage(preArticle.pageCount + pageIndex);
     isLoading = false;
-    setState(() {
-    });
+    setState(() {});
   }
 
   fetchNextArticle({int articleId, String linkUrl}) async {
@@ -308,8 +322,12 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   Future<Article> fetchArticle({int articleId, String linkUrl}) async {
     var article = new Article();
-    //是否在线阅读
-    if (this.widget.isOlineRedaer) {
+
+    var isExists = await Request.isExistsCacheByArticle(
+        basePath, this.widget.novelId.toString(), articleId.toString());
+    print("当前章节是否存在缓存:$isExists,id:$articleId");
+    //是否在线阅读 this.widget.isOlineRedaer
+    if (!isExists) {
       article = await RedaerRequest.getArticleByOline(
           linkUrl: linkUrl, sourceType: this.widget.sourceType);
     } else {
@@ -450,7 +468,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
         onPreviousArticle: () {
           clearSpCachePageIndex();
           chapterIndex = chapterIndex--;
-          print("点击上一章重置章节索引:$chapterIndex");
+          print("点���上一章重置章节索引:$chapterIndex");
           chapterIndex = resetContent(
               this.widget.novelId,
               currentArticle.preArticleId,
@@ -476,7 +494,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
           } else {
             this.widget.isOlineRedaer = false;
           }
-          resetContent(this.widget.novelId, chapter.id, chapter.linkUrl,
+          resetContent(this.widget.novelId, chapter.index + 1, chapter.linkUrl,
               PageJumpType.firstPage);
         },
         onEditSetting: () {

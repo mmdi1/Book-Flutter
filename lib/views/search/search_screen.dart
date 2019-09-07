@@ -307,11 +307,6 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
   addBookshelfApi(index) async {
     ProgressDialog.showLoadingDialog(context, "解析目录中...");
     var book = this.listBooks[index];
-    book.id = null;
-    book.isCache = 1;
-    book.isCacheIndex = 0;
-    book.isCacheArticleId = 0;
-    book = await BookApi.insertBook(book);
     var listCatalog =
         await RedaerRequest.getCotalogByOline(book.catalogUrl, book.sourceType);
     var listCatalogJson = '{"data":[';
@@ -321,6 +316,14 @@ class SearchSreenWidgetState extends State<SearchSreenWidget> {
       i++;
       listCatalogJson += jsonEncode(cJson) + ",";
     });
+    book.catalogNum = i; //记录章节总数
+    book.id = null;
+    book.isCache = 1;
+    book.isCacheIndex = 0;
+    book.isCacheArticleId = 0;
+    print("总章节数:$i,,,,,${book.toJson()}");
+    book = await BookApi.insertBook(book);
+
     var path = await Config.getLocalFilePath(context);
     print("加入书桌的地址:${path + "/" + book.id.toString()}");
     Directory bfb = new Directory(path + "/" + book.id.toString());

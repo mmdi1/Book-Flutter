@@ -125,16 +125,19 @@ class _ReaderMenuState extends State<ReaderMenu>
                 child: Image.asset('assets/images/pub_back_gray.png'),
               ),
             ),
-            Expanded(child: Container()),
-            Container(
-              width: 44,
-              child: GestureDetector(
-                onTap: () {
-                  Toast.show("功能暂未开放~");
-                },
-                child: Image.asset('assets/images/read_icon_voice.png'),
-              ),
-            ),
+            Expanded(
+                child: Text(
+                    this.widget.chapters[this.widget.articleIndex].title,
+                    textAlign: TextAlign.center)),
+            // Container(
+            //   width: 44,
+            //   child: GestureDetector(
+            //     onTap: () {
+            //       Toast.show("功能暂未开放~");
+            //     },
+            //     child: Image.asset('assets/images/read_icon_voice.png'),
+            //   ),
+            // ),
             Container(
               width: 44,
               child: GestureDetector(
@@ -215,9 +218,14 @@ class _ReaderMenuState extends State<ReaderMenu>
           GestureDetector(
             onTap: previousArticle,
             child: Container(
-              padding: EdgeInsets.all(20),
-              child:
-                  Image.asset('assets/images/read_icon_chapter_previous.png'),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 1, style: BorderStyle.solid, color: Colors.black)),
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.all(2),
+              child: Text("上一章",
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+              // Image.asset('assets/images/read_icon_chapter_previous.png'),
             ),
           ),
           Expanded(
@@ -240,8 +248,14 @@ class _ReaderMenuState extends State<ReaderMenu>
           GestureDetector(
             onTap: nextArticle,
             child: Container(
-              padding: EdgeInsets.all(20),
-              child: Image.asset('assets/images/read_icon_chapter_next.png'),
+              decoration: BoxDecoration(
+                  border: Border.all(
+                      width: 1, style: BorderStyle.solid, color: Colors.black)),
+              margin: EdgeInsets.all(20),
+              padding: EdgeInsets.all(2),
+              child: Text("下一章",
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+              // Image.asset('assets/images/read_icon_chapter_next.png'),
             ),
           )
         ],
@@ -489,8 +503,7 @@ class _ReaderMenuState extends State<ReaderMenu>
         buildBottomItem(
             'list', 'assets/images/read_icon_catalog.png', Icons.list),
         // buildBottomItem('亮度', 'assets/images/read_icon_brightness.png'),
-        buildBottomItem('progress', 'assets/icons/zj.svg',
-            Icons.all_inclusive),
+        buildBottomItem('progress', 'assets/icons/zj.svg', Icons.all_inclusive),
         buildBottomItem(
             'font', 'assets/images/read_icon_font.png', Icons.format_size),
       ],

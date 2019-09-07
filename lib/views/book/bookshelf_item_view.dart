@@ -19,6 +19,8 @@ class BookshelfItemView extends StatelessWidget {
   BookshelfItemView({this.book, this.cb});
   @override
   Widget build(BuildContext context) {
+    print("----------${book.toJson()}");
+    var downSchedule = (book.isCacheIndex / book.catalogNum).toStringAsFixed(2);
     var width = (Screen.width - 15 * 2 - 24 * 2) / 3;
     return GestureDetector(
       onTap: () {
@@ -35,9 +37,9 @@ class BookshelfItemView extends StatelessWidget {
           children: <Widget>[
             DecoratedBox(
               child: Container(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Image(
                       fit: BoxFit.cover,
@@ -48,6 +50,24 @@ class BookshelfItemView extends StatelessWidget {
                         errorListener: () {
                           print("图片加载错误---${book.imgUrl}");
                         },
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: Container(
+                        color: Colors.black,
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.file_download, size: 14,color: Colors.white,),
+                            Text(
+                              downSchedule + "%",
+                              textAlign: TextAlign.right,
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -62,7 +82,7 @@ class BookshelfItemView extends StatelessWidget {
             SizedBox(height: 10),
             Text(" " + book.name,
                 style: TextStyle(fontSize: 14, color: AppColor.grey),
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis),
             SizedBox(height: 25),
           ],
@@ -85,7 +105,9 @@ class BookshelfItemView extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
-                        context, CustomRoute(direction: 4, widget: BookDetailScreen(book)));
+                        context,
+                        CustomRoute(
+                            direction: 4, widget: BookDetailScreen(book)));
                   },
                 ),
                 ListTile(

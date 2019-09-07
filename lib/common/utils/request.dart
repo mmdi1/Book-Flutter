@@ -30,15 +30,13 @@ class Request {
     var responseJson = json.decode(responseStr);
     return responseJson;
   }
-
+  //判断当前章节是否存在本地缓存
   static Future<bool> isExistsCacheByArticle(
       String path, String bookId, String articleId) async {
     var oldStr = path + '/' + bookId + "/article_" + articleId + ".json";
+    print("地址:$oldStr");
     var file = new File(oldStr);
-    if (!file.existsSync()) {
-      return false;
-    }
-    return true;
+    return file.existsSync();
   }
 
   // static Future<Dynamic> getArticle(String action) async{

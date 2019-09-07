@@ -69,24 +69,9 @@ class DbUtils {
             isCache INTEGER,
             isCacheIndex INTEGER,
             isCacheArticleId INTEGER,
+            catalogNum INTEGER,
             cacheToUrl  TEXT,
             createdAt TEXT
-          )
-          ''');
-      await db.execute('''
-          CREATE TABLE articels (
-            id INTEGER PRIMARY KEY,
-             novelId INTEGER,
-             title TEXT,
-             content BLOB,
-             currentIndex INTEGER,
-             price INTEGER,
-             nextArticleId INTEGER,
-             preArticleId INTEGER,
-             sourceType TEXT,
-             currentLink TEXT,
-             preLink TEXT,
-             nextLink TEXT
           )
           ''');
       await db.close();

@@ -84,6 +84,7 @@ class BookApi {
       "catalogUrl",
       "isCacheIndex",
       "isCacheArticleId",
+      "catalogNum",
       "sourceType"
     ]);
     if (maps.length > 0) {
