@@ -83,7 +83,7 @@ class FlutterReduxApp extends StatelessWidget {
             //   }
             // },
             debugShowCheckedModeBanner: false,
-            title: "鱼叉阅读",
+            title: "墨鱼阅读",
             navigatorObservers: [routeObserver],
             // home: new SearchSreenWidget(),
             // home: new SplashScreen(store: store),

@@ -12,7 +12,7 @@
     <application
         android:usesCleartextTraffic="true"
         android:name="io.flutter.app.FlutterApplication"
-        android:label="鱼叉阅读"
+        android:label="墨鱼阅读"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

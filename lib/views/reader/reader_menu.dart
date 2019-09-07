@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/utils/SQColor.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
@@ -46,6 +47,17 @@ class _ReaderMenuState extends State<ReaderMenu>
   bool isEditSetting = false;
   bool isVertical = true;
   int initFontSize = ReaderConfig.instance.fontSize.toInt();
+  Widget zj_svg =
+      new SvgPicture.asset('assets/icons/zj.svg', width: 26, height: 26);
+  Widget ml_svg =
+      new SvgPicture.asset('assets/icons/ml.svg', width: 15, height: 15);
+  Widget zhjc_svg =
+      new SvgPicture.asset('assets/icons/zh_jc.svg', width: 30, height: 30);
+  Widget zh1_svg =
+      new SvgPicture.asset('assets/icons/zh_1.svg', width: 15, height: 15);
+  Widget zh2_svg =
+      new SvgPicture.asset('assets/icons/zh_2.svg', width: 14, height: 14);
+
   @override
   initState() {
     super.initState();
@@ -302,7 +314,7 @@ class _ReaderMenuState extends State<ReaderMenu>
                   SizedBox(height: 5),
                   Row(
                     children: <Widget>[
-                      buidIconBtnWdget(Icons.font_download, () {
+                      buidIconBtnWdget(zh1_svg, () {
                         if (initFontSize == 12) {
                           Toast.show("已经是最小字号了");
                           return;
@@ -317,7 +329,7 @@ class _ReaderMenuState extends State<ReaderMenu>
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      buidIconBtnWdget(Icons.font_download, () {
+                      buidIconBtnWdget(zh2_svg, () {
                         if (initFontSize == 24) {
                           Toast.show("已经是最大字号了");
                           return;
@@ -368,9 +380,9 @@ class _ReaderMenuState extends State<ReaderMenu>
                   SizedBox(height: 5),
                   Row(
                     children: <Widget>[
-                      buidIconBtnWdget(Icons.format_align_left, () {}),
-                      buidIconBtnWdget(Icons.format_align_justify, () {}),
-                      buidIconBtnWdget(Icons.format_align_right, () {}),
+                      buidIconBtnWdget(Icon(Icons.format_align_left), () {}),
+                      buidIconBtnWdget(Icon(Icons.format_align_justify), () {}),
+                      buidIconBtnWdget(Icon(Icons.format_align_right), () {}),
                     ],
                   ),
                 ],
@@ -388,14 +400,14 @@ class _ReaderMenuState extends State<ReaderMenu>
             color: SQColor.darkGray));
   }
 
-  Widget buidIconBtnWdget(IconData icon, Function _onPressed) {
+  Widget buidIconBtnWdget(Widget icon, Function _onPressed) {
     var widthNum = (Screen.width - 11) / 3;
     var iconWidthNum = widthNum / 3;
     return Container(
       width: iconWidthNum,
       child: IconButton(
         padding: EdgeInsets.all(0),
-        icon: Icon(icon),
+        icon: icon,
         onPressed: _onPressed,
       ),
     );
@@ -500,20 +512,18 @@ class _ReaderMenuState extends State<ReaderMenu>
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        buildBottomItem(
-            'list', 'assets/images/read_icon_catalog.png', Icons.list),
+        buildBottomItem('list', 'assets/images/read_icon_catalog.png', ml_svg),
         // buildBottomItem('亮度', 'assets/images/read_icon_brightness.png'),
-        buildBottomItem('progress', 'assets/icons/zj.svg', Icons.all_inclusive),
-        buildBottomItem(
-            'font', 'assets/images/read_icon_font.png', Icons.format_size),
+        buildBottomItem('progress', 'assets/icons/zj.svg', zj_svg),
+        buildBottomItem('font', 'assets/images/read_icon_font.png', zhjc_svg),
       ],
     );
   }
 
   //底部按钮单个
-  buildBottomItem(String title, String iconImg, IconData icon) {
+  buildBottomItem(String title, String iconImg, Widget icon) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 7),
+      padding: EdgeInsets.symmetric(vertical:4),
       child: GestureDetector(
         onTap: () {
           Toast.show("功能暂未开放");
@@ -521,13 +531,13 @@ class _ReaderMenuState extends State<ReaderMenu>
         child: Column(
           children: <Widget>[
             IconButton(
-              icon: Icon(icon),
+              icon: icon,
               onPressed: () {
                 _onPressedMenu(title);
               },
             ),
 
-            SizedBox(height: 5),
+            // SizedBox(height: 5),
             // Text(title,
             //     style: TextStyle(
             //         fontSize: fixedFontSize(12), color: SQColor.darkGray)),

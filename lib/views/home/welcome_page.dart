@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:archive/archive.dart';
-import 'package:archive/archive_io.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
@@ -10,12 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/utils/db_utils.dart';
-import 'package:thief_book_flutter/common/utils/sp_uitls.dart';
 import 'package:thief_book_flutter/common/utils/test.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
 import 'package:redux/redux.dart';
-import 'package:thief_book_flutter/views/home/home_core.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class SplashScreen extends StatefulWidget {
