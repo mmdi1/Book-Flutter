@@ -21,7 +21,7 @@ class BottomNavigationWidgetState extends State<BottomNavigationWidget>
     with SingleTickerProviderStateMixin {
   StreamController<int> _streamController;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String title = "当前1.70元/总共100.05元";
+  String title = "书桌";
   List<Widget> pages = new List();
   //Tab页的控制器，可以用来定义Tab标签和内容页的坐标
   TabController tabcontroller;

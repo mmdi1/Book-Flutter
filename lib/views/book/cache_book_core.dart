@@ -56,7 +56,6 @@ class CacheNetBookCore {
           book.isCache = 2;
         }
         print("更新书籍信息:${book.toJson()}");
-        book.catalogNum = null;
         await BookApi.update(book);
       } else {
         print("可能因网速原因终止缓存,页面地址:${catalog.linkUrl}");

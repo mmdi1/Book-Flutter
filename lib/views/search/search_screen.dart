@@ -11,6 +11,7 @@ import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
+import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/models/book.dart';
 import 'package:thief_book_flutter/models/catalog.dart';
@@ -100,7 +101,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
     // await Future.delayed(const Duration(milliseconds: 6000), () {});
     setState(() {
       isLoadingData = false;
-       controller.reverse();
+      controller.reverse();
     });
   }
 
@@ -123,7 +124,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
                         alignment: Alignment.center,
                         //动画控制器
                         turns: controller,
-                        //将要执行动画的子view 
+                        //将要执行动画的子view
                         child: Icon(Icons.autorenew)),
                     padding: EdgeInsets.only(bottom: 10, right: 10),
                   )
@@ -189,7 +190,6 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
 
   Widget contentView(int index) {
     return Container(
-      color: Colors.white,
       alignment: Alignment.centerLeft,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +207,6 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
                   image: CachedNetworkImageProvider(
                     listBooks[index].imgUrl,
                     errorListener: () {
-                      print("图片加载错误---$index");
                     },
                   ),
                 ),
@@ -237,6 +236,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
             },
           ),
           Container(
+            width: Screen.width - 165,
             padding: EdgeInsets.only(left: 15),
             decoration: new BoxDecoration(
               boxShadow: [
@@ -256,52 +256,62 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        SizedBox(height: 5),
         prefix1.Text(
           listBooks[index].name,
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
-        Padding(padding: EdgeInsets.all(5)),
+        SizedBox(height: 5),
         // prefix1.Text(listBooks[index].wordCount),
         prefix1.Text(
           listBooks[index].author,
           style: TextStyle(color: AppColor.grey),
         ),
-        Padding(padding: EdgeInsets.all(5)),
+        SizedBox(height: 5),
         prefix1.Text(
           "是否完结：" + listBooks[index].status,
           style: TextStyle(color: AppColor.grey),
         ),
-        Padding(padding: EdgeInsets.all(5)),
+        SizedBox(height: 5),
         prefix1.Text(
           "来源：" + listBooks[index].sourceType,
           style: TextStyle(color: AppColor.grey),
         ),
-        Row(
-          children: <Widget>[
-            RaisedButton(
-              color: Colors.white,
-              child: Text(
-                '加入书桌',
-              ),
-              onPressed: () {
-                print("加入书桌");
-                addBookshelfApi(index);
-              },
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 5),
-            ),
-            RaisedButton(
-              color: Colors.white,
-              child: Text(
-                '开始阅读',
-              ),
-              onPressed: () {
-                goToRederScreen(index);
-              },
-            ),
-          ],
+        SizedBox(height: 5),
+        prefix1.Text(
+          "介绍：" + listBooks[index].info.trim(),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: AppColor.grey),
         ),
+        SizedBox(height: 5),
+
+        // Row(
+        //   children: <Widget>[
+        //     RaisedButton(
+        //       color: Colors.white,
+        //       child: Text(
+        //         '加入书桌',
+        //       ),
+        //       onPressed: () {
+        //         print("加入书桌");
+        //         addBookshelfApi(index);
+        //       },
+        //     ),
+        //     Padding(
+        //       padding: EdgeInsets.only(left: 5),
+        //     ),
+        //     RaisedButton(
+        //       color: Colors.white,
+        //       child: Text(
+        //         '开始阅读',
+        //       ),
+        //       onPressed: () {
+        //         goToRederScreen(index);
+        //       },
+        //     ),
+        //   ],
+        // ),
 
         // prefix1.Text(
         //   "介绍：" +

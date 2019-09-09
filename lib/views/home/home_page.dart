@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
@@ -8,7 +7,6 @@ import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/views/book/bookshelf_item_view.dart';
 import 'package:thief_book_flutter/views/search/search_screen.dart';
-import 'package:thief_book_flutter/views/user/my_setting.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class HomePageWidget extends StatefulWidget {
@@ -80,7 +78,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     return new Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.white,
-        drawer: MySetting(),
+        // drawer: MySetting(),
         appBar: buildAppBarView(),
         body: Container(
             padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
@@ -95,36 +93,36 @@ class HomePageWidgetState extends State<HomePageWidget> {
   Widget buildAppBarView() {
     return new AppBar(
       elevation: 1,
-      leading: new IconButton(
-        icon: new Container(
-          padding: EdgeInsets.all(3.0),
-          child: ClipOval(
-            child: Image(
-              height: 40,
-              width: 40,
-              image: NetworkImage(
-                  "http://7xqekd.com1.z0.glb.clouddn.com/imgs/24910959%20%281%29.jpeg"),
-            ),
-          ),
-        ),
-        onPressed: () => _scaffoldKey.currentState.openDrawer(),
+      // leading: new IconButton(
+      //   icon: new Container(
+      //     padding: EdgeInsets.all(3.0),
+      //     child: ClipOval(
+      //       child: Image(
+      //         height: 40,
+      //         width: 40,
+      //         image: NetworkImage(
+      //             "http://7xqekd.com1.z0.glb.clouddn.com/imgs/24910959%20%281%29.jpeg"),
+      //       ),
+      //     ),
+      //   ),
+      //   onPressed: () => _scaffoldKey.currentState.openDrawer(),
+      // ),
+      leading: IconButton(
+        icon: Icon(Icons.search),
+        onPressed: () {
+          Navigator.push(
+              context,
+              CustomRoute(
+                  direction: 2,
+                  widget: SearchSreenWidget(
+                    onSetState: () {
+                      fetchData();
+                    },
+                  )));
+        },
       ),
       automaticallyImplyLeading: false,
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            Navigator.push(
-                context,
-                CustomRoute(
-                    direction: 2,
-                    widget: SearchSreenWidget(
-                      onSetState: () {
-                        fetchData();
-                      },
-                    )));
-          },
-        ),
         IconButton(
           icon: Icon(Icons.more_vert),
           onPressed: () {
@@ -134,7 +132,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
       ],
       title: Center(
         child: new Text(
-          "当前1.8元/总共10.05元",
+          "书桌",
           // MoreLocalization.of(context).,
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -241,11 +239,11 @@ class HomePageWidgetState extends State<HomePageWidget> {
           child: Column(
             children: <Widget>[
               buildMenuRadius(
-                  new BorderRadius.only(topLeft: new Radius.circular(5.0))),
-              buildMenu(),
-              buildMenu(),
+                  new BorderRadius.only(topLeft: new Radius.circular(5.0)),"同步pc摸鱼"),
+              // buildMenu(),
+              // buildMenu(),
               buildMenuRadius(
-                  new BorderRadius.only(bottomLeft: new Radius.circular(5.0))),
+                  new BorderRadius.only(bottomLeft: new Radius.circular(5.0)),"内网传书"),
             ],
           ),
         );
@@ -283,7 +281,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     );
   }
 
-  Widget buildMenuRadius(BorderRadiusGeometry borderRadius) {
+  Widget buildMenuRadius(BorderRadiusGeometry borderRadius,String title) {
     return Container(
       width: menuWidth,
       padding: EdgeInsets.all(5),
@@ -298,7 +296,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Icon(Icons.settings),
-          Text("设置",
+          Text(title,
               style: TextStyle(
                 fontSize: 12,
               ))

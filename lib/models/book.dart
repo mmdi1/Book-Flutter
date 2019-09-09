@@ -77,7 +77,6 @@ class Book {
     var map = new Map<String, dynamic>();
     map["isCacheIndex"] = this.isCacheIndex;
     map["isCacheArticleId"] = this.isCacheArticleId;
-    map["catalogNum"] = this.catalogNum;
     return map;
   }
 }

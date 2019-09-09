@@ -1,12 +1,20 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
+import 'package:thief_book_flutter/common/server/books_curd.dart';
+import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/models/book.dart';
+import 'package:thief_book_flutter/models/catalog.dart';
 import 'package:thief_book_flutter/views/book/book_detail_core.dart';
 import 'package:thief_book_flutter/views/book/cache_book_core.dart';
 import 'package:thief_book_flutter/views/reader/reader_screen.dart';
+import 'package:thief_book_flutter/views/reader/reader_source_core.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
+import 'package:thief_book_flutter/widgets/progress_dialog.dart';
 
 class BookDetailScreen extends StatefulWidget {
   Book book;
@@ -19,8 +27,8 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   @override
   void initState() {
     // RedaerRequest.getAixdzsArticle("/168/168363/p1.html");
-    // initScore();
     super.initState();
+    initData();
   }
 
   //
@@ -28,13 +36,60 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   void dispose() {
     super.dispose();
   }
-  initScore()async{
-    BookDetailApi.getScoreByQiDian();
+
+  initData() async {
+    addBookshelfApi();
+    // BookDetailApi.getScoreByQiDian();
   }
+
   cacheNetBook() async {
     // 获取存储路径
     var path = await Config.getLocalFilePath(context);
     await CacheNetBookCore.splitTxtByStream(this.widget.book, path);
+  }
+
+  addBookshelfApi() async {
+    // ProgressDialog.showLoadingDialog(context, "解析目录中...");
+    print("+=============================");
+    var book = this.widget.book;
+    var listCatalog =
+        await RedaerRequest.getCotalogByOline(book.catalogUrl, book.sourceType);
+    var listCatalogJson = '{"data":[';
+    var i = 0;
+    listCatalog.forEach((s) {
+      var cJson = new Catalog(s.id, s.title, s.linkUrl, i);
+      i++;
+      listCatalogJson += jsonEncode(cJson) + ",";
+    });
+    book.catalogNum = i; //记录章节总数
+    book.id = null;
+    book.isCache = 1;
+    book.isCacheIndex = 0;
+    book.isCacheArticleId = 0;
+    print("总章节数:$i,,,,,${book.toJson()}");
+    book = await BookApi.insertBook(book);
+
+    var path = await Config.getLocalFilePath(context);
+    print("加入书桌的地址:${path + "/" + book.id.toString()}");
+    Directory bfb = new Directory(path + "/" + book.id.toString());
+    if (!bfb.existsSync()) {
+      bfb.createSync(recursive: true);
+    }
+    File cf = new File(path + "/" + book.id.toString() + "/catalog.json");
+    print("写入地址:${cf.path}");
+    cf.createSync(recursive: true);
+    listCatalogJson =
+        listCatalogJson.substring(0, listCatalogJson.lastIndexOf(",")) + "]}";
+    cf.writeAsStringSync(listCatalogJson);
+    print("============${book.toJson()}");
+    if (book.id != null && book.id > 0) {
+      Toast.show("已加入书桌");
+      // 获取存储路径
+      CacheNetBookCore.splitTxtByStream(book, path);
+    } else {
+      Toast.show("加入失败，请检查网络");
+    }
+    // Navigator.pop(context);
   }
 
   //
@@ -204,6 +259,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
       ],
     );
   }
+
   @override
   Widget build(BuildContext context) {
     print(this.widget.book.toJson());
@@ -214,7 +270,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
           buildTopView(),
           buildNetScoreView(),
           FlatButton(
-            onPressed: (){
+            onPressed: () {
               Navigator.pop(context);
             },
             child: Text("返回"),
