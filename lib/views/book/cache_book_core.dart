@@ -53,9 +53,10 @@ class CacheNetBookCore {
         book.isCacheIndex = index;
         if (index == chaptersResponse.length - 1) {
           //如果缓存的章节到最后一章，则完成当前正本缓存
-          book.isCache= 2;
+          book.isCache = 2;
         }
         print("更新书籍信息:${book.toJson()}");
+        book.catalogNum = null;
         await BookApi.update(book);
       } else {
         print("可能因网速原因终止缓存,页面地址:${catalog.linkUrl}");

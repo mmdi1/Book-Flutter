@@ -99,7 +99,7 @@ class BookApi {
     var con = new LocalDb();
     var db = await con.getConn();
     var result = await db
-        .update("books", book.toJson(), where: 'id = ?', whereArgs: [book.id]);
+        .update("books", book.toUpdateCacheIndex(), where: 'id = ?', whereArgs: [book.id]);
     db.close();
     return result;
   }
