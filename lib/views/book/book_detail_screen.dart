@@ -38,6 +38,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   }
 
   initData() async {
+    //从搜索列表进来才缓存
     addBookshelfApi();
     // BookDetailApi.getScoreByQiDian();
   }
@@ -49,9 +50,15 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   }
 
   addBookshelfApi() async {
+    await Future.delayed(const Duration(milliseconds: 1000), () {});
+    var path = await Config.getLocalFilePath(context);
     // ProgressDialog.showLoadingDialog(context, "解析目录中...");
     print("+=============================");
     var book = this.widget.book;
+    Directory existsBook = new Directory(path + "/" + book.id.toString());
+    if (existsBook.existsSync()) {
+      return;
+    }
     var listCatalog =
         await RedaerRequest.getCotalogByOline(book.catalogUrl, book.sourceType);
     var listCatalogJson = '{"data":[';
@@ -68,13 +75,9 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     book.isCacheArticleId = 0;
     print("总章节数:$i,,,,,${book.toJson()}");
     book = await BookApi.insertBook(book);
-
-    var path = await Config.getLocalFilePath(context);
     print("加入书桌的地址:${path + "/" + book.id.toString()}");
     Directory bfb = new Directory(path + "/" + book.id.toString());
-    if (!bfb.existsSync()) {
-      bfb.createSync(recursive: true);
-    }
+    bfb.createSync(recursive: true);
     File cf = new File(path + "/" + book.id.toString() + "/catalog.json");
     print("写入地址:${cf.path}");
     cf.createSync(recursive: true);
@@ -145,7 +148,9 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
               SizedBox(height: 8),
               Text(this.widget.book.status +
                   "   " +
-                  "共2918章" +
+                  "共" +
+                  this.widget.book.catalogNum.toString() +
+                  "章" +
                   "  " +
                   this.widget.book.wordCount.substring(3)),
             ],
@@ -169,7 +174,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 10),
-              Text("97.8",
+              Text("暂无",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
               SizedBox(height: 8),
               Text("★★★★★", style: TextStyle(color: Colors.orange)),
@@ -260,6 +265,20 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     );
   }
 
+  Widget buildInfoView() {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          Text(
+            "介绍：" + this.widget.book.info.trim(),
+            maxLines: 4,
+          ),
+          Text("已缓存1273章  已读：234章"),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     print(this.widget.book.toJson());
@@ -268,7 +287,8 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
       body: Column(
         children: <Widget>[
           buildTopView(),
-          buildNetScoreView(),
+          buildInfoView(),
+          // buildNetScoreView(),
           FlatButton(
             onPressed: () {
               Navigator.pop(context);

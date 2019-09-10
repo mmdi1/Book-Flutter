@@ -206,8 +206,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
                 image: new DecorationImage(
                   image: CachedNetworkImageProvider(
                     listBooks[index].imgUrl,
-                    errorListener: () {
-                    },
+                    errorListener: () {},
                   ),
                 ),
                 // border: new Border.all(width: 1, color: AppColor.black),

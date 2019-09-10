@@ -59,7 +59,11 @@ class BookshelfItemView extends StatelessWidget {
                         color: Colors.black,
                         child: Row(
                           children: <Widget>[
-                            Icon(Icons.file_download, size: 14,color: Colors.white,),
+                            Icon(
+                              Icons.file_download,
+                              size: 14,
+                              color: Colors.white,
+                            ),
                             Text(
                               downSchedule + "%",
                               textAlign: TextAlign.right,
