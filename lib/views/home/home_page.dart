@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
@@ -55,7 +56,9 @@ class HomePageWidgetState extends State<HomePageWidget> {
     print("书:${books.length},${bookItems.length / 9}");
     pageCount = (bookItems.length / 9).floor() + 1;
     print("主页加载书:${books.length},分页:${bookItems.length / 9},共多少页:$pageCount");
-    setState(() {});
+    setState(() {
+      updateVersionAlert(context);
+    });
   }
 
   Widget _pageItemBuilder(BuildContext context, int index) {
@@ -239,11 +242,13 @@ class HomePageWidgetState extends State<HomePageWidget> {
           child: Column(
             children: <Widget>[
               buildMenuRadius(
-                  new BorderRadius.only(topLeft: new Radius.circular(5.0)),"同步pc摸鱼"),
+                  new BorderRadius.only(topLeft: new Radius.circular(5.0)),
+                  "同步pc摸鱼"),
               // buildMenu(),
               // buildMenu(),
               buildMenuRadius(
-                  new BorderRadius.only(bottomLeft: new Radius.circular(5.0)),"内网传书"),
+                  new BorderRadius.only(bottomLeft: new Radius.circular(5.0)),
+                  "内网传书"),
             ],
           ),
         );
@@ -281,7 +286,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     );
   }
 
-  Widget buildMenuRadius(BorderRadiusGeometry borderRadius,String title) {
+  Widget buildMenuRadius(BorderRadiusGeometry borderRadius, String title) {
     return Container(
       width: menuWidth,
       padding: EdgeInsets.all(5),
@@ -303,5 +308,27 @@ class HomePageWidgetState extends State<HomePageWidget> {
         ],
       ),
     );
+  }
+
+  updateVersionAlert(BuildContext context) {
+    Alert(
+      context: context,
+      style: AlertStyle(
+        overlayColor: Colors.white70,
+        isOverlayTapDismiss: false,
+      ),
+      title: "RFLUTTER ALERT",
+      desc: "Flutter is more awesome with RFlutter Alert.",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "COOL",
+            style: TextStyle(color: Colors.white70, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          width: 120,
+        )
+      ],
+    ).show();
   }
 }

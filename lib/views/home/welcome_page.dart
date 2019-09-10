@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/utils/db_utils.dart';
+import 'package:thief_book_flutter/common/utils/http.dart';
 import 'package:thief_book_flutter/common/utils/test.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
@@ -40,7 +41,7 @@ class SplashScreenState extends State<SplashScreen> {
           _timer.cancel();
           Navigator.of(context).push(CustomFindInRoute(
               BottomNavigationWidget(this.widget.store), 2000));
-          // initApp();
+          initApp();
         } else {
           setState(() {});
         }
@@ -119,16 +120,22 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   initApp() async {
+    var config = await Http.getBody("http://127.0.0.1:3002/config");
+    if (config == null) {
+      //服务器挂掉，或没有网络
+  
+    }
+    print("-------------------$config");
     //自动续存
-    var path = await Config.getLocalFilePath(context);
-    HomeApi.cacheBook(path);
+    // var path = await Config.getLocalFilePath(context);
+    // HomeApi.cacheBook(path);
   }
 
   @override
   Widget build(BuildContext context) {
     return IntroSlider(
       slides: this.slides,
-      onDonePress: this.onDonePress, 
+      onDonePress: this.onDonePress,
       nameSkipBtn: "跳过",
       nameNextBtn: "下一页",
       nameDoneBtn: "进入",

@@ -39,6 +39,7 @@ dependencies:
   floating_search_bar: 0.2.0
   fab_circular_menu: 0.1.1
   flutter_svg: 0.14.1
+  rflutter_alert: 1.0.3
   flutter_localizations:
     sdk: flutter
 

@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:gbk2utf8/gbk2utf8.dart';
 import 'package:http/http.dart' as http;
 
 class Http {

@@ -19,7 +19,6 @@ class BookshelfItemView extends StatelessWidget {
   BookshelfItemView({this.book, this.cb});
   @override
   Widget build(BuildContext context) {
-    print("----------${book.toJson()}");
     var downSchedule = (book.isCacheIndex / book.catalogNum).toStringAsFixed(2);
     var width = (Screen.width - 15 * 2 - 24 * 2) / 3;
     return GestureDetector(
