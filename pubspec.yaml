@@ -40,6 +40,7 @@ dependencies:
   fab_circular_menu: 0.1.1
   flutter_svg: 0.14.1
   rflutter_alert: 1.0.3
+  device_info: 0.4.0+2
   flutter_localizations:
     sdk: flutter
 

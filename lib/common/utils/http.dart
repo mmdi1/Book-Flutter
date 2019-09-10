@@ -1,3 +1,5 @@
+import 'package:device_info/device_info.dart';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Http {
@@ -26,7 +28,7 @@ class Http {
       // print("+=======================${res.body}");
       return res.body;
     } catch (e) {
-      print("请求错误-------------------------------------url:$url");
+      print("请求错误-------------------------------------url:$e");
       return null;
     }
   }
@@ -34,5 +36,33 @@ class Http {
   static post(String url, body) async {
     final res = await http.post(url, body: body);
     return {"code": res.statusCode, "errorMessage": res.reasonPhrase};
+  }
+
+  static getConfig(String url, type) async {
+    try {
+      print("初始请求--------");
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      var str = "";
+      if (type == 'ios') {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        str += iosInfo.systemVersion + ",";
+        str += iosInfo.systemName + ",";
+        str += iosInfo.identifierForVendor + ",";
+        str += iosInfo.name + ",";
+        str += iosInfo.model;
+      } else {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        str += androidInfo.version.baseOS;
+        str += androidInfo.product;
+        str += androidInfo.androidId;
+        str += androidInfo.device;
+        str += androidInfo.model;
+      }
+      final res = await http.get("http://localhost:3002/config?info=" + str);
+      return res.body;
+    } catch (e) {
+      print("初始请求报错-------$e");
+      return null;
+    }
   }
 }

@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
 import 'package:thief_book_flutter/common/style/app_style.dart';
+import 'package:thief_book_flutter/common/utils/http.dart';
 import 'package:thief_book_flutter/common/utils/navigator_utils.dart';
 import 'package:thief_book_flutter/common/utils/screen.dart';
 import 'package:thief_book_flutter/common/utils/toast.dart';
@@ -31,6 +33,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     print("+====初始Home_page");
     super.initState();
     fetchData();
+    updateVersionAlert(context);
   }
 
   @override
@@ -56,9 +59,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     print("书:${books.length},${bookItems.length / 9}");
     pageCount = (bookItems.length / 9).floor() + 1;
     print("主页加载书:${books.length},分页:${bookItems.length / 9},共多少页:$pageCount");
-    setState(() {
-      updateVersionAlert(context);
-    });
+    setState(() {});
   }
 
   Widget _pageItemBuilder(BuildContext context, int index) {
@@ -310,20 +311,59 @@ class HomePageWidgetState extends State<HomePageWidget> {
     );
   }
 
-  updateVersionAlert(BuildContext context) {
+  updateVersionAlert(BuildContext context) async {
+    await Future.delayed(const Duration(milliseconds: 1000), () {});
+    var type = 'ios';
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      type = 'android';
+    }
+    var config = await Http.getConfig("http://localhost:3002/config", type);
+    var text = "请检查网络是否正常";
+    var title = "网络连接失败";
+    var link = "";
+    var isAlert = false;
+    if (config == null) {
+      isAlert = true;
+      //服务器挂掉，或没有网络
+    } else {
+      var obj = json.decode(config);
+      if (obj["data"]["showAlertUpdate"]) {
+        isAlert = obj["data"]["showAlertUpdate"];
+        title = obj["data"]["title"];
+        text = obj["data"]["updateText"];
+        link = obj["data"]["link"];
+      }
+    }
+    print("-------------------$config");
+    if (!isAlert) {
+      // return;
+    }
+
     Alert(
       context: context,
+      title: title,
       style: AlertStyle(
-        overlayColor: Colors.white70,
+        overlayColor: Colors.black45,
         isOverlayTapDismiss: false,
       ),
-      title: "RFLUTTER ALERT",
-      desc: "Flutter is more awesome with RFlutter Alert.",
+      content: Container(
+        child: Text(text,
+            textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
+      ),
       buttons: [
         DialogButton(
           child: Text(
-            "COOL",
-            style: TextStyle(color: Colors.white70, fontSize: 20),
+            "确认",
+            textAlign: TextAlign.start,
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+          onPressed: () => Navigator.pop(context),
+          width: 120,
+        ),
+        DialogButton(
+          child: Text(
+            "取消",
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           onPressed: () => Navigator.pop(context),
           width: 120,

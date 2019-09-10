@@ -28,11 +28,41 @@ class BookApi {
           "isCache",
           "catalogUrl",
           "isCacheIndex",
+           "catalogNum",
           "isCacheArticleId",
           "sourceType"
         ],
         where: "id = ?",
         whereArgs: [id]);
+    if (maps.length > 0) {
+      return Book.fromJson(maps.first);
+    }
+    db.close();
+    return null;
+  }
+
+  static Future<Book> getBookByName(String name, String author) async {
+    var con = new LocalDb();
+    var db = await con.getConn();
+    List<Map> maps = await db.query("books",
+        columns: [
+          "id",
+          "name",
+          "status",
+          "imgUrl",
+          "info",
+          "wordCount",
+          "importUrl",
+          "author",
+          "isCache",
+          "catalogUrl",
+          "isCacheIndex",
+          "catalogNum",
+          "isCacheArticleId",
+          "sourceType"
+        ],
+        where: "name = ? and author = ?",
+        whereArgs: [name, author]);
     if (maps.length > 0) {
       return Book.fromJson(maps.first);
     }
@@ -56,6 +86,7 @@ class BookApi {
           "isCache",
           "catalogUrl",
           "isCacheIndex",
+          "catalogNum",
           "isCacheArticleId",
           "sourceType"
         ],
@@ -67,6 +98,7 @@ class BookApi {
     db.close();
     return null;
   }
+
   static Future<List<Book>> getBooks() async {
     var list = new List<Book>();
     var con = new LocalDb();
@@ -98,11 +130,12 @@ class BookApi {
   static Future<int> update(Book book) async {
     var con = new LocalDb();
     var db = await con.getConn();
-    var result = await db
-        .update("books", book.toUpdateCacheIndex(), where: 'id = ?', whereArgs: [book.id]);
+    var result = await db.update("books", book.toUpdateCacheIndex(),
+        where: 'id = ?', whereArgs: [book.id]);
     db.close();
     return result;
   }
+
   // 根据ID删除书籍信息
   static Future<int> delete(int id) async {
     var con = new LocalDb();

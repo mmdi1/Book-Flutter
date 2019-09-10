@@ -53,12 +53,19 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     await Future.delayed(const Duration(milliseconds: 1000), () {});
     var path = await Config.getLocalFilePath(context);
     // ProgressDialog.showLoadingDialog(context, "解析目录中...");
-    print("+=============================");
     var book = this.widget.book;
-    Directory existsBook = new Directory(path + "/" + book.id.toString());
+    var exBook = await BookApi.getBookByName(book.name, book.author);
+    if (exBook != null) {
+      print("已有当前书籍:${exBook.toJson()}");
+      this.widget.book = book;
+    }
+    print("+=============================${book.toJson()}");
+    Directory existsBook = new Directory(path + "/" + exBook.id.toString());
     if (existsBook.existsSync()) {
+      setState(() {});
       return;
     }
+
     var listCatalog =
         await RedaerRequest.getCotalogByOline(book.catalogUrl, book.sourceType);
     var listCatalogJson = '{"data":[';
@@ -267,13 +274,21 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
 
   Widget buildInfoView() {
     return Container(
+      margin: EdgeInsets.only(top: 20),
+      padding: EdgeInsets.all(10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             "介绍：" + this.widget.book.info.trim(),
             maxLines: 4,
+            textAlign: TextAlign.left,
+            style: TextStyle(fontSize: 13, color: Colors.grey),
           ),
-          Text("已缓存1273章  已读：234章"),
+          SizedBox(height: 30),
+          Text("已缓存1273章  已读至：第232章",
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 13, color: Colors.black87)),
         ],
       ),
     );
@@ -281,7 +296,6 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(this.widget.book.toJson());
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(

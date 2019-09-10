@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/redux/init_state.dart';
 import 'package:thief_book_flutter/common/utils/db_utils.dart';
 import 'package:thief_book_flutter/common/utils/http.dart';
@@ -12,7 +13,6 @@ import 'package:thief_book_flutter/common/utils/test.dart';
 import 'package:thief_book_flutter/views/BottomNavigation/BottomNavigation.dart';
 import 'package:thief_book_flutter/views/down/down_server.dart';
 import 'package:redux/redux.dart';
-import 'package:thief_book_flutter/views/home/home_core.dart';
 import 'package:thief_book_flutter/widgets/custome_router.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -120,16 +120,11 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   initApp() async {
-    var config = await Http.getBody("http://127.0.0.1:3002/config");
-    if (config == null) {
-      //服务器挂掉，或没有网络
-  
-    }
-    print("-------------------$config");
     //自动续存
     // var path = await Config.getLocalFilePath(context);
     // HomeApi.cacheBook(path);
   }
+
 
   @override
   Widget build(BuildContext context) {
