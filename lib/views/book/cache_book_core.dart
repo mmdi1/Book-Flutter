@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:thief_book_flutter/common/config/config.dart';
 import 'package:thief_book_flutter/common/server/articels_curd.dart';
 import 'package:thief_book_flutter/common/server/books_curd.dart';
+import 'package:thief_book_flutter/common/utils/toast.dart';
 import 'package:thief_book_flutter/models/article.dart';
 import 'package:thief_book_flutter/models/book.dart';
 import 'package:thief_book_flutter/models/catalog.dart';
@@ -11,6 +13,11 @@ import 'package:thief_book_flutter/views/reader/reader_source_core.dart';
 
 class CacheNetBookCore {
   static splitTxtByStream(Book book, String path) {
+    if (Config.isLodingDown > 1) {
+      Config.isLodingDown--;
+      Toast.show("已有下载进程");
+      return;
+    }
     splitAixdzsCore(book, path);
   }
 
@@ -40,6 +47,10 @@ class CacheNetBookCore {
     var lock = 0;
     debugPrint("开始时间:${time.hour}:${time.minute}:${time.second}");
     for (var catalog in catalogs) {
+      if (Config.isLodingDown == 0) {
+        //如果暂停则直接返回
+        return;
+      }
       currAr.novelId = book.id;
       currAr.id = index;
       currAr.currentLink = catalog.linkUrl;

@@ -24,6 +24,7 @@ class BookDetailScreen extends StatefulWidget {
 }
 
 class BookDetailScreenWidget extends State<BookDetailScreen> {
+  var addBook = false;
   @override
   void initState() {
     // RedaerRequest.getAixdzsArticle("/168/168363/p1.html");
@@ -46,6 +47,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   cacheNetBook() async {
     // 获取存储路径
     var path = await Config.getLocalFilePath(context);
+    Config.isLodingDown++;
     await CacheNetBookCore.splitTxtByStream(this.widget.book, path);
   }
 
@@ -95,6 +97,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     if (book.id != null && book.id > 0) {
       Toast.show("已加入书桌");
       // 获取存储路径
+      Config.isLodingDown++;
       CacheNetBookCore.splitTxtByStream(book, path);
     } else {
       Toast.show("加入失败，请检查网络");
@@ -214,7 +217,8 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
             Text("9.8",
                 style: TextStyle(fontSize: 34, fontWeight: FontWeight.w600)),
             SizedBox(height: 8),
-            Text("★★★★★", style: TextStyle(color: Colors.orange, fontSize: 14)),
+            Text("★���������★★★",
+                style: TextStyle(color: Colors.orange, fontSize: 14)),
           ]),
           SizedBox(width: 100),
           Column(crossAxisAlignment: CrossAxisAlignment.end, children: <Widget>[
@@ -294,6 +298,52 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     );
   }
 
+  //加入书桌按钮
+  Widget buildBtnRow() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        RaisedButton(
+          color: Colors.white,
+          child: Text(
+            '加入书桌',
+          ),
+          onPressed: () {
+            print("加入书桌");
+            addBook = true;
+            addBookshelfApi();
+          },
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 5),
+        ),
+        RaisedButton(
+          color: Colors.white,
+          child: Text(
+            '开始阅读',
+          ),
+          onPressed: () {
+            goToRederScreen();
+          },
+        ),
+      ],
+    );
+  }
+
+  //如果没有加入书桌，则清除下载记录
+  deleteBookFunc() async {
+    if (addBook) {
+      return;
+    }
+    print("进入清除下载记录");
+    Config.isLodingDown = 0;
+    BookApi.delete(this.widget.book.id);
+    var path = await Config.getLocalFilePath(context);
+    Directory bfb = new Directory(path + "/" + this.widget.book.id.toString());
+    bfb.deleteSync(recursive: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -303,8 +353,11 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
           buildTopView(),
           buildInfoView(),
           // buildNetScoreView(),
+
+          buildBtnRow(),
           FlatButton(
             onPressed: () {
+              deleteBookFunc();
               Navigator.pop(context);
             },
             child: Text("返回"),

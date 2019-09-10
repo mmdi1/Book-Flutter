@@ -9,11 +9,13 @@ class Config {
   static String dbPath = "";
   static String filePath = "";
   static String spCacheBookId = "spCacheBookId_key"; ////最后打开的小说id
-  static String spCacheArticleId = "spCacheArticleId_key";//阅读的当前章节
-  static String spCachePageIndex = "spCachePageIndex_key";//阅读的当前页数
+  static String spCacheArticleId = "spCacheArticleId_key"; //阅读的当前章节
+  static String spCachePageIndex = "spCachePageIndex_key"; //阅读的当前页数
   static String spCacheFontSize = "spCacheFontSize_key"; //字体大小
   static String spCacheVertical = "spCacheVertical_key"; //是否横屏换页
   static String bookPath = "";
+
+  static int isLodingDown = 0;
 
   /// 当前数据库版本 */
   static int currentDbVersion = 2;

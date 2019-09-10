@@ -9,6 +9,7 @@ class HomeApi {
     var book = await BookApi.getBook(bookid);
     if (book != null && book.isCache == 1) {
       print("进入自动续存名称:${book.name}");
+      Config.isLodingDown++;
       CacheNetBookCore.splitTxtByStream(book, path);
       return;
     }
@@ -16,6 +17,7 @@ class HomeApi {
     var book2 = await BookApi.getBookByAnyIsCache();
     if (book2 != null && book2.isCache == 1) {
       print("进入自动续存名称:${book.name}");
+      Config.isLodingDown++;
       CacheNetBookCore.splitTxtByStream(book, path);
       return;
     }

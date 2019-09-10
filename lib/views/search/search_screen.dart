@@ -383,6 +383,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
     if (book.id != null && book.id > 0) {
       Toast.show("已加入书桌");
       // 获取存储路径
+      Config.isLodingDown++;
       CacheNetBookCore.splitTxtByStream(book, path);
     } else {
       Toast.show("加入失败，请检查网络");
