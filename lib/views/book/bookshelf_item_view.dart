@@ -110,7 +110,8 @@ class BookshelfItemView extends StatelessWidget {
                     Navigator.push(
                         context,
                         CustomRoute(
-                            direction: 4, widget: BookDetailScreen(book)));
+                            direction: 4,
+                            widget: BookDetailScreen(book: book, type: 0)));
                   },
                 ),
                 ListTile(

@@ -18,7 +18,8 @@ import 'package:thief_book_flutter/widgets/progress_dialog.dart';
 
 class BookDetailScreen extends StatefulWidget {
   Book book;
-  BookDetailScreen(this.book);
+  final int type; //0是首页进入 1是搜索进入
+  BookDetailScreen({this.book, this.type});
   @override
   State<BookDetailScreen> createState() => BookDetailScreenWidget();
 }
@@ -29,21 +30,30 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
   void initState() {
     // RedaerRequest.getAixdzsArticle("/168/168363/p1.html");
     super.initState();
+    print(this.widget.type);
     initData();
   }
 
   //
   @override
   void dispose() {
+    if (this.widget.type == 1) {
+      print("释放了....");
+      // deleteBookFunc();
+    }
     super.dispose();
   }
 
   initData() async {
-    //从搜索列表进来才缓存
-    addBookshelfApi();
+    if (this.widget.type == 1) {
+      //从搜索列表进来才缓存
+      addBookshelfApi();
+    }
+
     // BookDetailApi.getScoreByQiDian();
   }
 
+  //缓存
   cacheNetBook() async {
     // 获取存储路径
     var path = await Config.getLocalFilePath(context);
@@ -59,10 +69,11 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     var exBook = await BookApi.getBookByName(book.name, book.author);
     if (exBook != null) {
       print("已有当前书籍:${exBook.toJson()}");
-      this.widget.book = book;
+      book = exBook;
     }
     print("+=============================${book.toJson()}");
-    Directory existsBook = new Directory(path + "/" + exBook.id.toString());
+    Directory existsBook =
+        new Directory(path + "/" + this.widget.book.id.toString());
     if (existsBook.existsSync()) {
       setState(() {});
       return;
@@ -158,10 +169,9 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
               SizedBox(height: 8),
               Text(this.widget.book.status +
                   "   " +
-                  "共" +
-                  this.widget.book.catalogNum.toString() +
-                  "章" +
-                  "  " +
+                  (this.widget.book.catalogNum != null
+                      ? ("共" + this.widget.book.catalogNum.toString() + "章")
+                      : "" + "  ") +
                   this.widget.book.wordCount.substring(3)),
             ],
           ),
@@ -307,6 +317,17 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
         RaisedButton(
           color: Colors.white,
           child: Text(
+            '返回',
+          ),
+          onPressed: () {
+            print("返回");
+            deleteBookFunc();
+            Navigator.pop(context);
+          },
+        ),
+        RaisedButton(
+          color: Colors.white,
+          child: Text(
             '加入书桌',
           ),
           onPressed: () {
@@ -333,6 +354,9 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
 
   //如果没有加入书桌，则清除下载记录
   deleteBookFunc() async {
+    if (this.widget.type != 1) {
+      return;
+    }
     if (addBook) {
       return;
     }
@@ -341,7 +365,9 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     BookApi.delete(this.widget.book.id);
     var path = await Config.getLocalFilePath(context);
     Directory bfb = new Directory(path + "/" + this.widget.book.id.toString());
-    bfb.deleteSync(recursive: true);
+    if (bfb.existsSync()) {
+      bfb.deleteSync(recursive: true);
+    }
   }
 
   @override
@@ -349,19 +375,30 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           buildTopView(),
           buildInfoView(),
           // buildNetScoreView(),
+          this.widget.type == 1 ? buildBtnRow() : SizedBox(),
+          this.widget.type == 1
+              ? SizedBox()
+              : Container(
+                  margin: EdgeInsets.only(left: 10, top: 20),
+                  width: 80,
+                  child: RaisedButton(
+                    color: Colors.white,
+                    child: Text(
+                      '返回',
+                    ),
+                    onPressed: () {
+                      print("返回");
+                      deleteBookFunc();
+                      Navigator.pop(context);
+                    },
+                  ),
+                )
 
-          buildBtnRow(),
-          FlatButton(
-            onPressed: () {
-              deleteBookFunc();
-              Navigator.pop(context);
-            },
-            child: Text("返回"),
-          ),
           // Text("介绍：" + (this.widget.book.info.trim())),
           // ButtonBar(
           //   children: <Widget>[

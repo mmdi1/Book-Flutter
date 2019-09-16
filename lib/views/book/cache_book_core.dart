@@ -102,8 +102,12 @@ class CacheNetBookCore {
     reqData.preArticleId = currAr.preArticleId;
     reqData.currentIndex = currAr.currentIndex;
     print("实际开始缓存章节:${reqData.title}");
+    if (Config.isLodingDown == 0) {
+      return false;
+    }
     File af = new File(
         path + "/" + bookid + "/article_" + currAr.id.toString() + ".json");
+
     af.createSync();
     af.writeAsStringSync(jsonEncode(reqData));
     return true;

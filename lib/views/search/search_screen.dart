@@ -71,6 +71,7 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
   @override
   void dispose() {
     super.dispose();
+    controller.reverse();
     controller.dispose();
     print('释放了搜索');
   }
@@ -231,7 +232,8 @@ class SearchSreenWidgetState extends State<SearchSreenWidget>
               Navigator.push(
                   context,
                   CustomRoute(
-                      widget: BookDetailScreen(listBooks[index]), type: 1));
+                      widget: BookDetailScreen(book: listBooks[index], type: 1),
+                      type: 1));
             },
           ),
           Container(
