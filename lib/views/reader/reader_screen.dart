@@ -543,7 +543,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
                 top: 0,
                 right: 0,
                 bottom: 0,
-                child: Image.asset('assets/images/read_bg.png',
+                child: Image.asset(Config.readerBgImg,
                     fit: BoxFit.cover)),
             Center(
               child: Text("加载中..."),
@@ -563,7 +563,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
                 top: 0,
                 right: 0,
                 bottom: 0,
-                child: Image.asset('assets/images/read_bg.png',
+                child: Image.asset(Config.readerBgImg,
                     fit: BoxFit.cover)),
             buildPageView(),
             buildMenu(),

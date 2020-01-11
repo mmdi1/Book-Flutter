@@ -52,7 +52,7 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    TestFunction.test();
+    // TestFunction.test();
     // SpUtils.clearAll();
     DownApi.requestPermission();
     DbUtils.initDbTabel();
@@ -60,9 +60,9 @@ class SplashScreenState extends State<SplashScreen> {
     super.initState();
     slides.add(
       new Slide(
-        title: "C.TEAM 出品",
+        title: "Joucks 出品",
         description:
-            "官网:https://c.team\n\nC.TEAM是创新团队\n\nC.TEAM旗下有很多爆款产品 \n并且C.TEAM产品是完全免费、开源",
+            "该产品是完全免费、开源",
         styleDescription: TextStyle(
             color: Colors.white, fontSize: 20.0, fontFamily: 'Raleway'),
         marginDescription:

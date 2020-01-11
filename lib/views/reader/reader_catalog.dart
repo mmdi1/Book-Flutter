@@ -88,7 +88,7 @@ class _ReaderCatalogState extends State<ReaderCatalog> {
           bottom: Screen.bottomSafeHeight,
           left: 30,
           right: 30),
-      color: Colors.grey,
+      color: Colors.white,
       height: Screen.height - 350,
       padding: EdgeInsets.all(3.0),
       child: new Column(children: <Widget>[

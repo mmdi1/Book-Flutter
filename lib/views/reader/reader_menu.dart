@@ -376,12 +376,16 @@ class _ReaderMenuState extends State<ReaderMenu>
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   SizedBox(height: 8),
-                  buildTitleWdget("行间距"),
+                  buildTitleWdget("背景"),
                   SizedBox(height: 5),
                   Row(
                     children: <Widget>[
-                      buidIconBtnWdget(Icon(Icons.format_align_left), () {}),
-                      buidIconBtnWdget(Icon(Icons.format_align_justify), () {}),
+                      buidIconBtnWdget(Icon(Icons.format_align_left), () {
+                        switchReaderBgFunc('assets/images/home_bg2.jpeg');
+                      }),
+                      buidIconBtnWdget(Icon(Icons.format_align_justify), () {
+                        switchReaderBgFunc('assets/images/read_bg.jpeg');
+                      }),
                       buidIconBtnWdget(Icon(Icons.format_align_right), () {}),
                     ],
                   ),
@@ -411,6 +415,13 @@ class _ReaderMenuState extends State<ReaderMenu>
         onPressed: _onPressed,
       ),
     );
+  }
+
+  //切换背景
+  switchReaderBgFunc(String bgPath) {
+    print("切换背景为:$bgPath");
+    Config.readerBgImg = bgPath;
+    SpUtils.setValue(Config.readerCackeKey, bgPath);
   }
 
   //二级菜单横竖平设置
@@ -523,7 +534,7 @@ class _ReaderMenuState extends State<ReaderMenu>
   //底部按钮单个
   buildBottomItem(String title, String iconImg, Widget icon) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical:4),
+      padding: EdgeInsets.symmetric(vertical: 4),
       child: GestureDetector(
         onTap: () {
           Toast.show("功能暂未开放");

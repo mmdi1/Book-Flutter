@@ -73,7 +73,7 @@ class BookDetailScreenWidget extends State<BookDetailScreen> {
     }
     print("+=============================${book.toJson()}");
     Directory existsBook =
-        new Directory(path + "/" + this.widget.book.id.toString());
+        new Directory(path + "/" + book.id.toString());
     if (existsBook.existsSync()) {
       setState(() {});
       return;

@@ -15,6 +15,9 @@ class Config {
   static String spCacheVertical = "spCacheVertical_key"; //是否横屏换页
   static String bookPath = "";
 
+  static String readerCackeKey = "spCacheReaderBg_key";
+  static String readerBgImg = 'assets/images/read_bg.png'; //默认阅读背景图片
+
   static int isLodingDown = 0;
 
   /// 当前数据库版本 */
