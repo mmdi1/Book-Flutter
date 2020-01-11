@@ -9,4 +9,8 @@
 ### 使用效果图片
 
 
-![image](https://github.com/joucksHua/Book-Flutterimages/1.png)
+![image](https://github.com/joucksHua/Book-Flutter/blob/master/images/1.png)
+![image](https://github.com/joucksHua/Book-Flutter/blob/master/images/2.jpg)
+![image](https://github.com/joucksHua/Book-Flutter/blob/master/images/3.png)
+![image](https://github.com/joucksHua/Book-Flutter/blob/master/images/4.jpg)
+![image](https://github.com/joucksHua/Book-Flutter/blob/master/images/5.jpg)
