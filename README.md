@@ -4,3 +4,4 @@
 
 ### 在线阅读、下载、等基本功能。
 
+<a href="https://github.com/joucksHua/Book-Flutter/releases/download/0.1/app.apk">安卓apk下载</a>
