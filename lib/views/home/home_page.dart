@@ -130,7 +130,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
         IconButton(
           icon: Icon(Icons.more_vert),
           onPressed: () {
-            showDialogWithOffset(handle: fromRight);
+            // showDialogWithOffset(handle: fromRight);
           },
         )
       ],
@@ -244,7 +244,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
             children: <Widget>[
               buildMenuRadius(
                   new BorderRadius.only(topLeft: new Radius.circular(5.0)),
-                  "同步pc摸鱼"),
+                  "未开发功能"),
               // buildMenu(),
               // buildMenu(),
               buildMenuRadius(
