@@ -33,7 +33,7 @@ class HomePageWidgetState extends State<HomePageWidget> {
     print("+====初始Home_page");
     super.initState();
     fetchData();
-    updateVersionAlert(context);
+    // updateVersionAlert(context);
   }
 
   @override
